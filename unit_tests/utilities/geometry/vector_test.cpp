@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_SUITE( vector_tests )
 		vector v4 = {0.1,1,0};
 		vector v5 = {0.0001,1,0};
 		vector v6 = {0.01,1,0};
-		
+
 		vector vCheck = {0,0,0};
 		BOOST_REQUIRE(!v1.isPerpendicular(vCheck));
 		BOOST_REQUIRE(!v2.isPerpendicular(vCheck));

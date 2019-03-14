@@ -9,8 +9,6 @@ namespace bso { namespace utilities { namespace geometry {
 	{ // 
 		if (mSize != 4)
 		{
-			for (auto& i : mVertices) std::cout << i.transpose() << std::endl << std::endl;
-		
 			std::stringstream errorMessage;
 			errorMessage << "Cannot sort quadrilateral:\n"
 									 << "received " << mSize << "vertices, expected 4.\n"

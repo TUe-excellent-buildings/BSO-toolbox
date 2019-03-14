@@ -201,8 +201,8 @@ BOOST_AUTO_TEST_SUITE( line_segment_tests )
 		check1 << std::setprecision(3) << l1;
 		check2 << std::setprecision(8) << l1;
 		
-		BOOST_REQUIRE(check1.str() == "(1,1.41,3) - (4.12e+05,53.5,6)");
-		BOOST_REQUIRE(check2.str() == "(1,1.4142136,3) - (412340,53.45678,6)");
+		BOOST_REQUIRE(check1.str() == "{{1,1.41,3},{4.12e+05,53.5,6}}");
+		BOOST_REQUIRE(check2.str() == "{{1,1.4142136,3},{412340,53.45678,6}}");
 	}
 	
 BOOST_AUTO_TEST_SUITE_END()

@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		tetrahedron tet1;
 		std::stringstream check;
 		check << tet1;
-		BOOST_REQUIRE(check.str() == "");
+		BOOST_REQUIRE(check.str() == "{}");
 	}
 	
 	BOOST_AUTO_TEST_CASE( initializer_list_init )
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		tetrahedron tet1 = {{1,1,1},{3,1,1},{1,3,1},{1.5,1.5,3}};
 		std::stringstream check1;
 		check1 << tet1;
-		BOOST_REQUIRE(check1.str() == "(1,1,1) - (3,1,1) - (1,3,1) - (1.5,1.5,3)");
+		BOOST_REQUIRE(check1.str() == "{{1,1,1},{3,1,1},{1,3,1},{1.5,1.5,3}}");
 		BOOST_REQUIRE_THROW(tetrahedron({{1,1,1},{3,1,1},{1,3,1}}), std::invalid_argument);
 		
 		vertex p1 = {1,1,1};
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		tetrahedron tet2 = {p1,p2,p3,p4};
 		std::stringstream check2;
 		check2 << tet2;
-		BOOST_REQUIRE(check2.str() == "(1,1,1) - (3,1,1) - (1,3,1) - (1.5,1.5,3)");
+		BOOST_REQUIRE(check2.str() == "{{1,1,1},{3,1,1},{1,3,1},{1.5,1.5,3}}");
 		BOOST_REQUIRE_THROW(tetrahedron({p1,p2,p3}), std::invalid_argument);
 		BOOST_REQUIRE_THROW(tetrahedron({p1,p2,p3,p3}), std::invalid_argument);
 		BOOST_REQUIRE_THROW(tetrahedron({p1,p2,p3,p4,p5}), std::invalid_argument);
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		tetrahedron tet1(cont1);
 		std::stringstream check1;
 		check1 << tet1;
-		BOOST_REQUIRE(check1.str() == "(1,1,1) - (3,1,1) - (1,3,1) - (1.5,1.5,3)");
+	BOOST_REQUIRE(check1.str() == "{{1,1,1},{3,1,1},{1,3,1},{1.5,1.5,3}}");
 		BOOST_REQUIRE_THROW(tetrahedron(std::vector<vertex>({{0,0,0},{1,1,1}})), std::invalid_argument);
 	}
 	
@@ -134,8 +134,8 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		check1 << std::setprecision(3) << tet;
 		check2 << std::setprecision(8) << tet;
 		
-		BOOST_REQUIRE(check1.str() == "(1,1.41,0) - (1,4.12e+05,0) - (0,53.5,0) - (100,0,100)");
-		BOOST_REQUIRE(check2.str() == "(1,1.4142136,0) - (1,412340,0) - (0,53.45678,0) - (100,0,100)");
+		BOOST_REQUIRE(check1.str() == "{{1,1.41,0},{1,4.12e+05,0},{0,53.5,0},{100,0,100}}");
+		BOOST_REQUIRE(check2.str() == "{{1,1.4142136,0},{1,412340,0},{0,53.45678,0},{100,0,100}}");
 	}
 	
 BOOST_AUTO_TEST_SUITE_END()

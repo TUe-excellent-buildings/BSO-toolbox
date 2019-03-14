@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		quadrilateral q1;
 		std::stringstream check;
 		check << q1;
-		BOOST_REQUIRE(check.str() == "");
+		BOOST_REQUIRE(check.str() == "{}");
 	}
 	
 	BOOST_AUTO_TEST_CASE( initializer_list_init )
@@ -32,9 +32,9 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		std::stringstream check1, check2;
 		check1 << q1;
 		check2 << q2;
-		BOOST_REQUIRE(check1.str() == "(0,0,0) - (1,0,0) - (1,1,0) - (0,1,0)");
-		BOOST_REQUIRE(check2.str() == "(0,0,0) - (1,0,0) - (1,1,0) - (0,1,0)" ||
-									check2.str() == "(0,0,0) - (0,1,0) - (1,1,0) - (1,0,0)");
+		BOOST_REQUIRE(check1.str() == "{{0,0,0},{1,0,0},{1,1,0},{0,1,0}}");
+		BOOST_REQUIRE(check2.str() == "{{0,0,0},{1,0,0},{1,1,0},{0,1,0}}" ||
+									check2.str() == "{{0,0,0},{0,1,0},{1,1,0},{1,0,0}}");
 		BOOST_REQUIRE_THROW(quadrilateral({{0,0,0},{1,0,0}}), std::invalid_argument);
 		
 		vertex p1 = {0,0,0};
@@ -46,8 +46,8 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		quadrilateral q3 = {p3,p2,p4,p1};
 		std::stringstream check3;
 		check3 << q3;
-		BOOST_REQUIRE(check3.str() == "(0,1,0) - (1,1,0) - (1,0,0) - (0,0,0)" ||
-									check3.str() == "(0,1,0) - (0,0,0) - (1,0,0) - (1,1,0)");
+		BOOST_REQUIRE(check3.str() == "{{0,1,0},{1,1,0},{1,0,0},{0,0,0}}" ||
+									check3.str() == "{{0,1,0},{0,0,0},{1,0,0},{1,1,0}}");
 		BOOST_REQUIRE_THROW(quadrilateral({p1,p2}), std::invalid_argument);
 		BOOST_REQUIRE_THROW(quadrilateral({p1,p2,p2,p3}), std::invalid_argument);
 		BOOST_REQUIRE_THROW(quadrilateral({p1,p2,p3,p4,p5}), std::invalid_argument);
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		triangle t1(cont1);
 		std::stringstream check1;
 		check1 << t1;
-		BOOST_REQUIRE(check1.str() == "(0,0,0) - (1,0,0) - (0.5,1,0)");
+		BOOST_REQUIRE(check1.str() == "{{0,0,0},{1,0,0},{0.5,1,0}}");
 		BOOST_REQUIRE_THROW(triangle(std::vector<vertex>({{0,0,0},{1,1,1}})), std::invalid_argument);
 	}
 	
@@ -71,14 +71,14 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		std::stringstream check1;
 		check1 << q2;
 
-		BOOST_REQUIRE(check1.str() == "(0,0,0) - (1,0,0) - (1,1,0) - (0,1,0)");
+		BOOST_REQUIRE(check1.str() == "{{0,0,0},{1,0,0},{1,1,0},{0,1,0}}");
 		
 		std::stringstream check2;
 		for (auto i = q2.lineBegin(); i != q2.lineEnd(); ++i)
 		{
 			check2 << *i << "\n";
 		}
-		BOOST_REQUIRE(check2.str() == "(0,0,0) - (1,0,0)\n(1,0,0) - (1,1,0)\n(1,1,0) - (0,1,0)\n(0,1,0) - (0,0,0)\n");
+		BOOST_REQUIRE(check2.str() == "{{0,0,0},{1,0,0}}\n{{1,0,0},{1,1,0}}\n{{1,1,0},{0,1,0}}\n{{0,1,0},{0,0,0}}\n");
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_inside )

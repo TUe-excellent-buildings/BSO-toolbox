@@ -31,6 +31,8 @@ namespace bso { namespace utilities { namespace geometry {
 		
 		template<class T>
 		vertex& operator = (const Eigen::MatrixBase<T>& rhs);
+		
+		friend std::ostream& operator << (std::ostream& stream, const vertex& v);
 	};
 
 } // namespace geometry	

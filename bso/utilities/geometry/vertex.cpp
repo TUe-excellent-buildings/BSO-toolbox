@@ -96,6 +96,13 @@ namespace bso { namespace utilities { namespace geometry {
 		return (*this);
 	}
 	
+	std::ostream& operator << (std::ostream& stream, const vertex& v)
+	{
+		Eigen::IOFormat layout(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", ",", "{", "}", "", "");
+		stream << v.transpose().format(layout);
+		return stream;
+	}
+	
 } // namespace geometry
 } // namespace utilities
 } // namespace bso
