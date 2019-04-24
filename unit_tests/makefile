@@ -15,19 +15,10 @@ SC_BUILDING = $(BSO)/unit_tests/spatial_design/sc_building_test.cpp
 CONFORMAL 	= $(BSO)/unit_tests/spatial_design/conformal_test.cpp
 TRIM_CAST   = $(BSO)/unit_tests/utilities/trim_and_cast_test.cpp
 GEOMETRY		= $(BSO)/unit_tests/utilities/geometry_test.cpp
+STRUCT_DES	= $(BSO)/unit_tests/structural_design/structural_design_test.cpp
 BSO_ALL			= $(BSO)/unit_tests/all_test.cpp
 
-.PHONY: 
-	all
-	ms_space
-	ms_building
-	sc_building
-	conformal
-	trim_cast
-	bso_vectors
-	geometry
-	clean 
-
+.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry structural_design clean 
 
 #make arguments
 cls:
@@ -48,6 +39,8 @@ trim_cast:
 	$(CPP) -o trim_cast_test $(ALL_LIB) $(TRIM_CAST) $(FLAGS)
 geometry:
 	$(CPP) -o geometry_test $(ALL_LIB) $(GEOMETRY) $(FLAGS)
+structural_design:
+	$(CPP) -o sd_test $(ALL_LIB) $(STRUCT_DES) $(FLAGS)
 clean:
 	@rm -f ms_space_test
 	@rm -f ms_building_test
@@ -55,4 +48,5 @@ clean:
 	@rm -f conformal_test
 	@rm -f trim_cast_test
 	@rm -f geometry_test
+	@rm -f sd_test
 	@rm -f all_test

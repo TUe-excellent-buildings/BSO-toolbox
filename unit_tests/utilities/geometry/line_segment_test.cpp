@@ -33,6 +33,13 @@ BOOST_AUTO_TEST_SUITE( line_segment_tests )
 		BOOST_CHECK_EQUAL_COLLECTIONS(l1.begin(), l1.end(), check.begin(), check.end());
 	}
 	
+	BOOST_AUTO_TEST_CASE( container_init ) {
+		std::vector<vertex> check = {{1,2,3},{4,5,6}};
+		line_segment l1 = check;
+		
+		BOOST_CHECK_EQUAL_COLLECTIONS(l1.begin(), l1.end(), check.begin(), check.end());
+	}
+	
 	BOOST_AUTO_TEST_CASE( vertex_init ) {
 		std::vector<vertex> check = {{2,3,4},{5,6,7}};
 		line_segment l1(vertex({2,3,4}), vertex({5,6,7}));
