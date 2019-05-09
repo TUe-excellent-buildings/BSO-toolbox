@@ -19,8 +19,8 @@ namespace bso { namespace structural_design { namespace element {
 
 	void element::generateEFT()
 	{ //
-		mEFT.clear();
-		mConstraints.clear();
+		mEFT.clear();unsigned int count = 0;
+		unsigned int localDOF = 0;
 		for (const auto& i : mNodes)
 		{
 			for (unsigned int j = 0; j < 6; ++j)
@@ -29,7 +29,7 @@ namespace bso { namespace structural_design { namespace element {
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Error, nodal DOF is not active, while it should be.\n"
-											 << "Encoutered error while generating element freedom table.\n"
+											 << "Encountered error while generating element freedom table.\n"
 											 << "(bso/structural_design/element.cpp)" << std::endl;
 					throw std::runtime_error(errorMessage.str());
 				}
@@ -37,8 +37,7 @@ namespace bso { namespace structural_design { namespace element {
 				{
 					try
 					{
-						mConstraints.push_back(i->getConstraint(j));
-						if (mConstraints.back() == 0) mEFT.push_back(i->getGlobalDOF(j));
+						if (i->getConstraint(j) == 0) mEFT[localDOF] = i->getGlobalDOF(j);
 					}
 					catch (std::exception& e)
 					{
@@ -48,6 +47,7 @@ namespace bso { namespace structural_design { namespace element {
 												 << "\n(bso/structural_design/element.cpp)" << std::endl;
 						throw std::runtime_error(errorMessage.str());
 					}
+					++localDOF;
 				}
 			}
 		}
@@ -55,28 +55,14 @@ namespace bso { namespace structural_design { namespace element {
 
 	std::vector<triplet> element::getSMTriplets() const
 	{ //
-		unsigned int numConstraints = 0;
-		for (const auto i : mConstraints) numConstraints += i;
-
-		if (mEFT.size() != (unsigned int)mSM.cols()-numConstraints)
-		{
-			std::stringstream errorMessage;
-			errorMessage << "\nError, when retrieving the stiffness terms of an element\n"
-									 << "for global assembly. Expected an element freedom table of\n"
-									 << "size: " << (unsigned int)mSM.cols()-numConstraints << ", while it is: " 
-									 << mEFT.size() << ".\n(bso/structural_design/element.cpp)" 
-									 << std::endl;
-			throw std::runtime_error(errorMessage.str());
-		}
-		
 		std::vector<triplet> tripletList;
 		for (unsigned int m = 0; m < mSM.rows(); ++m)
 		{
 			for (unsigned int n = 0; n < mSM.cols(); ++n)
 			{
-				if ((mSM(m,n) != 0) && (mConstraints[m] == 0) && (mConstraints[n] == 0))
+				if ((mSM(m,n) != 0) && (mEFT.find(m) != mEFT.end()) && (mEFT.find(n) != mEFT.end()))
 				{
-					tripletList.push_back(triplet(mEFT[m],mEFT[n],mSM(m,n)));
+					tripletList.push_back(triplet(mEFT.at(m),mEFT.at(n),mSM(m,n))); // have to use map::at() because triplet initializer takes non const argument by reference
 				}
 			}
 		}
@@ -96,6 +82,7 @@ namespace bso { namespace structural_design { namespace element {
 				if (mEFS(j) == 1)
 				{
 					*dispIte = i->getDisplacements(lc)(j);
+					++dispIte;
 				}
 			}
 		}

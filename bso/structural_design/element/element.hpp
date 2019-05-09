@@ -23,8 +23,7 @@ namespace bso { namespace structural_design { namespace element {
 		std::vector<node*> mNodes; // pointers to the nodes of this element
 		Eigen::Vector6i mEFS; // the freedom signature of that belongs to each node of this element
 
-		std::vector<unsigned long> mEFT; // element freedom table, the global DOF indices of each DOF of this element's node
-		std::vector<bool> mConstraints; // constraints per DOF
+		std::map<unsigned int, unsigned long> mEFT; // element freedom table, the global DOF indices of each DOF of this element's node
 		
 		Eigen::MatrixXd mOriginalSM; // the element stiffness matrix before applying topology densities
 		Eigen::MatrixXd mSM; // the element stiffness matrix after applying topology densities
