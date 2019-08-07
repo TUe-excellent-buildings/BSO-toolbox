@@ -18,7 +18,11 @@ namespace bso { namespace structural_design { namespace component {
 		~quad_hexahedron();
 		
 		void addStructure(const structure& s);
-		void mesh(const unsigned int& n, std::vector<point*>& point_store);
+		void mesh(const unsigned int& n, std::vector<point*>& pointStore);
+		void mesh(const unsigned int& v0Index, const unsigned int& v1Index, 
+							const unsigned int& v2Index, const unsigned int& n1,
+							const unsigned int& n2, const unsigned int& n3,
+							std::vector<point*>& pointStore);
 	};
 	
 } // namespace component

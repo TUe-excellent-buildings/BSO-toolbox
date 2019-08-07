@@ -48,59 +48,124 @@ namespace bso { namespace structural_design { namespace component {
 
 	void quad_hexahedron::mesh(const unsigned int& n, std::vector<point*>& pointStore)
 	{
+		this->mesh(0,1,2,n,n,n,pointStore);
+	} // 
+	
+	void quad_hexahedron:: mesh(const unsigned int& v0Index,
+				const unsigned int& v1Index, const unsigned int& v2Index, 
+				const unsigned int& n1, const unsigned int& n2, const unsigned int& n3,
+				std::vector<point*>& pointStore)
+	{
 		mMeshedPoints.clear();
-		mMeshedPoints.resize(pow((n+1),3));
-
+		mMeshedPoints.resize((n1+1)*(n2+1)*(n3+1));
 		namespace geom = bso::utilities::geometry;
-		geom::vector v04 = mVertices[4] - mVertices[0];
-		geom::vector v15 = mVertices[5] - mVertices[1];
-		geom::vector v26 = mVertices[6] - mVertices[2];
-		geom::vector v37 = mVertices[7] - mVertices[3];
-		std::vector<geom::vertex> meshPointsLine04(n+1);
-		std::vector<geom::vertex> meshPointsLine15(n+1);
-		std::vector<geom::vertex> meshPointsLine26(n+1);
-		std::vector<geom::vertex> meshPointsLine37(n+1);
-		
-		for (unsigned int i = 0; i < (n + 1); ++i)
+		std::vector<unsigned int> indices = {v0Index, v1Index, v2Index};
+
+		// find index to v4
+		for (unsigned int i = 0; i < 8; ++i)
 		{
-			meshPointsLine04[i] = mVertices[0] + (v04 * ((double)i/((double)n)));
-			meshPointsLine15[i] = mVertices[1] + (v15 * ((double)i/((double)n)));
-			meshPointsLine26[i] = mVertices[2] + (v26 * ((double)i/((double)n)));
-			meshPointsLine37[i] = mVertices[3] + (v37 * ((double)i/((double)n)));
+			if (std::find(indices.begin(), indices.end(), i) != indices.end()) continue;
+			try
+			{ // see if a quadrilateral can be formed using the vertex indexed at i
+				geom::quadrilateral qTest = {mVertices[indices[0]], mVertices[indices[1]], 
+																		 mVertices[indices[2]], mVertices[i]};
+			}
+			catch (std::exception& e)
+			{ // if not check next index
+				continue;
+			} // else add this index as the fourth vertex and break from the loop
+			indices.push_back(i);
+			break;
 		}
-		
-		std::vector<geom::vertex> meshPointsQuad0154(pow((n+1),2));
-		std::vector<geom::vertex> meshPointsQuad3267(pow((n+1),2));
-		
-		for (unsigned int i = 0; i < (n + 1); ++i)
+
+		// find the compliment of indices
+		std::vector<unsigned int> otherIndices;
+		for (unsigned int i = 0; i < 8; ++i)
+		{
+			if (std::find(indices.begin(),indices.end(),i) == indices.end())
+			{
+				otherIndices.push_back(i);
+			}
+		}
+
+		// add vertices 4,5,6,7 to indices by checking vertices in otherIndices if
+		// they make a line in the quad_hexahedron using vertices 0,1,2,3 respectively
+		for (unsigned int i = 0; i < 4; ++i)
+		{
+			for (unsigned int j = 0; j < otherIndices.size(); ++j)
+			{
+				geom::line_segment checkline = {mVertices[indices[i]], mVertices[otherIndices[j]]};
+				for (const auto k : mLineSegments)
+				{
+					if (k.isSameAs(checkline))
+					{
+						indices.push_back(otherIndices[j]);
+						otherIndices.erase(otherIndices.begin() + j);
+						break;
+					}
+				}
+			}
+		}
+
+		if (indices.size() != 8)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nError when meshing a quadrilateral faced hexahedron.\n"
+									 << "Could not sort all the vertices.\n"
+									 << "(bso/structural_design/component/quad_hexahedron.cpp)" << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+
+		geom::vector v04 = mVertices[indices[4]] - mVertices[indices[0]];
+		geom::vector v15 = mVertices[indices[5]] - mVertices[indices[1]];
+		geom::vector v26 = mVertices[indices[6]] - mVertices[indices[2]];
+		geom::vector v37 = mVertices[indices[7]] - mVertices[indices[3]];
+		std::vector<geom::vertex> meshPointsLine04(n1+1);
+		std::vector<geom::vertex> meshPointsLine15(n1+1);
+		std::vector<geom::vertex> meshPointsLine26(n1+1);
+		std::vector<geom::vertex> meshPointsLine37(n1+1);
+
+		for (unsigned int i = 0; i < (n1 + 1); ++i)
+		{
+			meshPointsLine04[i] = mVertices[indices[0]] + (v04 * ((double)i/((double)n1)));
+			meshPointsLine15[i] = mVertices[indices[1]] + (v15 * ((double)i/((double)n1)));
+			meshPointsLine26[i] = mVertices[indices[2]] + (v26 * ((double)i/((double)n1)));
+			meshPointsLine37[i] = mVertices[indices[3]] + (v37 * ((double)i/((double)n1)));
+		}
+
+		std::vector<geom::vertex> meshPointsQuad0154((n1+1)*(n2+1));
+		std::vector<geom::vertex> meshPointsQuad3267((n1+1)*(n2+1));
+
+		for (unsigned int i = 0; i < (n1 + 1); ++i)
 		{
 			geom::vector dirVector01 = meshPointsLine15[i] - meshPointsLine04[i];
 			geom::vector dirVector32 = meshPointsLine26[i] - meshPointsLine37[i];
-			for (unsigned int j = 0; j < (n + 1); ++j)
+			for (unsigned int j = 0; j < (n2 + 1); ++j)
 			{
-				meshPointsQuad0154[i + ((n+1)*j)] = meshPointsLine04[i] + (dirVector01 * ((double)j/((double)n)));
-				meshPointsQuad3267[i + ((n+1)*j)] = meshPointsLine37[i] + (dirVector32 * ((double)j/((double)n)));
+				meshPointsQuad0154[i + ((n1+1)*j)] = meshPointsLine04[i] + (dirVector01 * ((double)j/((double)n2)));
+				meshPointsQuad3267[i + ((n1+1)*j)] = meshPointsLine37[i] + (dirVector32 * ((double)j/((double)n2)));
 			}
 		}
-		
+
 		geom::vertex meshPoint;
 		geom::vector dirVector;
 		unsigned long highestID = 0;
 		bool pointFound;
-		for (unsigned int i = 0; i < (n + 1); ++i)
+		for (unsigned int i = 0; i < (n1 + 1); ++i)
 		{
-			for (unsigned int j = 0; j < (n+1); ++j)
+			for (unsigned int j = 0; j < (n2 + 1); ++j)
 			{
-				dirVector = meshPointsQuad3267[i + ((n+1)*j)] - meshPointsQuad0154[i + ((n+1)*j)];
-				for (unsigned int k = 0; k < (n+1); ++k)
+				dirVector = meshPointsQuad3267[i + ((n1+1)*j)] - meshPointsQuad0154[i + ((n1+1)*j)];
+
+				for (unsigned int k = 0; k < (n3 + 1); ++k)
 				{
-					meshPoint = meshPointsQuad0154[i + ((n+1)*j)] + (dirVector * ((double)k/((double)n)));
+					meshPoint = meshPointsQuad0154[i + ((n1+1)*j)] + (dirVector * ((double)k/((double)n3)));
 					pointFound = false;
 					for (const auto& l : pointStore)
 					{
 						if (l->isSameAs(meshPoint))
 						{
-							mMeshedPoints[i + ((n+1)*j) + (pow(n+1,2)*k)] = l;
+							mMeshedPoints[i + ((n1+1)*j) + (((n1+1)*(n2+1))*k)] = l;
 							pointFound = true;
 							break;
 						}
@@ -109,30 +174,30 @@ namespace bso { namespace structural_design { namespace component {
 					if (!pointFound)
 					{
 						pointStore.push_back(new point(highestID++,meshPoint));
-						mMeshedPoints[i + ((n+1)*j) + (pow(n+1,2)*k)] = pointStore.back();
+						mMeshedPoints[i + ((n1+1)*j) + (((n1+1)*(n2+1))*k)] = pointStore.back();
 					}
 				}
 			}
-		}			
+		}		
 
 		// pair the points that define an element together
 		mElementPoints.clear();
-		mElementPoints.resize(pow(n,3));
-		for (unsigned int i = 0; i < n; ++i)
+		mElementPoints.resize(n1*n2*n3);
+		for (unsigned int i = 0; i < n1; ++i)
 		{
-			for (unsigned int j = 0; j < n; ++j)
+			for (unsigned int j = 0; j < n2; ++j)
 			{
-				for (unsigned int k = 0; k < n; ++k)
+				for (unsigned int k = 0; k < n3; ++k)
 				{
-					mElementPoints[i + (n*j) + (pow(n,2)*k)] = {
-						mMeshedPoints[i 		+ ((n+1)*j) 		+ (pow(n+1,2)*k)],
-						mMeshedPoints[i 		+ ((n+1)*j) 		+ (pow(n+1,2)*(k+1))],
-						mMeshedPoints[i 		+ ((n+1)*(j+1)) + (pow(n+1,2)*k)],
-						mMeshedPoints[i 		+ ((n+1)*(j+1)) + (pow(n+1,2)*(k+1))],
-						mMeshedPoints[(i+1) + ((n+1)*j) 		+ (pow(n+1,2)*k)],
-						mMeshedPoints[(i+1) + ((n+1)*j) 		+ (pow(n+1,2)*(k+1))],
-						mMeshedPoints[(i+1) + ((n+1)*(j+1)) + (pow(n+1,2)*k)],
-						mMeshedPoints[(i+1) + ((n+1)*(j+1)) + (pow(n+1,2)*(k+1))]
+					mElementPoints[i + (n1*j) + ((n1*n2)*k)] = {
+						mMeshedPoints[i 		+ ((n1+1)*j) 		 + (((n1+1)*(n2+1))*k)],
+						mMeshedPoints[i 		+ ((n1+1)*j) 		 + (((n1+1)*(n2+1))*(k+1))],
+						mMeshedPoints[i 		+ ((n1+1)*(j+1)) + (((n1+1)*(n2+1))*k)],
+						mMeshedPoints[i 		+ ((n1+1)*(j+1)) + (((n1+1)*(n2+1))*(k+1))],
+						mMeshedPoints[(i+1) + ((n1+1)*j) 		 + (((n1+1)*(n2+1))*k)],
+						mMeshedPoints[(i+1) + ((n1+1)*j) 		 + (((n1+1)*(n2+1))*(k+1))],
+						mMeshedPoints[(i+1) + ((n1+1)*(j+1)) + (((n1+1)*(n2+1))*k)],
+						mMeshedPoints[(i+1) + ((n1+1)*(j+1)) + (((n1+1)*(n2+1))*(k+1))]
 					};
 				}
 			}
@@ -150,6 +215,7 @@ namespace bso { namespace structural_design { namespace component {
 		// assign the loads to all the points
 		for (auto& i : mElementPoints)
 		{ // for each element
+
 			geom::quad_hexahedron elementGeometry = derived_ptr_to_vertex(i);
 			geom::vertex elementCenter = elementGeometry.getCenter();
 
@@ -218,7 +284,7 @@ namespace bso { namespace structural_design { namespace component {
 				}
 			}
 		}
-	} // 
+	} // mesh()
 
 	
 } // namespace component

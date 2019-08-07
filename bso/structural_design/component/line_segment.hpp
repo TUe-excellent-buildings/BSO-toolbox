@@ -19,7 +19,6 @@ namespace bso { namespace structural_design { namespace component {
 		
 		void addStructure(const structure& s);
 		void mesh(const unsigned int& n, std::vector<point*>& point_store);
-		
 	};
 	
 } // namespace component

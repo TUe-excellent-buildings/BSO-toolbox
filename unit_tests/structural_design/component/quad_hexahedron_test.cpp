@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedrononent )
 		BOOST_REQUIRE_THROW(qh1.addStructure(st3),std::invalid_argument);
 	}
 	
-	BOOST_AUTO_TEST_CASE( mesh_flat_shell )
+	BOOST_AUTO_TEST_CASE( mesh_quad_hexahedron )
 	{
 		point p1(1,{-1,-1,-1});
 		point p2(2,{ 1,-1,-1});
