@@ -1,7 +1,7 @@
 #libraries
 BOOST   = /usr/include/boost
 EIGEN   = /usr/include/eigen
-BSO     = /home/sjonnie/5_hobby_and_learning/toolbox
+BSO     = ..
 ALL_LIB = -I$(BOOST) -I$(EIGEN) -I$(BSO)
 
 #compiler settings
