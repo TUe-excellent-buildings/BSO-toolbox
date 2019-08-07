@@ -9,6 +9,14 @@
 
 #include <boost/test/included/unit_test.hpp>
 
+/*
+BOOST_TEST()
+BOOST_REQUIRE_THROW(function, std::domain_error)
+BOOST_REQUIRE(!s[8].dominates(s[9]) && !s[9].dominates(s[8]))
+BOOST_CHECK_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
+*/
+
+namespace spatial_design_test {
 using namespace bso::spatial_design;
 
 BOOST_AUTO_TEST_SUITE( space_initialization )
@@ -225,3 +233,4 @@ BOOST_AUTO_TEST_SUITE( space_comparison )
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
+} // namespace spatial_design_test

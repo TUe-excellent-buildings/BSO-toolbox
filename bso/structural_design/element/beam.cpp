@@ -6,8 +6,56 @@
 
 namespace bso { namespace structural_design { namespace element {
 	
-	void beam::deriveStiffnessMatrix()
+	template<class CONTAINER>
+	void beam::deriveStiffnessMatrix(CONTAINER& l)
 	{
+		mIz = (mHeight * pow(mWidth, 3)) / 12.0;
+		mIy = (mWidth * pow(mHeight, 3)) / 12.0;
+		mA = mWidth * mHeight;
+		mJ = mIy + mIz;
+		mG = mE / (2.0 * (1.0 + mPoisson));
+		
+		mEFS << 1,1,1,1,1,1; // the element freedom signature of each node of a beam (x,y,z,rx,ry,rz)
+		for (const auto& i : mVertices)
+		{
+			for (auto& j : l)
+			{
+				j->updateNFS(mEFS);
+				if (i.isSameAs(*j)) mNodes.push_back(j);
+			}
+		}
+		
+		// create the transformation matrix (this contains the orientations of the beam)
+		mT.setZero(12,12);
+		bso::utilities::geometry::vector vx, vy, vz;
+		vx = this->getVector().normalized(); // the direction of the beam (local x-axis)
+		
+		if (vx.isVertical())
+		{
+			vy << 0.0, 1.0, 0.0;
+		}
+		else
+		{
+			vy << 0.0, 0.0, 1.0; // temporarily set vy to the unit vector in z-direction
+			vy = vy.cross(vx); // vy is perpendicular to any plane defined by vx and the unit vector in z-direction
+			vy.normalize();
+		}
+		
+		vz = vx.cross(vy);
+		vz.normalize();
+		
+		Eigen::Matrix3d lambda;
+		lambda << vx, vy, vz;
+
+		for (int i = 0; i < 2; i++)
+		{ // for each node
+			for (int j = 0; j < 2; j++)
+			{ // and for both: displacements and rotations
+				// add the transformation term lambda
+				mT.block<3,3>((2*i+j)*3,(2*i+j)*3) = lambda.transpose();
+			}
+		}
+		
 		// initializing this element's stiffness matrix:
 		mSM.setZero(12,12);
 		double lenght = this->getLength();
@@ -60,63 +108,31 @@ namespace bso { namespace structural_design { namespace element {
 		mOriginalSM = mSM;
 	}
 	
+	template<class CONTAINER>
 	beam::beam(const unsigned long& ID, const double& E, const double& width, const double& height, const double& poisson,
-							 std::initializer_list<node*>&& l, const double ERelativeLowerBound /*= 1e-6*/)
+						 CONTAINER& l, const double ERelativeLowerBound /*= 1e-6*/)
 	: bso::utilities::geometry::line_segment(derived_ptr_to_vertex(l)[0], derived_ptr_to_vertex(l)[1]),
 		element(ID, E, ERelativeLowerBound)
 	{ // 
-		
 		mIsBeam = true;
 		mWidth = width;
 		mHeight = height;
-		mA = mWidth * mHeight;
 		mPoisson = poisson;
-		mIz = (mHeight * pow(mWidth, 3)) / 12.0;
-		mIy = (mWidth * pow(mHeight, 3)) / 12.0;
-		mJ = mIy + mIz;
-		mG = mE / (2.0 * (1.0 + mPoisson));
-		
-		mEFS << 1,1,1,1,1,1; // the element freedom signature of each node of a beam (x,y,z,rx,ry,rz)
-		for (const auto& i : mVertices)
-		{
-			for (auto& j : l)
-			{
-				j->updateNFS(mEFS);
-				if (i.isSameAs(*j)) mNodes.push_back(j);
-			}
-		}
-		
-		// create the transformation matrix (this contains the orientations of the beam)
-		mT.setZero(12,12);
-		bso::utilities::geometry::vector vx, vy, vz;
-		vx = this->getVector().normalized(); // the direction of the beam (local x-axis)
-		
-		if (vx.isVertical())
-		{
-			vy << 0.0, 1.0, 0.0;
-		}
-		else
-		{
-			vy << 0.0, 0.0, 1.0; // temporarily set vy to the unit vector in z-direction
-			vy = vy.cross(vx); // vy is perpendicular to any plane defined by vx and the unit vector in z-direction
-			vy.normalize();
-		}
-		
-		vz = vx.cross(vy);
-		vz.normalize();
-		
-		Eigen::Matrix3d lambda;
-		lambda << vx, vy, vz;
 
-		for (int i = 0; i < 2; i++)
-		{ // for each node
-			for (int j = 0; j < 2; j++)
-			{ // and for both: displacements and rotations
-				// add the transformation term lambda
-				mT.block<3,3>((2*i+j)*3,(2*i+j)*3) = lambda.transpose();
-			}
-		}
-		this->deriveStiffnessMatrix();
+		this->deriveStiffnessMatrix(l);
+	} // ctor
+	
+	beam::beam(const unsigned long& ID, const double& E, const double& width, const double& height, const double& poisson,
+						 std::initializer_list<node*>&& l, const double ERelativeLowerBound /*= 1e-6*/)
+	: bso::utilities::geometry::line_segment(derived_ptr_to_vertex(l)[0], derived_ptr_to_vertex(l)[1]),
+		element(ID, E, ERelativeLowerBound)
+	{ // 
+		mIsBeam = true;
+		mWidth = width;
+		mHeight = height;
+		mPoisson = poisson;
+
+		this->deriveStiffnessMatrix(l);
 	} // ctor
 	
 	beam::~beam()
@@ -145,6 +161,16 @@ namespace bso { namespace structural_design { namespace element {
 			throw std::invalid_argument(errorMessage.str());
 		}
 	} // getProperty()
+	
+	double beam::getVolume() const
+	{
+		return bso::utilities::geometry::line_segment::getLength() * mWidth * mHeight;
+	} // getVolume()
+	
+	bso::utilities::geometry::vertex beam::getCenter() const
+	{
+		return bso::utilities::geometry::line_segment::getCenter();
+	} // getCenter()
 	
 } // namespace element
 } // namespace structural_design

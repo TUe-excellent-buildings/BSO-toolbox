@@ -6,14 +6,25 @@
 
 namespace bso { namespace structural_design { namespace element {
 	
-	void truss::deriveStiffnessMatrix()
+	template<class CONTAINER>
+	void truss::deriveStiffnessMatrix(CONTAINER& l)
 	{
+		mEFS << 1,1,1,0,0,0; // the element freedom signature of each node of a truss (x,y,z,rx,ry,rz)
+		for (const auto& i : mVertices)
+		{
+			for (auto& j : l)
+			{
+				j->updateNFS(mEFS);
+				if (i.isSameAs(*j)) mNodes.push_back(j);
+			}
+		}
+
 		// initialising this elements stiffness matrix:
 		mSM.setZero(6,6);
 
 		// generate element stiffness matrix
 		bso::utilities::geometry::vector c = this->getVector().normalized();
-		
+
 		// the geometric terms in the stiffness matrix ()
 		mSM(0,0) =  pow(c(0),2);
 		mSM(0,1) =  c(0)*c(1);
@@ -52,9 +63,20 @@ namespace bso { namespace structural_design { namespace element {
 				mSM(j,i) = mSM(i,j);
 			}
 		}
-
 		mOriginalSM = mSM;
 	}
+	
+	template<class CONTAINER>
+	truss::truss(const unsigned long& ID, const double& E, const double& A,
+							 CONTAINER& l, const double ERelativeLowerBound /*= 1e-6*/)
+	: bso::utilities::geometry::line_segment(derived_ptr_to_vertex(l)[0], derived_ptr_to_vertex(l)[1]),
+		element(ID, E, ERelativeLowerBound)
+	{ // 
+		mA = A;
+		mIsTruss = true;
+		
+		this->deriveStiffnessMatrix(l);
+	} // ctor
 	
 	truss::truss(const unsigned long& ID, const double& E, const double& A,
 							 std::initializer_list<node*>&& l, const double ERelativeLowerBound /*= 1e-6*/)
@@ -63,21 +85,13 @@ namespace bso { namespace structural_design { namespace element {
 	{ // 
 		mA = A;
 		mIsTruss = true;
-		mEFS << 1,1,1,0,0,0; // the element freedom signature of each node of a truss (x,y,z,rx,ry,rz)
-		for (const auto& i : mVertices)
-		{
-			for (auto& j : l)
-			{
-				j->updateNFS(mEFS);
-				if (i.isSameAs(*j)) mNodes.push_back(j);
-			}
-		}
-		this->deriveStiffnessMatrix();
+		
+		this->deriveStiffnessMatrix(l);
 	} // ctor
 	
 	truss::~truss()
 	{ // 
-		
+
 	} // dtor
 	
 	double truss::getProperty(std::string var) const
@@ -95,6 +109,16 @@ namespace bso { namespace structural_design { namespace element {
 			throw std::invalid_argument(errorMessage.str());
 		}
 	} // getProperty()
+	
+	double truss::getVolume() const
+	{
+		return bso::utilities::geometry::line_segment::getLength() * mA;
+	} // getVolume()
+	
+	bso::utilities::geometry::vertex truss::getCenter() const
+	{
+		return bso::utilities::geometry::line_segment::getCenter();
+	} // getCenter()
 	
 } // namespace element
 } // namespace structural_design

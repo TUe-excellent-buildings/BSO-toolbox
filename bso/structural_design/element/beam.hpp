@@ -20,13 +20,19 @@ namespace bso { namespace structural_design { namespace element {
 		
 		Eigen::MatrixXd mT;
 		
-		void deriveStiffnessMatrix();
+		template<class CONTAINER>
+		void deriveStiffnessMatrix(CONTAINER& l);
 	public:
+		template<class CONTAINER>
 		beam(const unsigned long& ID, const double& E, const double& width, const double& height, const double& poisson,
-					std::initializer_list<node*>&& l, const double ERelativeLowerBound = 1e-6);
+				 CONTAINER& l, const double ERelativeLowerBound = 1e-6);
+		beam(const unsigned long& ID, const double& E, const double& width, const double& height, const double& poisson,
+				 std::initializer_list<node*>&& l, const double ERelativeLowerBound = 1e-6);
 		~beam();
 		
 		double getProperty(std::string var) const;
+		double getVolume() const;
+		bso::utilities::geometry::vertex getCenter() const;
 	};
 	
 } // namespace element

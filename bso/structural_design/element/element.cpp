@@ -9,7 +9,6 @@ namespace bso { namespace structural_design { namespace element {
 		mE0 = E;
 		mE = E;
 		mEmin = E * ERelativeLowerBound;
-		
 	} // ctor
 
 	element::~element()
@@ -71,10 +70,10 @@ namespace bso { namespace structural_design { namespace element {
 
 	void element::computeResponse(load_case* lc)
 	{ //
-		unsigned int rowSize = mSM.rows();
 		Eigen::VectorXd elementDisplacements(mSM.rows());
 		elementDisplacements.setZero();
 		auto dispIte = elementDisplacements.data();
+
 		for (const auto& i : mNodes)
 		{
 			for (unsigned int j = 0; j < 6; ++j)
@@ -88,15 +87,39 @@ namespace bso { namespace structural_design { namespace element {
 		}
 		mDisplacements[lc] = elementDisplacements;
 		mEnergies[lc] = 0.5 * elementDisplacements.transpose() * mSM * elementDisplacements;
+		mTotalEnergy += mEnergies[lc];
 	} //
 	
 	void element::clearResponse()
 	{ // 
 		mDisplacements.clear();
 		mEnergies.clear();
+		mTotalEnergy = 0;
 	} // clearResponse()
+	
+	void element::updateDensity(const double& x, const double& penal /*= 1*/)
+	{
+		mDensity = x;
+		mE = mEmin + std::pow(mDensity,penal)*(mE0 - mEmin);
+		mSM = (mE/mE0) * mOriginalSM;
+	}
+	
+	double element::getTotalEnergy() const
+	{
+		return mTotalEnergy;
+	} // getTotalEnergy()
+	
+	double element::getEnergySensitivity(const double& penal /* 1*/) const
+	{
+		return mTotalEnergy * (-(penal*pow(mDensity,penal - 1)*(mE0 - mEmin))/(mEmin + pow(mDensity,penal)*(mE0 - mEmin)));
+	} // getEnergySensitivity()
+	
+	double element::getVolumeSensitivity() const
+	{
+		return this->getVolume();
+	} // getVolumeSensitivity()
 
-	const double& element::getEnergy(load_case* lc, const std::string& /*= ""*/) const
+	const double& element::getEnergy(load_case* lc, const std::string& type/*= ""*/) const
 	{ //
 		if (mEnergies.find(lc) != mEnergies.end())
 		{

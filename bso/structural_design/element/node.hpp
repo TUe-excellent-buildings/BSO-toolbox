@@ -1,7 +1,7 @@
 #ifndef SD_NODE_HPP
 #define SD_NODE_HPP
 
-#include <bso/structural_design/component/load_case.hpp>
+#include <bso/structural_design/component/load.hpp>
 #include <bso/utilities/geometry.hpp>
 
 #include <Eigen/Dense>
@@ -32,15 +32,17 @@ namespace bso { namespace structural_design { namespace element {
 		
 		void updateNFS(const Eigen::Vector6i& EFS); // updates the nodal freedom signature with that of an element
 		void addConstraint(const unsigned int& localDOF); // adds a constraint to the local DOF
-		void addLoad(component::load_case*  lc, const unsigned int& localDOF, const double& magnitude);
+		void addLoad(const load& l);
 		void addDisplacements(const std::map<component::load_case*, Eigen::VectorXd>& displacements);
+		void addLoadCase(load_case* lc);
 		void clearDisplacements();
 
-		const Eigen::Vector6d& getDisplacements(component::load_case* lc) const;
-		const Eigen::Vector6d& getLoads(component::load_case* lc) const;
+		Eigen::Vector6d getDisplacements(component::load_case* lc) const;
+		Eigen::Vector6d getLoads(component::load_case* lc) const;
 		const int& getConstraint(const unsigned int& n) const;
 		const int& getNFS(const unsigned int& n) const;
 		const unsigned long& ID() const {return mID;}
+		std::vector<component::load_case*> getLoadCases();
 		
 		void generateNFT(unsigned long& NFM); // this will map the local DOFs to the global DOFs of this node
 		unsigned long getGlobalDOF(const unsigned int& localDOF) const;

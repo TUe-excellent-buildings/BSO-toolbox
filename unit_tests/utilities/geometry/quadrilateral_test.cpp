@@ -6,14 +6,15 @@
 
 #include <bso/utilities/geometry.hpp>
 
-using namespace bso::utilities::geometry;
-
 /*
 BOOST_TEST()
 BOOST_REQUIRE_THROW(function, std::domain_error)
 BOOST_REQUIRE(!s[8].dominates(s[9]) && !s[9].dominates(s[8]))
 BOOST_CHECK_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 */
+
+namespace geometry_test {
+using namespace bso::utilities::geometry;
 
 BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 	
@@ -185,3 +186,4 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 
 	
 BOOST_AUTO_TEST_SUITE_END()
+} // namespace geometry_test

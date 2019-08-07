@@ -9,6 +9,21 @@
 
 namespace bso { namespace utilities { namespace geometry {
 	
+	template <class CONTAINER>
+	void line_segment::initFromVertices(const CONTAINER& l)
+	{
+		if (std::distance(l.begin(), l.end()) != 2)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "Error when initializing line segment from list.\n"
+									 << "Expected two vertices, received: " << l.size()
+									 << "\n(bso/utilities/geometry/line_segment.cpp)";
+			
+			throw std::invalid_argument(errorMessage.str());
+		}
+		std::copy(l.begin(), l.end(), mVertices);
+	} // initFromVertices
+	
 	line_segment::line_segment()
 	{
 		mVertices[0] = vertex();
@@ -23,17 +38,14 @@ namespace bso { namespace utilities { namespace geometry {
 	
 	line_segment::line_segment(const std::initializer_list<vertex>&& l)
 	{
-		if (l.size() != 2)
-		{
-			std::stringstream errorMessage;
-			errorMessage << "Error when initializing line segment.\n"
-									 << "Expected two vertices, received: " << l.size()
-									 << "\n(bso/utilities/geometry/line_segment.cpp)";
-			
-			throw std::invalid_argument(errorMessage.str());
-		}
-		for (unsigned int i = 0; i < 2; i++) mVertices[i] = *(l.begin() + i);
+		this->initFromVertices(l);
 	} // ctor with initializer list
+	
+	template <typename CONTAINER>
+	line_segment::line_segment(const CONTAINER& l)
+	{
+		this->initFromVertices(l);
+	} // ctor from container
 	
 	auto line_segment::begin()
 	{

@@ -1,7 +1,7 @@
 #ifndef SD_ELEMENT_HPP
 #define SD_ELEMENT_HPP
 
-#include <bso/structural_design/component/load_case.hpp>
+#include <bso/structural_design/component/load.hpp>
 #include <bso/structural_design/element/node.hpp>
 
 #include <Eigen/Dense>
@@ -30,6 +30,7 @@ namespace bso { namespace structural_design { namespace element {
 		
 		std::map<load_case*, Eigen::VectorXd> mDisplacements;
 		std::map<load_case*, double> mEnergies;
+		double mTotalEnergy;
 		
 		// Variables related to the stiffness of this element, mostly related to topology optimization
 		double mDensity = 1.0; // element density
@@ -55,7 +56,14 @@ namespace bso { namespace structural_design { namespace element {
 		virtual void computeResponse(load_case* lc);
 		virtual void clearResponse();
 		
+		virtual void updateDensity(const double& x, const double& penal = 1);
+		
 		virtual double getProperty(std::string) const = 0;
+		virtual double getVolume() const = 0;
+		virtual double getTotalEnergy() const;
+		virtual double getEnergySensitivity(const double& penal = 1) const;
+		virtual double getVolumeSensitivity() const;
+		virtual bso::utilities::geometry::vertex getCenter() const = 0;
 		
 		const unsigned long& ID() const {return mID;}
 		virtual const bool& isTruss() const {return mIsTruss;}
@@ -66,9 +74,9 @@ namespace bso { namespace structural_design { namespace element {
 		virtual bool& visualize() {return mVisualize;}
 		virtual const bool& visualizeTransparant() const {return mVisualizeTransparant;}
 		virtual const bool& isActiveInCompliance() const {return mActiveInCompliance;}
+		virtual bool& isActiveInCompliance() {return mActiveInCompliance;}
 		virtual const double& getDensity() const {return mDensity;}
-		virtual double& density() {return mDensity;}
-		virtual const double& getEnergy(load_case* lc, const std::string& = "") const;
+		virtual const double& getEnergy(load_case* lc, const std::string& type = "") const;
 		virtual const Eigen::VectorXd& getDisplacements(load_case* lc) const;
 		
 	};

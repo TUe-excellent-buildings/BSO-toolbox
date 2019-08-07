@@ -127,6 +127,11 @@ namespace bso { namespace utilities { namespace geometry {
 		}
 		return true;
 	} // isSameAs
+	
+	const vertex& polyhedron::operator [] (const unsigned int& index) const
+	{
+		return mVertices[index];
+	}
 
 	std::ostream& operator << (std::ostream& stream, const polyhedron& pol)
 	{ //

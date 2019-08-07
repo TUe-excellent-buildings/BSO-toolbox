@@ -52,22 +52,14 @@ namespace bso { namespace structural_design { namespace element {
 		mConstraints(localDOF) = 1;
 	} //
 	
-	void node::addLoad(component::load_case* lc, const unsigned int& localDOF, const double& magnitude)
+	void node::addLoad(const load& l)
 	{ 
-		if (localDOF > 5)
+		if (mLoads.find(l.loadCase()) == mLoads.end())
 		{
-			std::stringstream errorMessage;
-			errorMessage << "\nRequested a nodal load from DOF: " << localDOF << "\n"
-									 << "which is out of range: [0-5] (x,y,z,rx,ry,rz)\n"
-									 << "(bso/structural_design/element/node.cpp)" << std::endl;
-			throw std::invalid_argument(errorMessage.str());
+			this->addLoadCase(l.loadCase());
 		}
-		if (mLoads.find(lc) == mLoads.end())
-		{
-			mLoads[lc] == Eigen::Vector6d();
-			mLoads[lc].setZero();
-		}
-		mLoads[lc](localDOF) += magnitude;
+		mLoads[l.loadCase()](l.DOF()) += l.magnitude();
+
 	} //
 	
 	void node::addDisplacements(const std::map<component::load_case*, Eigen::VectorXd>& displacements)
@@ -77,28 +69,31 @@ namespace bso { namespace structural_design { namespace element {
 		{
 			Eigen::Vector6d tempDisplacements;
 			tempDisplacements.setZero();
-			auto disp_ite = i.second.data();
 			for (unsigned int j = 0; j < 6; ++j)
 			{
 				if (mNFS(j) == 1 && mConstraints(j) == 0)
 				{
-					tempDisplacements(j) = *disp_ite;
-					++disp_ite;
+					tempDisplacements(j) = i.second[mNFT[j]];
 				}
-				else tempDisplacements(j) = 0;
 			}
 			mDisplacements[i.first] = tempDisplacements;
 		}
 	}
+	
+	void node::addLoadCase(load_case* lc)
+	{
+		mLoads[lc] = Eigen::Vector6d::Zero();
+	} // addLoadCase()
 	
 	void node::clearDisplacements()
 	{ // 
 		mDisplacements.clear();
 	} // clearDisplacements()
 	
-	const Eigen::Vector6d& node::getDisplacements(component::load_case* lc) const
+	Eigen::Vector6d node::getDisplacements(component::load_case* lc) const
 	{
-		if (mDisplacements.find(lc) == mDisplacements.end())
+		auto lcSearch = mDisplacements.find(lc);
+		if (lcSearch == mDisplacements.end())
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, could not access displacements for load case:\n"
@@ -107,12 +102,13 @@ namespace bso { namespace structural_design { namespace element {
 									 << "(bso/structural_design/element/node.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}
-		return mDisplacements.find(lc)->second; 
+		return lcSearch->second; 
 	}
 	
-	const Eigen::Vector6d& node::getLoads(component::load_case* lc) const
+	Eigen::Vector6d node::getLoads(component::load_case* lc) const
 	{
-		if (mLoads.find(lc) == mLoads.end())
+		auto lcSearch = mLoads.find(lc);
+		if (lcSearch == mLoads.end())
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, could not access loads for load case:\n"
@@ -121,7 +117,7 @@ namespace bso { namespace structural_design { namespace element {
 									 << "(bso/structural_design/element/node.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}
-		return mLoads.find(lc)->second; 
+		return lcSearch->second;
 	}
 	
 	const int& node::getConstraint(const unsigned int& n) const
@@ -151,6 +147,13 @@ namespace bso { namespace structural_design { namespace element {
 		}
 		return mNFS[n];
 	}
+	
+	std::vector<component::load_case*> node::getLoadCases()
+	{
+		std::vector<component::load_case*> temp;
+		for (auto& i : mLoads) temp.push_back(i.first);
+		return temp;
+	} // get LoadCases()
 	
 	void node::generateNFT(unsigned long& NFM)
 	{ // 

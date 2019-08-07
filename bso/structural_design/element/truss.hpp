@@ -11,13 +11,20 @@ namespace bso { namespace structural_design { namespace element {
 	{
 	private:
 		double mA; // surface area [mm³]
-		void deriveStiffnessMatrix();
+		
+		template<class CONTAINER>
+		void deriveStiffnessMatrix(CONTAINER& l);
 	public:
+		template<class CONTAINER>
+		truss(const unsigned long& ID, const double& E, const double& A,
+					CONTAINER& l, const double ERelativeLowerBound = 1e-6);
 		truss(const unsigned long& ID, const double& E, const double& A,
 					std::initializer_list<node*>&& l, const double ERelativeLowerBound = 1e-6);
 		~truss();
 		
 		double getProperty(std::string var) const;
+		double getVolume() const;
+		bso::utilities::geometry::vertex getCenter() const;
 	};
 	
 } // namespace element

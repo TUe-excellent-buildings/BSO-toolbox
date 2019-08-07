@@ -5,7 +5,6 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include <bso/spatial_design/cf_building.hpp>
-using namespace bso::spatial_design::conformal;
 
 /*
 BOOST_TEST()
@@ -13,6 +12,9 @@ BOOST_REQUIRE_THROW(function, std::domain_error)
 BOOST_REQUIRE(!s[8].dominates(s[9]) && !s[9].dominates(s[8]))
 BOOST_CHECK_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 */
+
+namespace conformal_test {
+using namespace bso::spatial_design::conformal;
 
 BOOST_AUTO_TEST_SUITE( cf_cuboid_tests )
 	
@@ -275,3 +277,4 @@ BOOST_AUTO_TEST_SUITE( cf_cuboid_tests )
 	
 	
 BOOST_AUTO_TEST_SUITE_END()
+} // namespace conformal_test

@@ -6,8 +6,6 @@
 
 #include <bso/structural_design/element/truss.hpp>
 
-using namespace bso::structural_design::element;
-
 /*
 BOOST_TEST()
 BOOST_REQUIRE_THROW(function, std::domain_error)
@@ -15,13 +13,25 @@ BOOST_REQUIRE(!s[8].dominates(s[9]) && !s[9].dominates(s[8]))
 BOOST_CHECK_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 */
 
+namespace element_test {
+using namespace bso::structural_design::element;
+
 BOOST_AUTO_TEST_SUITE( sd_truss_test )
-	
-	BOOST_AUTO_TEST_CASE( initialization )
+
+	BOOST_AUTO_TEST_CASE( initialize_from_initializer_list )
 	{
 		node n1({0,0,0},1);
 		node n2({1,0,0},2);
 		BOOST_REQUIRE_NO_THROW(truss t1(1,1.0,2.0,{&n1,&n2}));
+	}
+	
+	BOOST_AUTO_TEST_CASE( initialize_from_container )
+	{
+		node n1({0,0,0},1);
+		node n2({1,0,0},2);
+		
+		std::vector<node*> nl1 = {&n1,&n2};
+		BOOST_REQUIRE_NO_THROW(truss t1(1,1.0,2.0,nl1));
 	}
 	
 	BOOST_AUTO_TEST_CASE( getProperty )
@@ -87,7 +97,7 @@ BOOST_AUTO_TEST_SUITE( sd_truss_test )
 		truss t1(1,E,A,{&n1,&n2});
 		
 		BOOST_REQUIRE( t1.getDensity() == 1);
-		t1.density() = 0.3;
+		t1.updateDensity(0.3);
 		BOOST_REQUIRE( t1.getDensity() == 0.3);
 	}
 	
@@ -136,19 +146,17 @@ BOOST_AUTO_TEST_SUITE( sd_truss_test )
 		truss t1(1,E,A,{&n1,&n2});
 		n1.addConstraint(1);
 		
-		unsigned long DOFCount = 3;
+		unsigned long DOFCount = 0;
 		n1.generateNFT(DOFCount);
 		n2.generateNFT(DOFCount);
 		t1.generateEFT();
 		
 		bso::structural_design::component::load_case lc_test("test_case");
-		Eigen::Vector3d disp1, disp2;
-		disp1 << 0.1,0,0;
-		disp2 << 0.2,0,0;
+		Eigen::VectorXd displacementValues(DOFCount);
+		displacementValues << 0.1,0,0.2,0,0;
 		std::map<bso::structural_design::component::load_case*, Eigen::VectorXd> displacements;
-		displacements[&lc_test] = disp1;
+		displacements[&lc_test] = displacementValues;
 		n1.addDisplacements(displacements);
-		displacements[&lc_test] = disp2;
 		n2.addDisplacements(displacements);
 		
 		t1.computeResponse(&lc_test);
@@ -202,5 +210,6 @@ BOOST_AUTO_TEST_SUITE( sd_truss_test )
 		checkDisplacement << 0,-8.693e-6,0;
 		BOOST_REQUIRE((displacements - checkDisplacement).isZero(1e-9));
 	}
-		
+
 BOOST_AUTO_TEST_SUITE_END()
+} // namespace element_test

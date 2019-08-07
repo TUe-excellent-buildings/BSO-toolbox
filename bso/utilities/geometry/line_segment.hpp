@@ -9,10 +9,14 @@ namespace bso { namespace utilities { namespace geometry {
 	class line_segment
 	{
 	protected:
+		template <class CONTAINER>
+		void initFromVertices(const CONTAINER& l);
 		vertex mVertices[2];
 	public:
 		line_segment();
 		line_segment(const vertex& v1, const vertex& v2);
+		template <typename CONTAINER>
+		line_segment(const CONTAINER& l);
 		line_segment(const std::initializer_list<vertex>&& l);
 		
 		auto begin();

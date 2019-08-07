@@ -7,8 +7,6 @@
 #include <bso/structural_design/element/node.hpp>
 #include <sstream>
 
-using namespace bso::structural_design::element;
-
 /*
 BOOST_TEST()
 BOOST_REQUIRE_THROW(function, std::domain_error)
@@ -16,8 +14,11 @@ BOOST_REQUIRE(!s[8].dominates(s[9]) && !s[9].dominates(s[8]))
 BOOST_CHECK_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 */
 
+namespace element_test {
+using namespace bso::structural_design::element;
+
 BOOST_AUTO_TEST_SUITE( sd_node_test )
-	
+
 	BOOST_AUTO_TEST_CASE( list_initialization )
 	{
 		node n({1.5,2.5,3.6}, 1);
@@ -89,10 +90,10 @@ BOOST_AUTO_TEST_SUITE( sd_node_test )
 	{
 		node n({1,2,3}, 4);
 		bso::structural_design::component::load_case lc1("lc1"), lc2("lc2"), lc3("lc3");
-		n.addLoad(&lc1, 0, 1.5);
-		n.addLoad(&lc1, 1, 2.5);
-		n.addLoad(&lc1, 2, 3.5);
-		n.addLoad(&lc2, 3, 0.5);
+		n.addLoad(load(&lc1, 1.5, 0));
+		n.addLoad(load(&lc1, 2.5, 1));
+		n.addLoad(load(&lc1, 3.5, 2));
+		n.addLoad(load(&lc2, 0.5, 3));
 		
 		BOOST_REQUIRE_NO_THROW(n.getLoads(&lc1));
 		BOOST_REQUIRE_NO_THROW(n.getLoads(&lc2));
@@ -109,6 +110,8 @@ BOOST_AUTO_TEST_SUITE( sd_node_test )
 		Eigen::Vector6i dummyEFS;
 		dummyEFS << 1,1,0,0,1,0;
 		n.updateNFS(dummyEFS);
+		unsigned long DOFCount = 0;
+		n.generateNFT(DOFCount);
 		Eigen::VectorXd displacements = Eigen::Matrix<double,3,1>();
 		displacements << 0.5,0.3,0.4;
 		bso::structural_design::component::load_case lc1("lc1"), lc2("lc2");
@@ -140,6 +143,6 @@ BOOST_AUTO_TEST_SUITE( sd_node_test )
 		BOOST_REQUIRE_THROW(n.getGlobalDOF(0), std::invalid_argument);
 		BOOST_REQUIRE_THROW(n.getGlobalDOF(7), std::runtime_error);
 	}
-	
-	
+
 BOOST_AUTO_TEST_SUITE_END()
+} // namespace element_test

@@ -8,14 +8,16 @@
 #include <bso/spatial_design/ms_building.hpp>
 #include <bso/spatial_design/cf_building.hpp>
 
-using namespace bso::spatial_design;
-
 /*
 BOOST_TEST()
 BOOST_REQUIRE_THROW(function, std::domain_error)
 BOOST_REQUIRE(!s[8].dominates(s[9]) && !s[9].dominates(s[8]))
 BOOST_CHECK_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 */
+
+namespace spatial_design_test {
+using namespace bso::spatial_design;
+using namespace bso::spatial_design::conformal;
 
 BOOST_AUTO_TEST_SUITE( cf_building_tests )
 	
@@ -445,3 +447,4 @@ BOOST_AUTO_TEST_SUITE( cf_building_tests )
 	}
 	
 BOOST_AUTO_TEST_SUITE_END()
+} // namespace spatial_design_test

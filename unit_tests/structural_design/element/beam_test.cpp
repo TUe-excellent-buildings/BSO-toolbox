@@ -6,8 +6,6 @@
 
 #include <bso/structural_design/element/beam.hpp>
 
-using namespace bso::structural_design::element;
-
 /*
 BOOST_TEST()
 BOOST_REQUIRE_THROW(function, std::domain_error)
@@ -15,13 +13,25 @@ BOOST_REQUIRE(!s[8].dominates(s[9]) && !s[9].dominates(s[8]))
 BOOST_CHECK_EQUAL_COLLECTIONS(a.begin(), a.end(), b.begin(), b.end());
 */
 
+namespace element_test {
+using namespace bso::structural_design::element;
+
 BOOST_AUTO_TEST_SUITE( sd_beam_test )
 	
-	BOOST_AUTO_TEST_CASE( initialization )
+	BOOST_AUTO_TEST_CASE( initialize_from_initializer_list )
 	{
 		node n1({0,0,0},1);
 		node n2({1,0,0},2);
 		BOOST_REQUIRE_NO_THROW(beam b1(1,1.0,20,20,0.3,{&n1,&n2}));
+	}
+	
+	BOOST_AUTO_TEST_CASE( initialize_from_container )
+	{
+		node n1({0,0,0},1);
+		node n2({1,0,0},2);
+		
+		std::vector<node*> nl1 = {&n1,&n2};
+		BOOST_REQUIRE_NO_THROW(beam b1(1,1.0,20,20,0.3,nl1));
 	}
 	
 	BOOST_AUTO_TEST_CASE( getProperty )
@@ -103,7 +113,7 @@ BOOST_AUTO_TEST_SUITE( sd_beam_test )
 		beam b1(1,E,w,h,v,{&n1,&n2});
 		
 		BOOST_REQUIRE(b1.getDensity() == 1);
-		b1.density() = 0.3;
+		b1.updateDensity(0.3);
 		BOOST_REQUIRE(b1.getDensity() == 0.3);
 	}
 	
@@ -144,19 +154,8 @@ BOOST_AUTO_TEST_SUITE( sd_beam_test )
 									0,0,0,-6.22711E+12,0,0,0,0,0,6.22711E+12,0,0,
 									0,0,-2.61224E+13,0,3.04762E+13,0,0,0,2.61224E+13,0,6.09524E+13,0,
 									0,1.63265E+12,0,0,0,1.90476E+12,0,-1.63265E+12,0,0,0,3.80952E+12;
-
-		for (unsigned int i = 0; i < 12; ++i)
-		{
-			for (unsigned int j = 0; j < 12; ++j)
-			{
-				if (testMatrix(i,j) != 0)
-				{
-					testMatrix(i,j) /= GSM.coeff(i,j);
-					testMatrix(i,j) -= 1;
-				}
-			}
-		}
-		BOOST_REQUIRE(testMatrix.isZero(1e-5));
+		
+		BOOST_REQUIRE(GSM.isApprox(testMatrix.sparseView(),1e-5));
 	}
 	
 	BOOST_AUTO_TEST_CASE( energy_from_displacement )
@@ -175,19 +174,19 @@ BOOST_AUTO_TEST_SUITE( sd_beam_test )
 		b1.generateEFT();
 
 		bso::structural_design::component::load_case lc_test("test_case");
-		Eigen::VectorXd disp1(6), disp2(6);
-		disp1 << 0.1,0,0,0,0,0;
-		disp2 << 0.2,0,0,0,0,0;
+		Eigen::VectorXd displacementValues(DOFCount);
+		displacementValues << 0.1,0,0,0,0,0,0.2,0,0,0,0,0;
 		std::map<bso::structural_design::component::load_case*, Eigen::VectorXd> displacements;
-
-		displacements[&lc_test] = disp1;
+		
+		displacements[&lc_test] = displacementValues;
 		n1.addDisplacements(displacements);
-		displacements[&lc_test] = disp2;
 		n2.addDisplacements(displacements);
 
 		b1.computeResponse(&lc_test);
 
 		BOOST_REQUIRE(abs(b1.getEnergy(&lc_test)/5714285.71429 - 1) < 1e-9);
+		bso::structural_design::component::load_case lc_invalid("invalid_case");
+		BOOST_REQUIRE_THROW(b1.getEnergy(&lc_invalid), std::runtime_error);
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_1 )
@@ -354,5 +353,6 @@ BOOST_AUTO_TEST_SUITE( sd_beam_test )
 			else BOOST_REQUIRE(abs(displacements(i)-checkDisplacement(i)) < 1e-15);
 		}
 	}
-	
+
 BOOST_AUTO_TEST_SUITE_END()
+} // namespace element_test
