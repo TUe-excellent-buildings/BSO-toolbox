@@ -50,11 +50,11 @@ BOOST_AUTO_TEST_SUITE( sd_fea_test )
 		
 		testFEA.addElement(new element::truss(0,1e5,1e3,{n1,n2}));
 		
-		BOOST_REQUIRE(std::distance(testFEA.elementsBegin(),testFEA.elementsEnd()) == 1);
-		BOOST_REQUIRE((*testFEA.elementsBegin())->isTruss());
-		BOOST_REQUIRE((*testFEA.elementsBegin())->ID() == 0);
-		BOOST_REQUIRE((*testFEA.elementsBegin())->getProperty("E") == 1e5);
-		BOOST_REQUIRE((*testFEA.elementsBegin())->getProperty("A") == 1e3);
+		BOOST_REQUIRE(testFEA.getElements().size() == 1);
+		BOOST_REQUIRE(testFEA.getElements()[0]->isTruss());
+		BOOST_REQUIRE(testFEA.getElements()[0]->ID() == 0);
+		BOOST_REQUIRE(testFEA.getElements()[0]->getProperty("E") == 1e5);
+		BOOST_REQUIRE(testFEA.getElements()[0]->getProperty("A") == 1e3);
 	}
 	
 	BOOST_AUTO_TEST_CASE( generate_GSM )
@@ -67,7 +67,6 @@ BOOST_AUTO_TEST_SUITE( sd_fea_test )
 		n2->addConstraint(1);
 		
 		testFEA.addElement(new element::truss(0,1e5,1e3,{n1,n2}));
-		auto e1 = *testFEA.elementsBegin();
 		testFEA.generateGSM();
 
 		BOOST_REQUIRE_THROW(n1->getGlobalDOF(0), std::invalid_argument);
@@ -98,7 +97,6 @@ BOOST_AUTO_TEST_SUITE( sd_fea_test )
 		n2->addLoad(l1);
 
 		testFEA.addElement(new element::truss(0,1e5,1e3,{n1,n2}));
-		auto e1 = *testFEA.elementsBegin();
 		testFEA.generateGSM();
 		
 		testFEA.solve();

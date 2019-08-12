@@ -126,7 +126,6 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		BOOST_REQUIRE(qh1.visualize());
 		qh1.visualize() = false;
 		BOOST_REQUIRE(!qh1.visualize());
-		BOOST_REQUIRE(!qh1.visualizeTransparant());
 	}
 	
 	BOOST_AUTO_TEST_CASE( density )

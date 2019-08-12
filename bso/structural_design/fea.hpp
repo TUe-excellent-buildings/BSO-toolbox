@@ -37,10 +37,10 @@ namespace bso { namespace structural_design {
 		
 		void solve(std::string solver = "SimplicialLLT");
 		
-		auto nodesBegin()    const {return mNodes.begin();}
-		auto nodesEnd()      const {return mNodes.end();}
-		auto elementsBegin() const {return mElements.begin();}
-		auto elementsEnd()   const {return mElements.end();}
+		const std::vector<element::node*>& getNodes() const {return mNodes;}
+		std::vector<element::node*>& getNodes() {return mNodes;}
+		const std::vector<element::element*>& getElements() const {return mElements;}
+		std::vector<element::element*>& getElements() {return mElements;}
 	};
 	
 } // namespace structural_design

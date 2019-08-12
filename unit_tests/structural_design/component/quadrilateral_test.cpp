@@ -65,9 +65,9 @@ BOOST_AUTO_TEST_SUITE( sd_quadrilateral_component )
 		BOOST_REQUIRE( q1.hasFlatShell());
 		BOOST_REQUIRE(!q1.hasQuadHexahedron());
 		
-		BOOST_REQUIRE(q1.structureBegin()->thickness() == 100);
-		BOOST_REQUIRE(q1.structureBegin()->poisson() == 0.3);
-		BOOST_REQUIRE(q1.structureBegin()->E() == 1e5);
+		BOOST_REQUIRE(q1.getStructures()[0].thickness() == 100);
+		BOOST_REQUIRE(q1.getStructures()[0].poisson() == 0.3);
+		BOOST_REQUIRE(q1.getStructures()[0].E() == 1e5);
 	}
 	
 	BOOST_AUTO_TEST_CASE( invalid_structure )
@@ -101,21 +101,22 @@ BOOST_AUTO_TEST_SUITE( sd_quadrilateral_component )
 		std::vector<point*> pointStore;
 		q1.mesh(2,pointStore);
 
-		BOOST_REQUIRE(std::distance(q1.elementPointsBegin(), q1.elementPointsEnd()) == 4);
-		BOOST_REQUIRE(std::distance(q1.meshedPointsBegin(),  q1.meshedPointsEnd())  == 9);
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+0))->isSameAs({0,  0,  0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+1))->isSameAs({0.5,0,  0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+2))->isSameAs({1,  0,  0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+3))->isSameAs({0,  0.5,0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+4))->isSameAs({0.5,0.5,0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+5))->isSameAs({1,  0.5,0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+6))->isSameAs({0,  1,  0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+7))->isSameAs({0.5,1,  0}));
-		BOOST_REQUIRE((*(q1.meshedPointsBegin()+8))->isSameAs({1,  1,  0}));
+		BOOST_REQUIRE(q1.getElementPoints().size() == 4);
+		BOOST_REQUIRE(q1.getMeshedPoints().size() == 9);
+
+		BOOST_REQUIRE(q1.getMeshedPoints()[0]->isSameAs({0,  0,  0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[1]->isSameAs({0.5,0,  0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[2]->isSameAs({1,  0,  0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[3]->isSameAs({0,  0.5,0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[4]->isSameAs({0.5,0.5,0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[5]->isSameAs({1,  0.5,0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[6]->isSameAs({0,  1,  0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[7]->isSameAs({0.5,1,  0}));
+		BOOST_REQUIRE(q1.getMeshedPoints()[8]->isSameAs({1,  1,  0}));
 		
 		q1.clearMesh();
-		BOOST_REQUIRE(std::distance(q1.elementPointsBegin(), q1.elementPointsEnd()) == 0);
-		BOOST_REQUIRE(std::distance(q1.meshedPointsBegin(),  q1.meshedPointsEnd())  == 0);
+		BOOST_REQUIRE(q1.getElements().size() == 0);
+		BOOST_REQUIRE(q1.getMeshedPoints().size() == 0);
 	}
 	
 	BOOST_AUTO_TEST_CASE( load_test )
@@ -138,16 +139,15 @@ BOOST_AUTO_TEST_SUITE( sd_quadrilateral_component )
 		
 		for (auto& i : pointStore)
 		{
-			const auto itEnd = i->loadEnd();
-			for (auto ite = i->loadBegin(); ite != itEnd; ++ite)
+			for (const auto& j : i->getLoads())
 			{
-				BOOST_REQUIRE(ite->magnitude() == 10);
+				BOOST_REQUIRE(j.magnitude() == 10);
 			}
 		}
 		
-		BOOST_REQUIRE(std::distance(pointStore[0]->loadBegin(), pointStore[0]->loadEnd()) == 1);
-		BOOST_REQUIRE(std::distance(pointStore[3]->loadBegin(), pointStore[3]->loadEnd()) == 2);
-		BOOST_REQUIRE(std::distance(pointStore[4]->loadBegin(), pointStore[4]->loadEnd()) == 4);
+		BOOST_REQUIRE(pointStore[0]->getLoads().size() == 1);
+		BOOST_REQUIRE(pointStore[3]->getLoads().size() == 2);
+		BOOST_REQUIRE(pointStore[4]->getLoads().size() == 4);
 	}
 	
 	BOOST_AUTO_TEST_CASE( constraint_test)
@@ -169,10 +169,9 @@ BOOST_AUTO_TEST_SUITE( sd_quadrilateral_component )
 		
 		for (auto& i : pointStore)
 		{
-			const auto itEnd = i->constraintEnd();
-			for (auto ite = i->constraintBegin(); ite != itEnd; ++ite)
+			for (const auto& j : i->getConstraints())
 			{
-				BOOST_REQUIRE(ite->DOF() == 4);
+				BOOST_REQUIRE(j.DOF() == 4);
 			}
 		}
 	}

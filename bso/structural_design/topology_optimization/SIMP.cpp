@@ -16,7 +16,7 @@ void SIMP(fea* FEASystem, const double& f,
 					const double& rMin, const double& penal, const double& xMove,
 					const double& tolerance, std::ostream& out)
 {
-	unsigned int numEle = std::distance(FEASystem->elementsBegin(), FEASystem->elementsEnd());
+	unsigned int numEle = FEASystem->getElements().size();
 	double totVolume = 0; // initialised at 0, before each element volumes are added
 	double c; // sum of all the elements compliances (objective value)
 
@@ -31,21 +31,18 @@ void SIMP(fea* FEASystem, const double& f,
 	std::vector<T> tripletList;
 
 	unsigned int eleIndexI = 0;
-	for (auto i = FEASystem->elementsBegin(); i != FEASystem->elementsEnd(); ++i)
+	for (auto& i : FEASystem->getElements())
 	{ // for each element i
-		auto elePtrI = *i;
-
-		volume(eleIndexI) = elePtrI->getVolume();
+		volume(eleIndexI) = i->getVolume();
 		x(eleIndexI) = f;
-		elePtrI->updateDensity(f,penal);
+		i->updateDensity(f,penal);
 		
 		unsigned int eleIndexJ = 0;
-		for (auto j = FEASystem->elementsBegin(); j != FEASystem->elementsEnd(); ++j)
+		for (auto& j : FEASystem->getElements())
 		{ // and for each element j
-			auto elePtrJ = *j;
 			// calculate distance center to center distance r_ij between element i and j
 			bso::utilities::geometry::line_segment lij = 
-				{elePtrI->getCenter(), elePtrJ->getCenter()};
+				{i->getCenter(), j->getCenter()};
 			double rij = lij.getLength();
 
 			if (rij < rMin)
@@ -92,12 +89,11 @@ void SIMP(fea* FEASystem, const double& f,
 
 			// objective function and sensitivity analysis (retrieve data from FEA)
 			eleIndexI = 0;
-			for (auto i = FEASystem->elementsBegin(); i != FEASystem->elementsEnd(); ++i)
+			for (auto& i : FEASystem->getElements())
 			{
-				auto elePtrI = *i;
-				c 						+= elePtrI->getTotalEnergy();
-				dc(eleIndexI) =  elePtrI->getEnergySensitivity(penal); 
-				dv(eleIndexI) =  elePtrI->getVolume();
+				c 						+= i->getTotalEnergy();
+				dc(eleIndexI) =  i->getEnergySensitivity(penal); 
+				dv(eleIndexI) =  i->getVolume();
 				++eleIndexI;
 			}
 
@@ -135,10 +131,9 @@ void SIMP(fea* FEASystem, const double& f,
 			}
 		
 			eleIndexI = 0;
-			for (auto i = FEASystem->elementsBegin(); i != FEASystem->elementsEnd(); ++i)
+			for (auto& i : FEASystem->getElements())
 			{
-				auto elePtrI = *i;
-				elePtrI->updateDensity(xNew(eleIndexI), penal);
+				i->updateDensity(xNew(eleIndexI), penal);
 				++eleIndexI;
 			}
 

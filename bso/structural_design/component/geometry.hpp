@@ -51,15 +51,12 @@ namespace bso { namespace structural_design { namespace component {
 		virtual const bool& isQuadrilateral() const {return mIsQuadrilateral;}
 		virtual const bool& isQuadHexahedron() const {return mIsQuadHexahedron;}
 		
-		auto meshedPointsBegin() 	const {return mMeshedPoints.begin();}
-		auto meshedPointsEnd()   	const {return mMeshedPoints.end();}
-		auto elementPointsBegin() const {return mElementPoints.begin();}
-		auto elementPointsEnd()   const {return mElementPoints.end();}
-		auto elementsBegin() 			const {return mElements.begin();}
-		auto elementsEnd()   			const {return mElements.end();}
-		auto structureBegin() 		const {return mStructures.begin();}
-		auto structureEnd()   		const {return mStructures.end();}
-		
+		const std::vector<point*>& getMeshedPoints() const {return mMeshedPoints;}
+		const std::vector<std::vector<point*> >& getElementPoints() const {return mElementPoints;}
+		const std::vector<element::element*>& getElements() const {return mElements;}
+		const std::vector<structure>& getStructures() const {return mStructures;} 
+		const std::vector<load>& getLoads() const {return mLoads;}
+		const std::vector<constraint>& getConstraints() const {return mConstraints;}	
 	};
 	
 } // namespace component

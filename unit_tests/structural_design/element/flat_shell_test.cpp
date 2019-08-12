@@ -102,7 +102,6 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		BOOST_REQUIRE(fs1.visualize());
 		fs1.visualize() = false;
 		BOOST_REQUIRE(!fs1.visualize());
-		BOOST_REQUIRE(!fs1.visualizeTransparant());
 	}
 	
 	BOOST_AUTO_TEST_CASE( density )

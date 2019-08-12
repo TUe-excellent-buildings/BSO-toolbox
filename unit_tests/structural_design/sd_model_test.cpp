@@ -30,8 +30,8 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		
 		BOOST_REQUIRE(p1->isSameAs({1,0,0}));
 		BOOST_REQUIRE(p1->getID() == 0);
-		BOOST_REQUIRE(std::distance(sd1.pointsBegin(),sd1.pointsEnd()) == 1);
-		BOOST_REQUIRE(std::distance(sd1.geometriesBegin(),sd1.geometriesEnd()) == 0);
+		BOOST_REQUIRE(sd1.getPoints().size() == 1);
+		BOOST_REQUIRE(sd1.getGeometries().size() == 0);
 	}
 	
 	BOOST_AUTO_TEST_CASE( add_geometry )
@@ -42,8 +42,9 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		BOOST_REQUIRE( geom1->isLineSegment());
 		BOOST_REQUIRE(!geom1->isQuadrilateral());
 		BOOST_REQUIRE(!geom1->isQuadHexahedron());
-		BOOST_REQUIRE(std::distance(sd1.pointsBegin(),sd1.pointsEnd()) == 0);
-		BOOST_REQUIRE(std::distance(sd1.geometriesBegin(),sd1.geometriesEnd()) == 1);
+		
+		BOOST_REQUIRE(sd1.getPoints().size() == 0);
+		BOOST_REQUIRE(sd1.getGeometries().size() == 1);
 		
 		auto geom2 = sd1.addGeometry(bso::utilities::geometry::quadrilateral(
 		{{0,0,0},{1,0,0},{1,1,0},{0,1,0}}));
@@ -51,8 +52,8 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		BOOST_REQUIRE(!geom2->isLineSegment());
 		BOOST_REQUIRE( geom2->isQuadrilateral());
 		BOOST_REQUIRE(!geom2->isQuadHexahedron());
-		BOOST_REQUIRE(std::distance(sd1.pointsBegin(),sd1.pointsEnd()) == 0);
-		BOOST_REQUIRE(std::distance(sd1.geometriesBegin(),sd1.geometriesEnd()) == 2);
+		BOOST_REQUIRE(sd1.getPoints().size() == 0);
+		BOOST_REQUIRE(sd1.getGeometries().size() == 2);
 		
 		auto geom3 = sd1.addGeometry(bso::utilities::geometry::quad_hexahedron(
 		{{0,0,0},{1,0,0},{1,1,0},{0,1,0},{0,0,1},{1,0,1},{1,1,1},{0,1,1}}));
@@ -60,8 +61,8 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		BOOST_REQUIRE(!geom3->isLineSegment());
 		BOOST_REQUIRE(!geom3->isQuadrilateral());
 		BOOST_REQUIRE( geom3->isQuadHexahedron());
-		BOOST_REQUIRE(std::distance(sd1.pointsBegin(),sd1.pointsEnd()) == 0);
-		BOOST_REQUIRE(std::distance(sd1.geometriesBegin(),sd1.geometriesEnd()) == 3);
+		BOOST_REQUIRE(sd1.getPoints().size() == 0);
+		BOOST_REQUIRE(sd1.getGeometries().size() == 3);
 	}
 
 	BOOST_AUTO_TEST_CASE( mesh )
@@ -83,17 +84,17 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		geom3->addStructure(str4);
 
 		sd1.mesh(2);
-		BOOST_REQUIRE(std::distance(sd1.pointsBegin(),sd1.pointsEnd()) == 0);
-		BOOST_REQUIRE(std::distance(sd1.geometriesBegin(),sd1.geometriesEnd()) == 3);
+		BOOST_REQUIRE(sd1.getPoints().size() == 0);
+		BOOST_REQUIRE(sd1.getGeometries().size() == 3);
 		
 		unsigned int trussCount = 0, beamCount = 0, flatShellCount = 0,
 								 quadHexahedronCount = 0, unknownCount = 0;
-		for (auto i = sd1.getFEA()->elementsBegin(); i != sd1.getFEA()->elementsEnd(); ++i)
+		for (const auto& i : sd1.getFEA()->getElements())
 		{
-			if ((*i)->isTruss()) ++trussCount;
-			else if ((*i)->isBeam()) ++beamCount;
-			else if ((*i)->isFlatShell()) ++flatShellCount;
-			else if ((*i)->isQuadHexahedron()) ++quadHexahedronCount;
+			if (i->isTruss()) ++trussCount;
+			else if (i->isBeam()) ++beamCount;
+			else if (i->isFlatShell()) ++flatShellCount;
+			else if (i->isQuadHexahedron()) ++quadHexahedronCount;
 		}
 
 		BOOST_REQUIRE(trussCount == 1);
@@ -136,11 +137,11 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		sd1.mesh(2); // trusses should still be meshe into one element
 		sd1.analyze();
 		
-		auto node2 = *(std::next(sd1.getFEA()->nodesBegin(),1));
+		auto displacements = sd1.getFEA()->getNodes()[1]->getDisplacements(&lc1);
 		Eigen::Vector6d checkDisp;
 		checkDisp << 0,-8.693e-6,0,0,0,0;
 
-		BOOST_REQUIRE(checkDisp.isApprox(node2->getDisplacements(&lc1),1e-4));
+		BOOST_REQUIRE(checkDisp.isApprox(displacements,1e-4));
 	}
 	
 	BOOST_AUTO_TEST_CASE( analyze_beam )
@@ -176,11 +177,11 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		
 		element::node* checkNode;
 		bool checkNodeFound = false;
-		for (auto i = sd1.getFEA()->nodesBegin(); i != sd1.getFEA()->nodesEnd(); ++i)
+		for (const auto& i : sd1.getFEA()->getNodes())
 		{
-			if ((*i)->isSameAs(*p2))
+			if (i->isSameAs(*p2))
 			{
-				checkNode = *i;
+				checkNode = i;
 				checkNodeFound = true;
 			}
 		}
@@ -233,9 +234,9 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		
 		double compliance = 0;
 		
-		for (auto i = sd1.getFEA()->elementsBegin(); i != sd1.getFEA()->elementsEnd(); ++i)
+		for (const auto& i : sd1.getFEA()->getElements())
 		{
-			compliance += (*i)->getTotalEnergy();
+			compliance += i->getTotalEnergy();
 		}
 		BOOST_REQUIRE(abs(compliance/101.5963 - 1) < 1e-5);
 	}

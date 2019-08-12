@@ -38,15 +38,12 @@ namespace bso { namespace structural_design {
 		void topologyOptimization(const std::string& algorithm, const double& f, 
 															const double& rMin, const double& penal, const double& xMove,
 															const double& tolerance);
-		
 		void getResult();
 		
-		fea* getFEA() 				 {return mFEA;}
-		auto pointsBegin()     {return mPoints.begin();}
-		auto pointsEnd()       {return mPoints.end();}
-		auto geometriesBegin() {return mGeometries.begin();}
-		auto geometriesEnd()   {return mGeometries.end();}
-		
+		fea* getFEA() {return mFEA;}
+		fea* const getFEA() const {return mFEA;}
+		const std::vector<component::point*>& getPoints() const {return mPoints;}
+		const std::vector<component::geometry*> getGeometries() const {return mGeometries;}
 	};
 	
 } // namespace structural_design

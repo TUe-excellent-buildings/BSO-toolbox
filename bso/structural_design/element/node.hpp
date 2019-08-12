@@ -42,7 +42,7 @@ namespace bso { namespace structural_design { namespace element {
 		const int& getConstraint(const unsigned int& n) const;
 		const int& getNFS(const unsigned int& n) const;
 		const unsigned long& ID() const {return mID;}
-		std::vector<component::load_case*> getLoadCases();
+		std::vector<component::load_case*> getLoadCases() const;
 		
 		void generateNFT(unsigned long& NFM); // this will map the local DOFs to the global DOFs of this node
 		unsigned long getGlobalDOF(const unsigned int& localDOF) const;

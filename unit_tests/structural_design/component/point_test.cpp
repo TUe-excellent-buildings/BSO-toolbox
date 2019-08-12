@@ -29,8 +29,8 @@ BOOST_AUTO_TEST_SUITE( sd_point_component )
 		BOOST_REQUIRE(pc1(1) == 1);
 		BOOST_REQUIRE(pc1(2) == 2);
 		BOOST_REQUIRE(pc1.getID() == 0);
-		BOOST_REQUIRE(std::distance(pc1.loadBegin(), pc1.loadEnd()) == 0);
-		BOOST_REQUIRE(std::distance(pc1.constraintBegin(), pc1.constraintEnd()) == 0);
+		BOOST_REQUIRE(pc1.getLoads().size() == 0);
+		BOOST_REQUIRE(pc1.getConstraints().size() == 0);
 	}
 	
 	BOOST_AUTO_TEST_CASE( Eigen_vector_init )
@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_SUITE( sd_point_component )
 		BOOST_REQUIRE(pc1(1) == 2);
 		BOOST_REQUIRE(pc1(2) == 3);
 		BOOST_REQUIRE(pc1.getID() == 1);
-		BOOST_REQUIRE(std::distance(pc1.loadBegin(), pc1.loadEnd()) == 0);
-		BOOST_REQUIRE(std::distance(pc1.constraintBegin(), pc1.constraintEnd()) == 0);
+		BOOST_REQUIRE(pc1.getLoads().size() == 0);
+		BOOST_REQUIRE(pc1.getConstraints().size() == 0);
 	}
 	
 	BOOST_AUTO_TEST_CASE( loads )
@@ -54,10 +54,10 @@ BOOST_AUTO_TEST_SUITE( sd_point_component )
 		load l1(&lc1, -300, 2);
 		pc1.addLoad(l1);
 		
-		auto ite = pc1.loadBegin();
-		BOOST_REQUIRE(ite->loadCase() == &lc1);
-		BOOST_REQUIRE(ite->magnitude() == -300);
-		BOOST_REQUIRE(ite->DOF() == 2);
+		auto retrievedLoad = pc1.getLoads()[0];
+		BOOST_REQUIRE(retrievedLoad.loadCase() == &lc1);
+		BOOST_REQUIRE(retrievedLoad.magnitude() == -300);
+		BOOST_REQUIRE(retrievedLoad.DOF() == 2);
 	}
 	
 	BOOST_AUTO_TEST_CASE( constraints )
@@ -66,8 +66,8 @@ BOOST_AUTO_TEST_SUITE( sd_point_component )
 		constraint c1(1);
 		pc1.addConstraint(c1);
 		
-		auto ite = pc1.constraintBegin();
-		BOOST_REQUIRE(ite->DOF() == 1);
+		auto retrievedConstraint = pc1.getConstraints()[0];
+		BOOST_REQUIRE(retrievedConstraint.DOF() == 1);
 	}
 	
 BOOST_AUTO_TEST_SUITE_END()

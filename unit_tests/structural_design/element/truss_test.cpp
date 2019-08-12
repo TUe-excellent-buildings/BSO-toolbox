@@ -85,7 +85,6 @@ BOOST_AUTO_TEST_SUITE( sd_truss_test )
 		BOOST_REQUIRE(t1.visualize());
 		t1.visualize() = false;
 		BOOST_REQUIRE(!t1.visualize());
-		BOOST_REQUIRE(!t1.visualizeTransparant());
 	}
 	
 	BOOST_AUTO_TEST_CASE( density )

@@ -148,7 +148,7 @@ namespace bso { namespace structural_design { namespace element {
 		return mNFS[n];
 	}
 	
-	std::vector<component::load_case*> node::getLoadCases()
+	std::vector<component::load_case*> node::getLoadCases() const
 	{
 		std::vector<component::load_case*> temp;
 		for (auto& i : mLoads) temp.push_back(i.first);

@@ -23,10 +23,10 @@ namespace bso { namespace spatial_design { namespace conformal {
 		void addEdge					(cf_edge*				ePtr	) = delete;
 		void addSpace					(cf_space*			spPtr	) = delete;
 		
-		const std::vector<cf_rectangle*	>& cfRectangles() const { return mCFRectangles;}
-		const std::vector<cf_point*			>& cfPoints() 		const { return mCFPoints;}
-		const std::vector<cf_edge*			>& cfEdges() 			const { return mCFEdges;}
-		const std::vector<cf_space*			>& cfSpaces() 		const { return mCFSpaces;}
+		const std::vector<cf_rectangle*	>& cfRectangles() = delete;
+		const std::vector<cf_point*			>& cfPoints() 		= delete;
+		const std::vector<cf_edge*			>& cfEdges() 			= delete;
+		const std::vector<cf_space*			>& cfSpaces() 		= delete;
 	};
 	
 } // conformal

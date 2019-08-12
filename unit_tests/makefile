@@ -6,7 +6,7 @@ ALL_LIB = -I$(BOOST) -I$(EIGEN) -I$(BSO)
 
 #compiler settings
 CPP   = g++ -std=c++14
-FLAGS  = -O3 -march=native -lboost_unit_test_framework
+FLAGS  = -O3 -march=native -lboost_unit_test_framework -lglut -lGL -lGLU -lpthread
 
 #test suites
 MS_SPACE    = $(BSO)/unit_tests/spatial_design/ms_space_test.cpp
@@ -16,9 +16,10 @@ CONFORMAL 	= $(BSO)/unit_tests/spatial_design/conformal_test.cpp
 TRIM_CAST   = $(BSO)/unit_tests/utilities/trim_and_cast_test.cpp
 GEOMETRY		= $(BSO)/unit_tests/utilities/geometry_test.cpp
 STRUCT_DES	= $(BSO)/unit_tests/structural_design/structural_design_test.cpp
+VISUALIZE   = $(BSO)/unit_tests/visualization/visualization_test.cpp
 BSO_ALL			= $(BSO)/unit_tests/all_test.cpp
 
-.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry structural_design clean 
+.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry structural_design clean visualization
 
 #make arguments
 cls:
@@ -41,6 +42,8 @@ geometry:
 	$(CPP) -o geometry_test $(ALL_LIB) $(GEOMETRY) $(FLAGS)
 structural_design:
 	$(CPP) -o sd_test $(ALL_LIB) $(STRUCT_DES) $(FLAGS)
+visualization:
+	$(CPP) -o vis_test $(ALL_LIB) $(VISUALIZE) $(FLAGS)
 clean:
 	@rm -f ms_space_test
 	@rm -f ms_building_test
@@ -50,3 +53,4 @@ clean:
 	@rm -f geometry_test
 	@rm -f sd_test
 	@rm -f all_test
+	@rm -f vis_test

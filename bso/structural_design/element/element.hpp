@@ -45,7 +45,6 @@ namespace bso { namespace structural_design { namespace element {
 		bool mIsQuadHexahedron = false;
 		bool mVisualize = true;
 		bool mActiveInCompliance = true;
-		bool mVisualizeTransparant = false;
 		
 	public:
 		element(const unsigned long& ID, const double& E, const double& ERelativeLowerBound = 1e-6);
@@ -72,7 +71,6 @@ namespace bso { namespace structural_design { namespace element {
 		virtual const bool& isQuadHexahedron() const {return mIsQuadHexahedron;}
 		virtual const bool& visualize() const {return mVisualize;}
 		virtual bool& visualize() {return mVisualize;}
-		virtual const bool& visualizeTransparant() const {return mVisualizeTransparant;}
 		virtual const bool& isActiveInCompliance() const {return mActiveInCompliance;}
 		virtual bool& isActiveInCompliance() {return mActiveInCompliance;}
 		virtual const double& getDensity() const {return mDensity;}

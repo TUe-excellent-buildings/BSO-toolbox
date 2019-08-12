@@ -98,13 +98,13 @@ namespace bso { namespace structural_design {
 			unsigned long pointID = mMeshedPoints.size();
 			mMeshedPoints.push_back(new component::point(pointID, *i));
 			auto meshedPoint = mMeshedPoints.back();
-			for (auto j = i->loadBegin(); j != i->loadEnd(); ++j)
+			for (const auto& j : i->getLoads())
 			{
-				meshedPoint->addLoad(*j);
+				meshedPoint->addLoad(j);
 			}
-			for (auto j = i->constraintBegin(); j != i->constraintEnd(); ++j)
+			for (const auto& j : i->getConstraints())
 			{
-				meshedPoint->addConstraint(*j);
+				meshedPoint->addConstraint(j);
 			}
 		}
 
@@ -124,15 +124,15 @@ namespace bso { namespace structural_design {
 			nodeMap[i] = nodePtr;
 			
 			// add loads
-			for (auto k = i->loadBegin(); k != i->loadEnd(); ++k)
+			for (const auto& j : i->getLoads())
 			{
-				nodePtr->addLoad(*k);
+				nodePtr->addLoad(j);
 			}
 			
 			// add constraints
-			for (auto k = i->constraintBegin(); k != i->constraintEnd(); ++k)
+			for (const auto& j : i->getConstraints())
 			{
-				nodePtr->addConstraint(k->DOF());
+				nodePtr->addConstraint(j.DOF());
 			}
 		}
 
@@ -143,15 +143,15 @@ namespace bso { namespace structural_design {
 		{
 			if (i->hasTruss())
 			{
-				for (auto j = i->structureBegin(); j != i->structureEnd(); ++j)
+				for (const auto& j : i->getStructures())
 				{
 					double ERelativeLowerBound = 1e-6;
-					if (j->hasERelativeLowerBoundAssigned()) ERelativeLowerBound = j->ERelativeLowerBound();
+					if (j.hasERelativeLowerBoundAssigned()) ERelativeLowerBound = j.ERelativeLowerBound();
 					
-					if (j->type() == "truss")
+					if (j.type() == "truss")
 					{
-						auto firstPoint  = *(i->meshedPointsBegin());
-						auto secondPoint = *(std::prev(i->meshedPointsEnd(),1));
+						auto firstPoint  = i->getMeshedPoints()[0];
+						auto secondPoint = i->getMeshedPoints().back();
 
 						auto firstNodeSearch  = nodeMap.find(firstPoint);
 						auto secondNodeSearch = nodeMap.find(secondPoint);
@@ -167,18 +167,20 @@ namespace bso { namespace structural_design {
 							throw std::runtime_error(errorMessage.str());
 						}
 
-						elePtr = new element::truss(elementID++,j->E(), j->A(),
+						elePtr = new element::truss(elementID++,j.E(), j.A(),
 													{firstNodeSearch->second,secondNodeSearch->second},
 													ERelativeLowerBound);
 						mFEA->addElement(elePtr);
+						if (j.isGhostComponent()) elePtr->isActiveInCompliance() = false;
+						if (!j.isVisible()) elePtr->visualize() = false;
 					}
 				}
 			}
-			for (auto j = i->elementPointsBegin(); j != i->elementPointsEnd(); ++j)
+			for (const auto& j : i->getElementPoints())
 			{
-				if (std::distance(i->structureBegin(),i->structureEnd()) == 0) continue;
+				if (i->getElementPoints().size() == 0) continue;
 				std::vector<element::node*> elementNodes;
-				for (auto k : *j)
+				for (const auto& k : j)
 				{
 					auto nodeSearch = nodeMap.find(k);
 					if (nodeSearch == nodeMap.end())
@@ -192,29 +194,29 @@ namespace bso { namespace structural_design {
 					}
 					elementNodes.push_back(nodeSearch->second);
 				}
-				for (auto k = i->structureBegin(); k != i->structureEnd(); ++k)
+				for (const auto& k : i->getStructures())
 				{
 					double ERelativeLowerBound = 1e-6;
-					if (k->hasERelativeLowerBoundAssigned()) ERelativeLowerBound = k->ERelativeLowerBound();
-					if (k->type() == "truss"){ }// do nothing, these are meshed by one element already
-					else if (k->type() == "beam")
+					if (k.hasERelativeLowerBoundAssigned()) ERelativeLowerBound = k.ERelativeLowerBound();
+					if (k.type() == "truss"){ continue; }// do nothing, these are meshed by one element already
+					else if (k.type() == "beam")
 					{
 						elePtr = new element::beam(elementID++,
-													k->E(), k->width(), k->height(), 
-													k->poisson(), elementNodes, ERelativeLowerBound);
+													k.E(), k.width(), k.height(), 
+													k.poisson(), elementNodes, ERelativeLowerBound);
 						mFEA->addElement(elePtr);
 					}
-					else if (k->type() == "flat_shell")
+					else if (k.type() == "flat_shell")
 					{
 						elePtr = new element::flat_shell(elementID++,
-													k->E(), k->thickness(), k->poisson(), 
+													k.E(), k.thickness(), k.poisson(), 
 													elementNodes, ERelativeLowerBound);
 						mFEA->addElement(elePtr);
 					}
-					else if (k->type() == "quad_hexahedron")
+					else if (k.type() == "quad_hexahedron")
 					{
 						elePtr = new element::quad_hexahedron(elementID++,
-													k->E(), k->poisson(), elementNodes, ERelativeLowerBound);
+													k.E(), k.poisson(), elementNodes, ERelativeLowerBound);
 						mFEA->addElement(elePtr);
 					}
 					else
@@ -222,15 +224,12 @@ namespace bso { namespace structural_design {
 						std::stringstream errorMessage;
 						errorMessage << "\nWhen meshing a geometry of a structural model,\n"
 												 <<	"Encountered an unknown element type to be meshed:\n"
-												 << k->type() << "\n"
+												 << k.type() << "\n"
 												 << "(bso/structural_design/sd_model.cpp)" << std::endl;
 						throw std::runtime_error(errorMessage.str());
 					}
-					if (k->isGhostComponent() == true)
-					{
-						elePtr->isActiveInCompliance() = false;
-						elePtr->visualize() = false;
-					}
+					if (k.isGhostComponent()) elePtr->isActiveInCompliance() = false;
+					if (!k.isVisible()) elePtr->visualize() = false;
 					i->addElement(elePtr);
 				}
 			}

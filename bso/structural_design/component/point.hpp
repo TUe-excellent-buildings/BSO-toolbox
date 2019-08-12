@@ -28,11 +28,8 @@ namespace bso { namespace structural_design { namespace component {
 		
 		const unsigned long& getID() const {return mID;}
 		
-		auto loadBegin() const {return mLoads.begin();}
-		auto loadEnd()   const {return mLoads.end();}
-		
-		auto constraintBegin() const {return mConstraints.begin();}
-		auto constraintEnd()   const {return mConstraints.end();}
+		const std::vector<load>& getLoads() const {return mLoads;}
+		const std::vector<constraint>& getConstraints() const {return mConstraints;}
 	};
 	
 } // namespace component

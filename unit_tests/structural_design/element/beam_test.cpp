@@ -99,7 +99,6 @@ BOOST_AUTO_TEST_SUITE( sd_beam_test )
 		BOOST_REQUIRE(b1.visualize());
 		b1.visualize() = false;
 		BOOST_REQUIRE(!b1.visualize());
-		BOOST_REQUIRE(!b1.visualizeTransparant());
 	}
 	
 	BOOST_AUTO_TEST_CASE( density )

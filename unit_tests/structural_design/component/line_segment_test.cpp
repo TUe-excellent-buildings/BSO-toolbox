@@ -55,8 +55,8 @@ BOOST_AUTO_TEST_SUITE( sd_line_segment_component )
 		BOOST_REQUIRE(!ls1.hasFlatShell());
 		BOOST_REQUIRE(!ls1.hasQuadHexahedron());
 		
-		BOOST_REQUIRE(ls1.structureBegin()->A() == 100);
-		BOOST_REQUIRE(ls1.structureBegin()->E() == 1e5);
+		BOOST_REQUIRE(ls1.getStructures()[0].A() == 100);
+		BOOST_REQUIRE(ls1.getStructures()[0].E() == 1e5);
 	}
 	
 	BOOST_AUTO_TEST_CASE( beam )
@@ -73,10 +73,10 @@ BOOST_AUTO_TEST_SUITE( sd_line_segment_component )
 		BOOST_REQUIRE(!ls1.hasFlatShell());
 		BOOST_REQUIRE(!ls1.hasQuadHexahedron());
 		
-		BOOST_REQUIRE(ls1.structureBegin()->poisson() == 0.3);
-		BOOST_REQUIRE(ls1.structureBegin()->width() == 100);
-		BOOST_REQUIRE(ls1.structureBegin()->height() == 400);
-		BOOST_REQUIRE(ls1.structureBegin()->E() == 1e5);
+		BOOST_REQUIRE(ls1.getStructures()[0].poisson() == 0.3);
+		BOOST_REQUIRE(ls1.getStructures()[0].width() == 100);
+		BOOST_REQUIRE(ls1.getStructures()[0].height() == 400);
+		BOOST_REQUIRE(ls1.getStructures()[0].E() == 1e5);
 	}
 	
 	BOOST_AUTO_TEST_CASE( invalid_structure )
@@ -104,15 +104,15 @@ BOOST_AUTO_TEST_SUITE( sd_line_segment_component )
 		std::vector<point*> pointStore;
 		ls1.mesh(2,pointStore);
 
-		BOOST_REQUIRE(std::distance(ls1.elementPointsBegin(), ls1.elementPointsEnd()) == 2);
-		BOOST_REQUIRE(std::distance(ls1.meshedPointsBegin(), ls1.meshedPointsEnd()) == 3);
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()))->isSameAs({0,0,0}));
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+1))->isSameAs({0.5,0,0}));
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+2))->isSameAs({1,0,0}));
+		BOOST_REQUIRE(ls1.getElementPoints().size() == 2);
+		BOOST_REQUIRE(ls1.getMeshedPoints().size() == 3);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[0]->isSameAs({0,0,0}));
+		BOOST_REQUIRE(ls1.getMeshedPoints()[1]->isSameAs({0.5,0,0}));
+		BOOST_REQUIRE(ls1.getMeshedPoints()[2]->isSameAs({1,0,0}));
 		
 		ls1.clearMesh();
-		BOOST_REQUIRE(std::distance(ls1.elementPointsBegin(), ls1.elementPointsEnd()) == 0);
-		BOOST_REQUIRE(std::distance(ls1.meshedPointsBegin(), ls1.meshedPointsEnd()) == 0);
+		BOOST_REQUIRE(ls1.getElementPoints().size()  == 0);
+		BOOST_REQUIRE(ls1.getMeshedPoints().size() == 0);
 	}
 	
 	BOOST_AUTO_TEST_CASE( mesh_truss )
@@ -127,15 +127,15 @@ BOOST_AUTO_TEST_SUITE( sd_line_segment_component )
 		std::vector<point*> pointStore;
 		ls1.mesh(2,pointStore);
 
-		BOOST_REQUIRE(std::distance(ls1.elementPointsBegin(), ls1.elementPointsEnd()) == 2);
-		BOOST_REQUIRE(std::distance(ls1.meshedPointsBegin(), ls1.meshedPointsEnd()) == 3);
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()))->isSameAs({0,0,0}));
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+1))->isSameAs({0.5,0,0}));
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+2))->isSameAs({1,0,0}));
+		BOOST_REQUIRE(ls1.getElementPoints().size() == 2);
+		BOOST_REQUIRE(ls1.getMeshedPoints().size() == 3);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[0]->isSameAs({0,0,0}));
+		BOOST_REQUIRE(ls1.getMeshedPoints()[1]->isSameAs({0.5,0,0}));
+		BOOST_REQUIRE(ls1.getMeshedPoints()[2]->isSameAs({1,0,0}));
 		
 		ls1.clearMesh();
-		BOOST_REQUIRE(std::distance(ls1.elementPointsBegin(), ls1.elementPointsEnd()) == 0);
-		BOOST_REQUIRE(std::distance(ls1.meshedPointsBegin(), ls1.meshedPointsEnd()) == 0);
+		BOOST_REQUIRE(ls1.getElementPoints().size()  == 0);
+		BOOST_REQUIRE(ls1.getMeshedPoints().size() == 0);
 	}
 	
 	BOOST_AUTO_TEST_CASE( load_test )
@@ -154,10 +154,10 @@ BOOST_AUTO_TEST_SUITE( sd_line_segment_component )
 		std::vector<point*> pointStore;
 		ls1.mesh(2,pointStore);
 		
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()))->loadBegin()->magnitude() == 10);
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+1))->loadBegin()->magnitude() == 10);
-		BOOST_REQUIRE(((*(ls1.meshedPointsBegin()+1))->loadBegin()+1)->magnitude() == 10);
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+2))->loadBegin()->magnitude() == 10);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[0]->getLoads()[0].magnitude() == 10);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[1]->getLoads()[0].magnitude() == 10);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[1]->getLoads()[1].magnitude() == 10);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[2]->getLoads()[0].magnitude() == 10);
 	}
 	
 	BOOST_AUTO_TEST_CASE( constraint_test )
@@ -175,9 +175,9 @@ BOOST_AUTO_TEST_SUITE( sd_line_segment_component )
 		std::vector<point*> pointStore;
 		ls1.mesh(2,pointStore);
 		
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()))->constraintBegin()->DOF() == 2);
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+1))->constraintBegin()->DOF() == 2);
-		BOOST_REQUIRE((*(ls1.meshedPointsBegin()+2))->constraintBegin()->DOF() == 2);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[0]->getConstraints()[0].DOF() == 2);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[1]->getConstraints()[0].DOF() == 2);
+		BOOST_REQUIRE(ls1.getMeshedPoints()[2]->getConstraints()[0].DOF() == 2);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()
