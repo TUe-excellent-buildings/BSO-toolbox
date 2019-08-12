@@ -56,10 +56,10 @@ namespace bso { namespace structural_design { namespace element {
 		ETerm(0,0) = mPoisson - 1; 	 ETerm(0,1) = -mPoisson; 			ETerm(0,2) = -mPoisson; // first 3 elements of the first row
 		ETerm(1,0) = -mPoisson;    	 ETerm(1,1) = mPoisson - 1; 	ETerm(1,2) = -mPoisson; // first 3 elements of the second row
 		ETerm(2,0) = -mPoisson;    	 ETerm(2,1) = -mPoisson;    	ETerm(2,2) = mPoisson - 1; // first 3 elements of the third row
-		ETerm(3,3) = (mPoisson-1)/2; ETerm(4,4) = (mPoisson-1)/2; ETerm(5,5) = (mPoisson-1)/2; // elements of the diagonal on the last 3 rows
+		ETerm(3,3) = -(1-2*mPoisson)/2.0; ETerm(4,4) = ETerm(3,3); ETerm(5,5) = ETerm(3,3); // elements of the diagonal on the last 3 rows
 
 		ETerm = ETerm * (mE / (2 * pow(mPoisson,2) + mPoisson - 1));
-	
+
 		// initialise the element stiffness matrices and start numerical integration of the contribution of every node to the element's stiffness
 		mSM.setZero(24,24);
 		double ksi, eta, zeta;
