@@ -180,9 +180,33 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		
 		Eigen::MatrixXd testMatrix(24,24);
 		testMatrix.setZero(24,24);
-		// testMatrix << 
+		testMatrix << 47008.5,16025.6,16025.6,-21367.5,3205.13,3205.13,-17094,-16025.6,1602.56,10683.8,-3205.13,8012.82,10683.8,8012.82,-3205.13,-17094,1602.56,-16025.6,-11752.1,-8012.82,-8012.82,-1068.38,-1602.56,-1602.56,
+		16025.6,47008.5,16025.6,-3205.13,10683.8,8012.82,-16025.6,-17094,1602.56,3205.13,-21367.5,3205.13,8012.82,10683.8,-3205.13,-1602.56,-1068.38,-1602.56,-8012.82,-11752.1,-8012.82,1602.56,-17094,-16025.6,
+		16025.6,16025.6,47008.5,-3205.13,8012.82,10683.8,-1602.56,-1602.56,-1068.38,8012.82,-3205.13,10683.8,3205.13,3205.13,-21367.5,-16025.6,1602.56,-17094,-8012.82,-8012.82,-11752.1,1602.56,-16025.6,-17094,
+		-21367.5,-3205.13,-3205.13,47008.5,-16025.6,-16025.6,10683.8,3205.13,-8012.82,-17094,16025.6,-1602.56,-17094,-1602.56,16025.6,10683.8,-8012.82,3205.13,-1068.38,1602.56,1602.56,-11752.1,8012.82,8012.82,
+		3205.13,10683.8,8012.82,-16025.6,47008.5,16025.6,-3205.13,-21367.5,3205.13,16025.6,-17094,1602.56,1602.56,-1068.38,-1602.56,-8012.82,10683.8,-3205.13,-1602.56,-17094,-16025.6,8012.82,-11752.1,-8012.82,
+		3205.13,8012.82,10683.8,-16025.6,16025.6,47008.5,-8012.82,-3205.13,10683.8,1602.56,-1602.56,-1068.38,16025.6,1602.56,-17094,-3205.13,3205.13,-21367.5,-1602.56,-16025.6,-17094,8012.82,-8012.82,-11752.1,
+		-17094,-16025.6,-1602.56,10683.8,-3205.13,-8012.82,47008.5,16025.6,-16025.6,-21367.5,3205.13,-3205.13,-11752.1,-8012.82,8012.82,-1068.38,-1602.56,1602.56,10683.8,8012.82,3205.13,-17094,1602.56,16025.6,
+		-16025.6,-17094,-1602.56,3205.13,-21367.5,-3205.13,16025.6,47008.5,-16025.6,-3205.13,10683.8,-8012.82,-8012.82,-11752.1,8012.82,1602.56,-17094,16025.6,8012.82,10683.8,3205.13,-1602.56,-1068.38,1602.56,
+		1602.56,1602.56,-1068.38,-8012.82,3205.13,10683.8,-16025.6,-16025.6,47008.5,3205.13,-8012.82,10683.8,8012.82,8012.82,-11752.1,-1602.56,16025.6,-17094,-3205.13,-3205.13,-21367.5,16025.6,-1602.56,-17094,
+		10683.8,3205.13,8012.82,-17094,16025.6,1602.56,-21367.5,-3205.13,3205.13,47008.5,-16025.6,16025.6,-1068.38,1602.56,-1602.56,-11752.1,8012.82,-8012.82,-17094,-1602.56,-16025.6,10683.8,-8012.82,-3205.13,
+		-3205.13,-21367.5,-3205.13,16025.6,-17094,-1602.56,3205.13,10683.8,-8012.82,-16025.6,47008.5,-16025.6,-1602.56,-17094,16025.6,8012.82,-11752.1,8012.82,1602.56,-1068.38,1602.56,-8012.82,10683.8,3205.13,
+		8012.82,3205.13,10683.8,-1602.56,1602.56,-1068.38,-3205.13,-8012.82,10683.8,16025.6,-16025.6,47008.5,1602.56,16025.6,-17094,-8012.82,8012.82,-11752.1,-16025.6,-1602.56,-17094,3205.13,-3205.13,-21367.5,
+		10683.8,8012.82,3205.13,-17094,1602.56,16025.6,-11752.1,-8012.82,8012.82,-1068.38,-1602.56,1602.56,47008.5,16025.6,-16025.6,-21367.5,3205.13,-3205.13,-17094,-16025.6,-1602.56,10683.8,-3205.13,-8012.82,
+		8012.82,10683.8,3205.13,-1602.56,-1068.38,1602.56,-8012.82,-11752.1,8012.82,1602.56,-17094,16025.6,16025.6,47008.5,-16025.6,-3205.13,10683.8,-8012.82,-16025.6,-17094,-1602.56,3205.13,-21367.5,-3205.13,
+		-3205.13,-3205.13,-21367.5,16025.6,-1602.56,-17094,8012.82,8012.82,-11752.1,-1602.56,16025.6,-17094,-16025.6,-16025.6,47008.5,3205.13,-8012.82,10683.8,1602.56,1602.56,-1068.38,-8012.82,3205.13,10683.8,
+		-17094,-1602.56,-16025.6,10683.8,-8012.82,-3205.13,-1068.38,1602.56,-1602.56,-11752.1,8012.82,-8012.82,-21367.5,-3205.13,3205.13,47008.5,-16025.6,16025.6,10683.8,3205.13,8012.82,-17094,16025.6,1602.56,
+		1602.56,-1068.38,1602.56,-8012.82,10683.8,3205.13,-1602.56,-17094,16025.6,8012.82,-11752.1,8012.82,3205.13,10683.8,-8012.82,-16025.6,47008.5,-16025.6,-3205.13,-21367.5,-3205.13,16025.6,-17094,-1602.56,
+		-16025.6,-1602.56,-17094,3205.13,-3205.13,-21367.5,1602.56,16025.6,-17094,-8012.82,8012.82,-11752.1,-3205.13,-8012.82,10683.8,16025.6,-16025.6,47008.5,8012.82,3205.13,10683.8,-1602.56,1602.56,-1068.38,
+		-11752.1,-8012.82,-8012.82,-1068.38,-1602.56,-1602.56,10683.8,8012.82,-3205.13,-17094,1602.56,-16025.6,-17094,-16025.6,1602.56,10683.8,-3205.13,8012.82,47008.5,16025.6,16025.6,-21367.5,3205.13,3205.13,
+		-8012.82,-11752.1,-8012.82,1602.56,-17094,-16025.6,8012.82,10683.8,-3205.13,-1602.56,-1068.38,-1602.56,-16025.6,-17094,1602.56,3205.13,-21367.5,3205.13,16025.6,47008.5,16025.6,-3205.13,10683.8,8012.82,
+		-8012.82,-8012.82,-11752.1,1602.56,-16025.6,-17094,3205.13,3205.13,-21367.5,-16025.6,1602.56,-17094,-1602.56,-1602.56,-1068.38,8012.82,-3205.13,10683.8,16025.6,16025.6,47008.5,-3205.13,8012.82,10683.8,
+		-1068.38,1602.56,1602.56,-11752.1,8012.82,8012.82,-17094,-1602.56,16025.6,10683.8,-8012.82,3205.13,10683.8,3205.13,-8012.82,-17094,16025.6,-1602.56,-21367.5,-3205.13,-3205.13,47008.5,-16025.6,-16025.6,
+		-1602.56,-17094,-16025.6,8012.82,-11752.1,-8012.82,1602.56,-1068.38,-1602.56,-8012.82,10683.8,-3205.13,-3205.13,-21367.5,3205.13,16025.6,-17094,1602.56,3205.13,10683.8,8012.82,-16025.6,47008.5,16025.6,
+		-1602.56,-16025.6,-17094,8012.82,-8012.82,-11752.1,16025.6,1602.56,-17094,-3205.13,3205.13,-21367.5,-8012.82,-3205.13,10683.8,1602.56,-1602.56,-1068.38,3205.13,8012.82,10683.8,-16025.6,16025.6,47008.5;
 		
-		// BOOST_REQUIRE(GSM.isApprox(testMatrix.sparseView(),1e-5));
+		//std::cout << GSM;
+		BOOST_REQUIRE(GSM.isApprox(testMatrix.sparseView(),1e-5));
 	}
 
 	BOOST_AUTO_TEST_CASE( energy_from_displacement )
@@ -258,14 +282,154 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
 	}
 	
-	BOOST_AUTO_TEST_CASE( benchmark_2 )
+	BOOST_AUTO_TEST_CASE( benchmark_2 )  //shear test
 	{
+		node n1({-0.5,-0.5,-0.5},1);
+		node n2({ 0.5,-0.5,-0.5},2);
+		node n3({ 0.5, 0.5,-0.5},3);
+		node n4({-0.5, 0.5,-0.5},4);
+		node n5({-0.5,-0.5, 0.5},5);
+		node n6({ 0.5,-0.5, 0.5},6);
+		node n7({ 0.5, 0.5, 0.5},7);
+		node n8({-0.5, 0.5, 0.5},8);
+		double E = 2.1e5;
+		double v = 0.3;
 		
+		n1.addConstraint(0); // {0:dx,1:dy,2:dz,3:rx,4:ry,5:rz}
+		n1.addConstraint(2);
+		n2.addConstraint(0);
+		n2.addConstraint(2);
+		n3.addConstraint(0);
+		n3.addConstraint(1);
+		n3.addConstraint(2);
+		n4.addConstraint(0);
+		n4.addConstraint(1);
+		n4.addConstraint(2);
+		n7.addConstraint(1);
+		n8.addConstraint(1);
+		
+		quad_hexahedron qh1(1,E,v,{&n1,&n2,&n3,&n4,&n5,&n6,&n7,&n8});
+		
+		unsigned long DOFCount = 0;
+		n1.generateNFT(DOFCount);
+		n2.generateNFT(DOFCount);
+		n3.generateNFT(DOFCount);
+		n4.generateNFT(DOFCount);
+		n5.generateNFT(DOFCount);
+		n6.generateNFT(DOFCount);
+		n7.generateNFT(DOFCount);
+		n8.generateNFT(DOFCount);
+		qh1.generateEFT();
+		
+		std::vector<triplet> triplets = qh1.getSMTriplets();
+		Eigen::SparseMatrix<double> GSM;
+		GSM.resize(DOFCount,DOFCount);
+		GSM.setFromTriplets(triplets.begin(), triplets.end());
+		
+		Eigen::VectorXd loads;
+		loads.setZero(DOFCount);
+		loads(2) = 100;  // node 5, force in x-direction
+		loads(5) = 100;  // node 6, force in x-direction
+		loads(8) = 100;  // node 7, force in x-direction
+		loads(10) = 100; // node 8, force in x-direction
+		Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > solver;
+		solver.compute(GSM);
+		BOOST_REQUIRE(solver.info() == Eigen::Success);
+		Eigen::VectorXd displacements = solver.solve(loads);
+		
+		Eigen::VectorXd checkDisplacements;
+		checkDisplacements.setZero(DOFCount);
+		checkDisplacements(0)  =  8.50e-4; // results from abaqus and ansys
+		checkDisplacements(1)  = -8.50e-4; // see graduation work Diane Schoenmaker
+		checkDisplacements(2)  =  7.94e-3;		
+		checkDisplacements(3)  =  1.12e-3;
+		checkDisplacements(4)  =  3.50e-3;
+		checkDisplacements(5)  =  7.94e-3; 
+		checkDisplacements(6)  = -1.12e-3; 
+		checkDisplacements(7)  = -3.50e-3;
+		checkDisplacements(8)  =  9.22e-3;
+		checkDisplacements(9)  = -3.67e-3; 
+		checkDisplacements(10) =  9.22e-3; 
+		checkDisplacements(11) =  3.76e-3;
+		
+		//std::cout << displacements << std::endl;
+
+		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_3 )
 	{ 
+		node n1({-0.5,-0.5,-0.5},1);	//Moment
+		node n2({ 0.5,-0.5,-0.5},2);
+		node n3({ 0.5, 0.5,-0.5},3);
+		node n4({-0.5, 0.5,-0.5},4);
+		node n5({-0.5,-0.5, 0.5},5);
+		node n6({ 0.5,-0.5, 0.5},6);
+		node n7({ 0.5, 0.5, 0.5},7);
+		node n8({-0.5, 0.5, 0.5},8);
+		double E = 2.1e5;
+		double v = 0.3;
 		
+		n1.addConstraint(0); // {0:dx,1:dy,2:dz,3:rx,4:ry,5:rz}
+		n1.addConstraint(2);
+		n2.addConstraint(0);
+		n2.addConstraint(2);
+		n3.addConstraint(0);
+		n3.addConstraint(1);
+		n3.addConstraint(2);
+		n4.addConstraint(0);
+		n4.addConstraint(1);
+		n4.addConstraint(2);
+		n7.addConstraint(1);
+		n8.addConstraint(1);
+		
+		quad_hexahedron qh1(1,E,v,{&n1,&n2,&n3,&n4,&n5,&n6,&n7,&n8});
+		
+		unsigned long DOFCount = 0;
+		n1.generateNFT(DOFCount);
+		n2.generateNFT(DOFCount);
+		n3.generateNFT(DOFCount);
+		n4.generateNFT(DOFCount);
+		n5.generateNFT(DOFCount);
+		n6.generateNFT(DOFCount);
+		n7.generateNFT(DOFCount);
+		n8.generateNFT(DOFCount);
+		qh1.generateEFT();
+		
+		std::vector<triplet> triplets = qh1.getSMTriplets();
+		Eigen::SparseMatrix<double> GSM;
+		GSM.resize(DOFCount,DOFCount);
+		GSM.setFromTriplets(triplets.begin(), triplets.end());
+
+		Eigen::VectorXd loads;
+		loads.setZero(DOFCount);
+		loads(4)  = -100; // node 5, force in z-direction
+		loads(7)  =  100; // node 6, force in z-direction
+		loads(9)  =  100; // node 7, force in z-direction
+		loads(11) = -100; // node 8, force in z-direction
+		Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > solver;
+		solver.compute(GSM);
+		BOOST_REQUIRE(solver.info() == Eigen::Success);
+		Eigen::VectorXd displacements = solver.solve(loads);
+
+		Eigen::VectorXd checkDisplacements;
+		checkDisplacements.setZero(DOFCount);
+		checkDisplacements(0)  = -8.5e-4; // results from abaqus and ansys
+		checkDisplacements(1)  =  8.5e-4; // see graduation work Diane Schoenmaker
+		checkDisplacements(2)  = -3e-3;		
+		checkDisplacements(3)  =  1.12e-3;
+		checkDisplacements(4)  = -3.5e-3;
+		checkDisplacements(5)  = -3e-3; 
+		checkDisplacements(6)  =  1.12e-3; 
+		checkDisplacements(7)  =  3.5e-3;
+		checkDisplacements(8)  = -4.27e-3;
+		checkDisplacements(9)  =  3.76e-3; 
+		checkDisplacements(10) = -4.27e-3; 
+		checkDisplacements(11) = -3.76e-3;
+		
+		//std::cout <<  displacements << std::endl;
+
+		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_4 )
