@@ -184,8 +184,8 @@ SD_Model::SD_Model(const bso::structural_design::sd_model& sd,
 			{
 				if (i->isActiveInCompliance())
 				{
-					minValue = log10(i->getTotalEnergy());
-					maxValue = log10(i->getTotalEnergy());
+					minValue = log10(abs(i->getTotalEnergy())+1.0);
+					maxValue = log10(abs(i->getTotalEnergy())+1.0);
 					break;
 				}
 			}
@@ -193,7 +193,7 @@ SD_Model::SD_Model(const bso::structural_design::sd_model& sd,
 			{
 				if (i->isActiveInCompliance())
 				{
-					double value = log10(i->getTotalEnergy());
+					double value = log10(abs(i->getTotalEnergy())+1.0);
 					if (value < minValue) minValue = value;
 					if (value > maxValue) maxValue = value;
 				}
@@ -274,7 +274,7 @@ SD_Model::SD_Model(const bso::structural_design::sd_model& sd,
 				if (!i->visualize()) continue; // will not be a density to visualize
 				double lookupValue;
 				if (type == "density") lookupValue = i->getDensity();
-				else lookupValue = log10(i->getTotalEnergy());
+				else lookupValue = log10(abs(i->getTotalEnergy())+1.0);
 				
 				for (auto& j : clusterPProps)
 				{

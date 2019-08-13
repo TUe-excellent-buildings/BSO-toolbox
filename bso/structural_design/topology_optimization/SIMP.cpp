@@ -83,9 +83,8 @@ void SIMP(fea* FEASystem, const double& f,
 			c = 0;
 
 			// FEA
-			FEASystem->clearResponse();
 			FEASystem->generateGSM();
-			FEASystem->solve("SimplicialLLT");
+			FEASystem->solve("SimplicialLDLT");
 
 			// objective function and sensitivity analysis (retrieve data from FEA)
 			eleIndexI = 0;

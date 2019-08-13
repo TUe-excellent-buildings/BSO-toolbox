@@ -106,9 +106,9 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		comp::constraint c2(2);
 
 		comp::load_case lc1("vertical load");
-		comp::load l1(&lc1,-1,2);
+		comp::load l1(&lc1,-1e5,2);
 		
-		comp::structure str1("quad_hexahedron",{{"E",1},{"poisson",0.3}});
+		comp::structure str1("quad_hexahedron",{{"E",1e5},{"poisson",0.3}});
 		
 		auto p1 = sd.addPoint({0,0,10});
 		p1->addLoad(l1);
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		quad2->addConstraint(c1);
 		quad3->addConstraint(c0);
 		
-		sd.mesh(1);
+		sd.mesh(5);
 		sd.analyze();
 		visualize(sd,"strain_energy","Visualization of strain energy in analyzed sd model");
 	}
@@ -169,9 +169,11 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		
 		sd.mesh(20);
 		sd.analyze();
-		visualize(sd,"strain_energy","Visualization of strain energy in sd model");
+		visualize(sd,"strain_energy","Visualization of strain energy in analyzed sd model");
 		sd.topologyOptimization("SIMP",0.5,1.5,3,0.2,1e-2);
-		visualize(sd,"density","Visualization of densities in topology optimized sd model");
+		visualize(sd,"density","Visualization of densities in topology optimized sd model using SIMP algorithm");
+		sd.topologyOptimization("robust",0.5,1.5,3,0.2,1e-2);
+		visualize(sd,"density","Visualization of densities in topology optimized sd model using robust algorithm");
 	}
 	
 	BOOST_AUTO_TEST_CASE( end_visualization )

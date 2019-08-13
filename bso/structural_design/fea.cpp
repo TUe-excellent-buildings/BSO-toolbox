@@ -40,6 +40,40 @@ namespace bso { namespace structural_design {
 		}
 	} // simplicialLLT()
 	
+	void fea::simplicialLDLT()
+	{
+		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double> > solver;
+		solver.compute(mGSM);
+		if (solver.info() != Eigen::Success)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nWhen solving an FEA system with SimplicialLDLT,\n"
+									 << "Could not decompose the GSM\n"
+									 << "(bso/structural_design/fea.cpp)" << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+		
+		for (auto& lc : mLoadCases)
+		{
+			try
+			{
+				mDisplacements[lc] = solver.solve(mLoads[lc]);
+				if (solver.info() != Eigen::Success)
+				{
+					throw std::runtime_error("Solver failed");
+				}
+			}
+			catch (std::exception& e)
+			{
+				std::stringstream errorMessage;
+				errorMessage << "\nWhen solving FEA system with SimplicialLDLT for load case: " << *lc << "\n"
+										 << "received the following error:\n" << e.what() << "\n"
+										 << "(bso/structural_design/fea.cpp)" << std::endl;
+				throw std::runtime_error(errorMessage.str());
+			}
+		}
+	} // simplicialLDLT()
+	
 	void fea::BiCGSTAB()
 	{
 		Eigen::BiCGSTAB<Eigen::SparseMatrix<double>, Eigen::DiagonalPreconditioner<double>> solver;
@@ -234,7 +268,9 @@ namespace bso { namespace structural_design {
 	void fea::solve(std::string solver /*= "SimplicialLLT"*/)
 	{
 		// solve the system with the specified solver
+		this->clearResponse();
 		if (solver == "SimplicialLLT") this->simplicialLLT();
+		else if (solver == "SimplicialLDLT") this->simplicialLDLT();
 		else if (solver == "BiCGSTAB") this->BiCGSTAB();
 		else if (solver == "scaledBiCGSTAB") this->scaledBiCGSTAB();
 		else 
@@ -258,6 +294,20 @@ namespace bso { namespace structural_design {
 			}
 		}		
 	} // solve()
+	
+	Eigen::VectorXd fea::getDisplacements(element::load_case* lc) const
+	{
+		auto dispSearch = mDisplacements.find(lc);
+		if (dispSearch == mDisplacements.end())
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nRequested displacements for unknown load case:\n"
+									 << *lc << "\n"
+									 << "(bso/structural_design/fea.cpp)" << std::endl;
+			throw std::invalid_argument(errorMessage.str());
+		}
+		return dispSearch->second;
+	}
 	
 } // namespace structural_design
 } // namespace bso

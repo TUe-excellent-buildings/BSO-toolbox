@@ -23,6 +23,7 @@ namespace bso { namespace structural_design {
 		
 		// solvers
 		void simplicialLLT();
+		void simplicialLDLT();
 		void BiCGSTAB();
 		void scaledBiCGSTAB();
 	public:
@@ -35,8 +36,9 @@ namespace bso { namespace structural_design {
 		void generateGSM();
 		void clearResponse();
 		
-		void solve(std::string solver = "SimplicialLLT");
+		void solve(std::string solver = "SimplicialLDLT");
 		
+		Eigen::VectorXd getDisplacements(element::load_case* lc) const;
 		const std::vector<element::node*>& getNodes() const {return mNodes;}
 		std::vector<element::node*>& getNodes() {return mNodes;}
 		const std::vector<element::element*>& getElements() const {return mElements;}

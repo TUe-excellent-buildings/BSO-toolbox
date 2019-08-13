@@ -30,7 +30,7 @@ namespace bso { namespace structural_design {
 		component::geometry* addGeometry(const bso::utilities::geometry::quad_hexahedron& g);
 		
 		void mesh(const unsigned int& n);
-		void analyze(std::string solver = "SimplicialLLT");
+		void analyze(std::string solver = "SimplicialLDLT");
 		
 		void topologyOptimization(const std::string& algorithm, const double& f, 
 															const double& rMin, const double& penal, const double& xMove,
