@@ -18,9 +18,10 @@ void forcePThreadLink() {pthread_t t1; pthread_create(&t1,NULL,&simpleFunc,NULL)
 #include <bso/visualization/models/cf_building.hpp>
 #endif // CF_BUILDING_HPP
 
-#ifdef BP_MODEL_HPP
+#ifdef BSO_BP_MODEL_HPP
 #include <bso/building_physics/bp_model.hpp>
-#endif // BP_MODEL_HPP
+#include <bso/visualization/models/bp_model.hpp>
+#endif // BSO_BP_MODEL_HPP
 
 #ifdef SD_MODEL_HPP
 #include <bso/structural_design/sd_model.hpp>
@@ -172,19 +173,14 @@ void visualize(const spatial_design::cf_building& cf, std::string type, std::str
 	vpmanager.addviewport(new viewport(new Conformal_Model(cf, type, title)));
 }
 #endif // CF_BUILDING_HPP
-/*
-#ifdef BP_MODEL_HPP
-void visualize(const building_physics::bp_model& bp_model)
-{
-	vpmanager.addviewport(new viewport(new BP_Model(bp_model)));
-}
 
-void visualize(const building_physics::bp_results& bp_results)
+#ifdef BSO_BP_MODEL_HPP
+void visualize(const bso::building_physics::bp_model& bp_model, const std::string& title = "bp_model")
 {
-	vpmanager.addviewport(new viewport(new MS_Model(bp_results)));
+	vpmanager.addviewport(new viewport(new BP_Model(bp_model,title)));
 }
 #endif // BP_MODEL_HPP
-*/
+
 #ifdef SD_MODEL_HPP
 void visualize(const bso::structural_design::sd_model& sd, const std::string& type ="component",
 							 const std::string& title ="sd_model", const bool& ghostly = false)

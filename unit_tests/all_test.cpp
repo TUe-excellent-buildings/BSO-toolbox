@@ -11,3 +11,4 @@
 #include <unit_tests/spatial_design/sc_building_test.cpp>
 #include <unit_tests/spatial_design/conformal_test.cpp>
 #include <unit_tests/structural_design/structural_design_test.cpp>
+#include <unit_tests/building_physics/building_physics_test.cpp>

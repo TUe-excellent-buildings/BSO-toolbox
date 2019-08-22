@@ -16,10 +16,11 @@ CONFORMAL 	= $(BSO)/unit_tests/spatial_design/conformal_test.cpp
 TRIM_CAST   = $(BSO)/unit_tests/utilities/trim_and_cast_test.cpp
 GEOMETRY		= $(BSO)/unit_tests/utilities/geometry_test.cpp
 STRUCT_DES	= $(BSO)/unit_tests/structural_design/structural_design_test.cpp
+BUILD_PHYS  = $(BSO)/unit_tests/building_physics/building_physics_test.cpp
 VISUALIZE   = $(BSO)/unit_tests/visualization/visualization_test.cpp
 BSO_ALL			= $(BSO)/unit_tests/all_test.cpp
 
-.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry structural_design clean visualization
+.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry building_physics structural_design clean visualization
 
 #make arguments
 cls:
@@ -42,6 +43,8 @@ geometry:
 	$(CPP) -o geometry_test $(ALL_LIB) $(GEOMETRY) $(FLAGS)
 structural_design:
 	$(CPP) -o sd_test $(ALL_LIB) $(STRUCT_DES) $(FLAGS)
+building_physics:
+	$(CPP) -o bp_test $(ALL_LIB) $(BUILD_PHYS) $(FLAGS)
 visualization:
 	$(CPP) -o vis_test $(ALL_LIB) $(VISUALIZE) $(FLAGS)
 clean:
@@ -52,5 +55,6 @@ clean:
 	@rm -f trim_cast_test
 	@rm -f geometry_test
 	@rm -f sd_test
+	@rm -f bp_test
 	@rm -f all_test
 	@rm -f vis_test

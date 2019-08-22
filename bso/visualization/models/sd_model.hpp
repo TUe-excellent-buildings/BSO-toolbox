@@ -371,10 +371,8 @@ void SD_Model::render(const camera &cam) const
 
 	pbsp->render_btf(cam);
 
-	for (auto lbit = labels.begin(); lbit != labels.end(); lbit++)
-	{
-		(*lbit)->render();
-	}
+	for (auto& i : labels) i->render();
+	
 	glPopAttrib();
 }
 

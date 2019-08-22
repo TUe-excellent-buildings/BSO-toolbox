@@ -1,5 +1,5 @@
 #ifndef BOOST_TEST_MODULE
-#define BOOST_TEST_MODULE "sd_analysis"
+#define BOOST_TEST_MODULE "sd_model_test"
 #endif
 
 #include <boost/test/included/unit_test.hpp>

@@ -8,6 +8,7 @@
 #include <bso/spatial_design/sc_building.hpp>
 #include <bso/spatial_design/cf_building.hpp>
 #include <bso/structural_design/sd_model.hpp>
+#include <bso/building_physics/bp_model.hpp>
 
 #include <bso/visualization/visualization.hpp>
 
@@ -174,6 +175,71 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		visualize(sd,"density","Visualization of densities in topology optimized sd model using SIMP algorithm");
 		sd.topologyOptimization("robust",0.5,1.5,3,0.2,1e-2);
 		visualize(sd,"density","Visualization of densities in topology optimized sd model using robust algorithm");
+	}
+	
+	BOOST_AUTO_TEST_CASE( bp_model_visualization )
+	{
+		using namespace bso::building_physics;
+		bp_model bp;
+		bso::utilities::geometry::quad_hexahedron bpGeom({
+			{0,0,0},{3000,0,0},{3000,3000,0},{0,3000,0},
+			{0,0,3000},{3000,0,3000},{3000,3000,3000},{0,3000,3000}
+		});
+		
+		// weather profile
+		state::weather_profile* wp = new  state::weather_profile(bp.getNextIndependentIndex());
+		bp.addState(wp);
+		
+		// ground profile
+		state::ground_profile* gp = new state::ground_profile(bp.getNextIndependentIndex(),10);
+		bp.addState(gp);
+		
+		// space
+		bso::building_physics::properties::space_settings spaceSettings("testSpace",100,0,20,22,1.0);
+		auto spacePtr = new state::space(bp.getNextDependentIndex(),&bpGeom,
+					spaceSettings, wp); 
+		bp.addState(spacePtr);
+		
+		// walls and windows
+		Eigen::Vector4d wallVisProp, floorVisProp, windowVisProp;
+		windowVisProp << 0.1,		0.5,		0.71,		0.35;
+		floorVisProp << 0.35,		0.72,		0.35,		1.0;
+		wallVisProp << 0.72,		0.35,		0.06,		1.0;
+		bso::building_physics::properties::material m1("mat1","concrete",2400,850,1.8);
+		bso::building_physics::properties::material m2("mat2","insulation",60,850,0.04);
+		std::vector<bso::building_physics::properties::layer> layers = {
+			bso::building_physics::properties::layer(m1,100),
+			bso::building_physics::properties::layer(m2,50)};
+		bso::building_physics::properties::construction wallConstruction("testWall",layers,0.5,{"wallVis",wallVisProp});
+		bso::building_physics::properties::construction floorConstruction("testFloor",layers,0.5,{"floorVis",floorVisProp});
+		bso::building_physics::properties::glazing windowGlazing("testGlass",1.2,3e4,{"windowVis",windowVisProp});
+		
+		unsigned int counter = 0;
+		for (auto i = bpGeom.polygonBegin(); i != bpGeom.polygonEnd(); ++i)
+		{
+			if (counter == 5)
+			{
+				bp.addState(new state::floor(bp.getNextDependentIndex(),*i,floorConstruction,
+					spacePtr, gp));
+			}
+			else if (counter == 4)
+			{
+				bp.addState(new state::floor(bp.getNextDependentIndex(),*i,floorConstruction,
+					spacePtr, wp));
+			}
+			else if (counter == 0)
+			{
+				bp.addState(new state::window(bp.getNextDependentIndex(),*i,windowGlazing,
+					spacePtr, wp));
+			}
+			else
+			{
+				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+					spacePtr, wp));
+			}
+			counter++;
+		}
+		bso::visualization::visualize(bp,"test_model_building_physics_visualization");
 	}
 	
 	BOOST_AUTO_TEST_CASE( end_visualization )
