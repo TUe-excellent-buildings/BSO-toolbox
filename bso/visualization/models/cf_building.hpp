@@ -70,7 +70,7 @@ Conformal_Model::Conformal_Model(const bso::spatial_design::cf_building& cf,
 	
 	for (const auto& i : cf.cfSpaces())
 	{
-		this->addLabel(labels,&lbprops,std::to_string(0/*i->ID())*/),i->getCenter());
+		this->addLabel(labels,&lbprops,std::to_string(i->getSpaceID()),i->getCenter());
 	}
 
 	if (type == "line_segment")

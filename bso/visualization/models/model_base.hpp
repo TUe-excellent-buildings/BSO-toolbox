@@ -81,31 +81,43 @@ void model_base::addLineSegment(std::list<polygon*> &plist, bso::utilities::geom
 									const double& thickness /*= 0*/)
 {
 	auto vec = l->getVector();
+	auto widthDirCopy = widthDir;
+	auto widthCopy = width;
 	if (width <= 0)
 	{ // add only the line
-		// do nothing for now
+		widthDirCopy = {0,0,1000};
+		if (vec.isVertical())
+		{
+			widthDirCopy = {1,0,0};
+			widthDirCopy = vec.cross(widthDirCopy);
+		}
+		else
+		{
+			widthDirCopy = vec.cross(widthDirCopy);
+		}
+		widthDirCopy.normalize();
+		widthCopy = l->getLength()*1e-3;
 	}
-	else
+
+	if (widthDirCopy.isZero(1e-9) || !(vec.isPerpendicular(widthDirCopy,1e-9)))
 	{
-		if (widthDir.isZero(1e-9) || !(vec.isPerpendicular(widthDir,1e-9)))
-		{
-			std::stringstream errorMessage;
-			errorMessage << "\nError when trying to visualize a line segment.\n"
-									 << "Trying to create a higher dimensional visualization\n"
-									 << "without a valid directional vector.\n"
-									 << "(bso/vizualization/models/model_base)" << std::endl;
-			throw std::runtime_error(errorMessage.str());
-		}
-		std::vector<bso::utilities::geometry::vertex> widthVertices;
-		for (const auto& i : *l)
-		{
-			widthVertices.push_back(i + widthDir.normalized() * width / 2.0);
-			widthVertices.push_back(i - widthDir.normalized() * width / 2.0);
-		}
-	
-		bso::utilities::geometry::quadrilateral p = widthVertices;
-		this->addPolygon(plist,&p,pprops,lprops,thickness);
+		std::stringstream errorMessage;
+		errorMessage << "\nError when trying to visualize a line segment.\n"
+								 << "Trying to create a higher dimensional visualization\n"
+								 << "without a valid directional vector.\n"
+								 << "(bso/vizualization/models/model_base)" << std::endl;
+		throw std::runtime_error(errorMessage.str());
 	}
+	std::vector<bso::utilities::geometry::vertex> widthVertices;
+	for (const auto& i : *l)
+	{
+		widthVertices.push_back(i + widthDirCopy.normalized() * widthCopy / 2.0);
+		widthVertices.push_back(i - widthDirCopy.normalized() * widthCopy / 2.0);
+	}
+
+	bso::utilities::geometry::quadrilateral p = widthVertices;
+	this->addPolygon(plist,&p,pprops,lprops,thickness);
+
 } // 
 
 void model_base::addPolygon(std::list<polygon*> &plist, bso::utilities::geometry::polygon const* p,

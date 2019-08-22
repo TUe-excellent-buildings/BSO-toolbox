@@ -7,7 +7,7 @@ namespace bso { namespace spatial_design { namespace conformal {
 										 public cf_building_entity
 	{
 	private:
-		
+		std::string mSurfaceType;
 	public:
 		cf_surface(const utilities::geometry::quadrilateral& rhs, cf_building_model* buildingModel);
 		
@@ -20,6 +20,9 @@ namespace bso { namespace spatial_design { namespace conformal {
 		void addPoint					(cf_point*			pPtr	) = delete;
 		void addEdge					(cf_edge*				ePtr	) = delete;
 		void addSurface				(cf_surface*		srfPtr) = delete;
+		
+		void setSurfaceType(const std::string& surfaceType) {mSurfaceType = surfaceType;}
+		const std::string& getSurfaceType() const {return mSurfaceType;}
 
 		const std::vector<cf_vertex*		>& cfVertices() 	const { return mCFVertices;}
 		const std::vector<cf_line*			>& cfLines() 			const { return mCFLines;}

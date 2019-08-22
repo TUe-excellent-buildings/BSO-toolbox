@@ -32,7 +32,8 @@ namespace bso { namespace utilities { namespace geometry {
 	
 	bool vector::isVertical(const double& tol /*= 1e-3*/) const
 	{ // checks if the vector is vertical
-		return this->isCodirectional({0,0,1}, tol);
+		return (this->isCodirectional({0,0,1}, tol) ||
+						this->isCodirectional({0,0,-1},tol));
 	} // isVertical()
 	
 	bool vector::isHorizontal(const double& tol /*= 1e-3*/) const

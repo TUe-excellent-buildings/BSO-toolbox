@@ -111,6 +111,11 @@ BOOST_AUTO_TEST_SUITE( cf_building_tests )
 			if (!found) std::cout << "Did not find cuboid: " << i << std::endl; 
 			BOOST_REQUIRE(found);
 		}
+		std::stringstream typeAssignments;
+		for (const auto& i : cf.cfSpaces()) typeAssignments << i->getSpaceType();
+		for (const auto& i : cf.cfSurfaces()) typeAssignments << i->getSurfaceType();
+
+		BOOST_REQUIRE(typeAssignments.str() == "ADEBCGF");
 	}
 	
 	BOOST_AUTO_TEST_CASE( cf_test_2_txt )

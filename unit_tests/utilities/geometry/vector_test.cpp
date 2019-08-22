@@ -87,12 +87,14 @@ BOOST_AUTO_TEST_SUITE( vector_tests )
 		vector v3 = {0,0.01,1};
 		vector v4 = {0,1,1};
 		vector v5 = {0,1,0};
+		vector v6 = {0,0,-1};
 		
 		BOOST_REQUIRE(v1.isVertical());
 		BOOST_REQUIRE(v2.isVertical());
 		BOOST_REQUIRE(v3.isVertical(1e-1));
 		BOOST_REQUIRE(!v4.isVertical());
 		BOOST_REQUIRE(!v5.isVertical());
+		BOOST_REQUIRE(v6.isVertical());
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_horizontal ) {

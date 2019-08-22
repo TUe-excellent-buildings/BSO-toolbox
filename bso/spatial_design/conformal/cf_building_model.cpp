@@ -23,6 +23,12 @@ namespace bso { namespace spatial_design { namespace conformal {
 		}
 		
 		mCFSpaces.push_back(new cf_space(cornerPoints, this));
+		mCFSpaces.back()->setSpaceID(msSpace.getID());
+		std::string possibleSpaceType;
+		if (msSpace.getSpaceType(possibleSpaceType))
+		{
+			mCFSpaces.back()->setSpaceType(possibleSpaceType);
+		}
 
 		auto spPtr = mCFSpaces.back();
 		for (auto i = spPtr->begin(); i != spPtr->end(); ++i)
@@ -39,11 +45,25 @@ namespace bso { namespace spatial_design { namespace conformal {
 			spPtr->addEdge(mCFEdges.back());
 		}
 		
+		std::vector<std::string> possibleSurfaceTypes;
+		bool surfaceTypesAvailable = msSpace.getSurfaceTypes(possibleSurfaceTypes);
+		if (surfaceTypesAvailable)
+		{
+			std::swap(possibleSurfaceTypes[0],possibleSurfaceTypes[2]);
+			std::swap(possibleSurfaceTypes[1],possibleSurfaceTypes[3]);
+			std::swap(possibleSurfaceTypes[4],possibleSurfaceTypes[5]);
+		}
+		auto typeIte = possibleSurfaceTypes.begin();
 		for (auto i = spPtr->polygonBegin(); i != spPtr->polygonEnd(); ++i)
 		{
 			mCFSurfaces.push_back(new cf_surface(**i, this));
 			mCFSurfaces.back()->addSpace(spPtr);
 			spPtr->addSurface(mCFSurfaces.back());
+			if (surfaceTypesAvailable)
+			{
+				mCFSurfaces.back()->setSurfaceType(*typeIte);
+				++typeIte;
+			}
 		}
 	} // 
 	
