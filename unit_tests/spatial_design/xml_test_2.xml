@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gebouwmodel versie="1.0" naam="">
+  <constructies>
+    <constructie naam="rechthoek_1" id="1">
+      <geometrie type="vlak">0 0 0 1000 0 0 1000 0 3000 0 0 3000</geometrie>
+    </constructie>
+    <constructie naam="rechthoek_2" id="2">
+      <geometrie type="vlak">1000 0 0 1000 2000 0 1000 2000 3000 1000 0 3000</geometrie>
+    </constructie>
+    <constructie naam="rechthoek_3" id="3">
+      <geometrie type="vlak">1000 2000 0 0 2000 0 0 2000 3000 1000 2000 3000</geometrie>
+    </constructie>
+    <constructie naam="rechthoek_4" id="4">
+      <geometrie type="vlak">0 2000 0 0 0 0 0 0 3000 0 2000 3000</geometrie>
+    </constructie>
+    <constructie naam="rechthoek_5" id="5">
+      <geometrie type="vlak">0 0 0 1000 0 0 1000 2000 0 0 2000 0</geometrie>
+    </constructie>
+    <constructie naam="rechthoek_6" id="6">
+      <geometrie type="vlak">0 0 3000 1000 0 3000 1000 2000 3000 0 2000 3000</geometrie>
+    </constructie>
+  </constructies>
+  <ruimtes>
+    <ruimte naam="simpel" id="1">
+      <constructieids>1 2 3 4 5 6</constructieids>
+    </ruimte>
+  </ruimtes>
+</gebouwmodel>

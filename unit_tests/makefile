@@ -19,8 +19,10 @@ STRUCT_DES	= $(BSO)/unit_tests/structural_design/structural_design_test.cpp
 BUILD_PHYS  = $(BSO)/unit_tests/building_physics/building_physics_test.cpp
 VISUALIZE   = $(BSO)/unit_tests/visualization/visualization_test.cpp
 BSO_ALL			= $(BSO)/unit_tests/all_test.cpp
+XML				  = $(BSO)/unit_tests/spatial_design/xml/xml_test.cpp
+DATA				= $(BSO)/unit_tests/utilities/data_handling_test.cpp
 
-.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry building_physics structural_design clean visualization
+.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry building_physics structural_design clean visualization xml data
 
 #make arguments
 cls:
@@ -47,6 +49,10 @@ building_physics:
 	$(CPP) -o bp_test $(ALL_LIB) $(BUILD_PHYS) $(FLAGS)
 visualization:
 	$(CPP) -o vis_test $(ALL_LIB) $(VISUALIZE) $(FLAGS)
+xml:
+	$(CPP) -o xml_test $(ALL_LIB) $(XML) $(FLAGS)
+data:
+	$(CPP) -o data_test $(ALL_LIB) $(DATA) $(FLAGS)
 clean:
 	@rm -f ms_space_test
 	@rm -f ms_building_test
@@ -58,3 +64,5 @@ clean:
 	@rm -f bp_test
 	@rm -f all_test
 	@rm -f vis_test
+	@rm -f xml_test
+	@rm -f data_test
