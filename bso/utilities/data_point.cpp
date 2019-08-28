@@ -36,6 +36,11 @@ data_point::data_point() : mData(Eigen::VectorXd())
 	
 } // ctor()
 
+data_point::data_point(const unsigned int& size) : mData(Eigen::VectorXd::Zero(size))
+{
+	
+} // ctor()
+
 data_point::data_point(const Eigen::VectorXd& data) : mData(data)
 {
 	
@@ -78,6 +83,29 @@ double data_point::calcDistanceTo(const data_point& p2) const
 	}
 	return distance;
 } // calcDistanceTo()
+
+double data_point::calcSquaredDistanceTo(const data_point& p2) const
+{
+	double squaredDistance = 0.0;
+	try 
+	{
+		this->mCheckValidDimensions(p2);
+		squaredDistance = (mData - p2.mData).squaredNorm();
+	}
+	catch(std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, while calculating squared distance between data points:\n"
+								 << mData.transpose()
+								 << "\nand:\n"
+								 << p2.mData.transpose()
+								 << "\nreceived the following error:"
+								 << e.what()
+								 << "(bso/utilities/data_point.hpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return squaredDistance;
+}
 
 void data_point::normalize(const data_point& pStart, const data_point& pEnd)
 {
@@ -178,26 +206,27 @@ std::vector<data_point> data_point::findClosestIn(const CONTAINER& dataCollectio
 	std::vector<data_point> closest;
 	try
 	{
+		if (std::distance(dataCollection.begin(),dataCollection.end()) == 0)
+		{
+			throw std::invalid_argument("Container is empty.");
+		}
 		double smallestDistance = 0;
 		for (const auto& i : dataCollection)
 		{
 			smallestDistance = this->calcDistanceTo(i);
 			if (smallestDistance != 0) break;
 		}
-		if (smallestDistance == 0)
-		{
-			throw std::invalid_argument("Container is either empty or is filled with the same data point.");
-		}
 		for (const auto& i : dataCollection)
 		{
 			double distance = this->calcDistanceTo(i);
-			if ((distance/smallestDistance - 1) < -tol)
+			if ((distance == 0 && smallestDistance == 0) || 
+					(smallestDistance != 0 && (distance/smallestDistance - 1) < -tol))
 			{
 				closest.clear();
 				closest.push_back(i);
 				smallestDistance = distance;
 			}
-			else if ((distance/smallestDistance - 1) < tol)
+			else if (smallestDistance != 0 && (distance/smallestDistance - 1) < tol)
 			{
 				closest.push_back(i);
 			}
@@ -223,26 +252,27 @@ std::vector<data_point> data_point::findFurthestIn(const CONTAINER& dataCollecti
 	std::vector<data_point> furthest;
 	try
 	{
+		if (std::distance(dataCollection.begin(),dataCollection.end()) == 0)
+		{
+			throw std::invalid_argument("Container is empty.");
+		}
 		double largestDistance = 0;
 		for (const auto& i : dataCollection)
 		{
 			largestDistance = this->calcDistanceTo(i);
 			if (largestDistance != 0) break;
 		}
-		if (largestDistance == 0)
-		{
-			throw std::invalid_argument("Container is either empty or is filled with the same data point.");
-		}
 		for (const auto& i : dataCollection)
 		{
 			double distance = this->calcDistanceTo(i);
-			if ((distance/largestDistance - 1) > tol)
+			if ((distance == 0 && largestDistance == 0) || 
+					(largestDistance != 0 && (distance/largestDistance - 1) > tol))
 			{
 				furthest.clear();
 				furthest.push_back(i);
 				largestDistance = distance;
 			}
-			else if ((distance/largestDistance - 1) > -tol)
+			else if (largestDistance != 0 && (distance/largestDistance - 1) > -tol)
 			{
 				furthest.push_back(i);
 			}
@@ -268,6 +298,354 @@ std::ostream& operator << (std::ostream& stream, const data_point& p)
 	return stream;
 }
 
+data_point data_point::operator + (const data_point& rhs) const
+{
+	data_point addition = *this;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		addition += rhs;
+	}
+	catch ( std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use + operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return addition;
+}
+
+data_point data_point::operator - (const data_point& rhs) const
+{
+	data_point subtraction = *this;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		subtraction -= rhs;
+	}
+	catch ( std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use - operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return subtraction;
+}
+
+data_point& data_point::operator += (const data_point& rhs)
+{
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		mData += rhs.mData;
+	}
+	catch ( std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use += operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return *this;
+}
+
+data_point& data_point::operator -= (const data_point& rhs)
+{
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		mData -= rhs.mData;
+	}
+	catch (std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use -= operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return *this;
+}
+
+data_point data_point::operator * (const double& rhs) const
+{
+	data_point product = *this;
+	try
+	{
+		product *= rhs;
+	}
+	catch ( std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use * operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return product;
+}
+
+data_point data_point::operator / (const double& rhs) const
+{
+	data_point division = *this;
+	try
+	{
+		division /= rhs;
+	}
+	catch ( std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use / operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return division;
+}
+
+data_point& data_point::operator *= (const double& rhs)
+{
+	try
+	{
+		mData *= rhs;
+	}
+	catch ( std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use *= operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return *this;
+}
+
+data_point& data_point::operator /= (const double& rhs)
+{
+	try
+	{
+		mData /= rhs;
+	}
+	catch ( std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use /= operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return *this;
+}
+
+bool data_point::operator <= (const data_point& rhs) const
+{
+	bool check = true;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		for (unsigned int i = 0; i < mData.size(); ++i)
+		{
+			if (mData(i) > rhs.mData(i))
+			{
+				check = false;
+				break;
+			}
+		}
+	}
+	catch(std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use <= operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // operator <=
+
+bool data_point::operator >= (const data_point& rhs) const
+{
+	bool check = true;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		for (unsigned int i = 0; i < mData.size(); ++i)
+		{
+			if (mData(i) < rhs.mData(i))
+			{
+				check = false;
+				break;
+			}
+		}
+	}
+	catch(std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use >= operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // operator >=
+
+bool data_point::operator < (const data_point& rhs) const
+{
+	bool check;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		check = !(this->operator >= (rhs));
+	}
+	catch(std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use < operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // operator <
+ 
+bool data_point::operator > (const data_point& rhs) const
+{
+	bool check;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		check = !(this->operator <= (rhs));
+	}
+	catch(std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use > operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // operator >
+ 
+bool data_point::operator == (const data_point& rhs) const
+{
+	bool check = true;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		for (unsigned int i = 0; i < mData.size(); ++i)
+		{
+			if ((mData(i) < rhs.mData(i)) || (mData(i) > rhs.mData(i)))
+			{
+				check = false;
+				break;
+			}
+		}
+	}
+	catch(std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use == operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // operator ==
+ 
+bool data_point::operator != (const data_point& rhs) const
+{
+	bool check = true;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		check = !(this->operator == (rhs));
+	}
+	catch(std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, trying to use != operator on data_point,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // operator !=
+
+bool data_point::isApproximately(const data_point& rhs,
+	const double tol /*= 1e-3*/) const
+{
+	bool check;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		check = mData.isApprox(rhs.mData,tol);
+	}
+	catch (std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, checking if two data points are approximately equal,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // isApproximately()
+
+bool data_point::dominates(const data_point& rhs) const
+{
+	bool check = false;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		for (unsigned int i = 0; i < mData.size(); ++i)
+		{
+			if (mData(i) > rhs.mData(i))
+			{ // this point is worse in at least one dimension
+				check = false;
+				break;
+			}
+			if (!check && mData(i) < rhs.mData(i))
+			{ // this point is better in at least one dimension
+				check = true;
+			}
+		}
+	}
+	catch (std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, while checking if data_point dominates another,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // dominates()
+
+bool data_point::isDominatedBy(const data_point& rhs) const
+{
+	bool check;
+	try
+	{
+		this->mCheckValidDimensions(rhs);
+		check = rhs.dominates(*this);
+	}
+	catch (std::exception& e)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, while checking if data_point is dominates by another,\n"
+								 << "received the following error: " << e.what() << "\n"
+								 << "(bso/utilities/data_point.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	return check;
+} // isDominatedBy()
+ 
 } // namespace utilities
 } // namespace bso
 
