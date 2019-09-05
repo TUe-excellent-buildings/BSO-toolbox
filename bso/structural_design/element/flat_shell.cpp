@@ -266,7 +266,7 @@ namespace bso { namespace structural_design { namespace element {
 		
 	} // dtor
 	
-	void flat_shell::computeResponse(load_case* lc)
+	void flat_shell::computeResponse(load_case lc)
 	{
 		Eigen::VectorXd elementDisplacements(mSM.rows());
 		elementDisplacements.setZero();
@@ -298,7 +298,7 @@ namespace bso { namespace structural_design { namespace element {
 		mTotalEnergy = 0;
 	} // clearResponse()
 	
-	const double& flat_shell::getEnergy(load_case* lc, const std::string& type /*= ""*/) const
+	const double& flat_shell::getEnergy(load_case lc, const std::string& type /*= ""*/) const
 	{
 		if (type == "")
 		{
@@ -320,7 +320,7 @@ namespace bso { namespace structural_design { namespace element {
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, when retrieving energies from a flat shell element.\n"
-									 << "Could not find it for load case: " << *lc << "\n"
+									 << "Could not find it for load case: " << lc << "\n"
 									 << "(bso/structural_design/element/flat_shell.cpp)" << std::endl;
 			throw std::invalid_argument(errorMessage.str());
 		}

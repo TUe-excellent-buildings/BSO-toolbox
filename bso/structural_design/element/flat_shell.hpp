@@ -16,7 +16,7 @@ namespace bso { namespace structural_design { namespace element {
 		
 		Eigen::MatrixXd mT;
 		
-		std::map<load_case*, std::map<std::string, double>> mSeparatedEnergies;
+		std::map<load_case, std::map<std::string, double>> mSeparatedEnergies;
 		
 		template<class CONTAINER>
 		void deriveStiffnessMatrix(CONTAINER& l);
@@ -28,10 +28,10 @@ namespace bso { namespace structural_design { namespace element {
 							 std::initializer_list<node*>&& l, const double ERelativeLowerBound = 1e-6, const double geomTol = 1e-3);
 		~flat_shell();
 		
-		void computeResponse(load_case* lc);
+		void computeResponse(load_case lc);
 		void clearResponse();
 		
-		const double& getEnergy(load_case* lc, const std::string& type = "") const;
+		const double& getEnergy(load_case lc, const std::string& type = "") const;
 		
 		double getProperty(std::string var) const;
 		double getVolume() const;

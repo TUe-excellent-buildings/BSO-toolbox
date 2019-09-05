@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		p4->addConstraint(c0); p4->addConstraint(c1); p4->addConstraint(c2);
 		
 		component::load_case lc1("vertical load");
-		component::load l1(&lc1,-0.2,1);
+		component::load l1(lc1,-0.2,1);
 		p2->addLoad(l1);
 		
 		auto geom1 = sd1.addGeometry(geom::line_segment({*p2,*p1}));
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		sd1.mesh(2); // trusses should still be meshe into one element
 		sd1.analyze();
 		
-		auto displacements = sd1.getFEA()->getNodes()[1]->getDisplacements(&lc1);
+		auto displacements = sd1.getFEA()->getNodes()[1]->getDisplacements(lc1);
 		Eigen::Vector6d checkDisp;
 		checkDisp << 0,-8.693e-6,0,0,0,0;
 
@@ -160,9 +160,9 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		component::constraint c5(5); p1->addConstraint(c5);
 		
 		component::load_case lc1("vertical load");
-		component::load l1(&lc1, 300,0);
-		component::load l2(&lc1,-200,1);
-		component::load l3(&lc1, 400,2);
+		component::load l1(lc1, 300,0);
+		component::load l2(lc1,-200,1);
+		component::load l3(lc1, 400,2);
 		p2->addLoad(l1);
 		p2->addLoad(l2);
 		p2->addLoad(l3);
@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		Eigen::Vector6d checkDisp;
 		checkDisp << 2.625e-4,-0.8575,0.107188,1.04917e-22,-4.59375e-5,-3.675e-4;
 
-		BOOST_REQUIRE(checkDisp.isApprox(checkNode->getDisplacements(&lc1),1e-4));
+		BOOST_REQUIRE(checkDisp.isApprox(checkNode->getDisplacements(lc1),1e-4));
 	}
 	
 	BOOST_AUTO_TEST_CASE( topopt_SIMP )
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		component::constraint c5(5);
 		
 		component::load_case lc1("vertical load");
-		component::load l1(&lc1, 1,1);
+		component::load l1(lc1, 1,1);
 		
 		component::structure str1("flat_shell",{{"E",1},{"thickness",1},{"poisson",0.3}});
 		

@@ -22,6 +22,47 @@ namespace bso { namespace structural_design {
 	{
 		
 	} // ctor()
+	
+	sd_model::sd_model(const sd_model& rhs)
+	{
+		for (const auto& i : rhs.mPoints)
+		{
+			this->addPoint(*i);
+		}
+		for (const auto& i : rhs.mGeometries)
+		{
+			// copy the geometry
+			structural_design::component::geometry* newSDGeom;
+			if (i->isLineSegment())
+			{
+				auto linePtr = dynamic_cast<utilities::geometry::line_segment*>(i);
+				newSDGeom = this->addGeometry(*linePtr);
+			}
+			else if(i->isQuadrilateral())
+			{
+				auto quadPtr = dynamic_cast<utilities::geometry::quadrilateral*>(i);
+				newSDGeom = this->addGeometry(*quadPtr);
+			}
+			else if (i->isQuadHexahedron())
+			{
+				auto quadHexPtr = dynamic_cast<utilities::geometry::quad_hexahedron*>(i);
+				newSDGeom = this->addGeometry(*quadHexPtr);
+			}
+			else 
+			{
+				std::stringstream errorMessage;
+				errorMessage << "\nError, while copying a structural model, did not\n"
+										 << "recognize one of its geometries.\n"
+										 << "(bso/structural_design/sd_model.cpp)" << std::endl;
+				throw std::invalid_argument(errorMessage.str());
+			}
+			// add the possible structure, loads, and constraints to the geoemtry
+			for (const auto& j : i->getStructures()) newSDGeom->addStructure(j);
+			for (const auto& j : i->getLoads()) newSDGeom->addLoad(j);
+			for (const auto& j : i->getConstraints()) newSDGeom->addConstraint(j);
+		}
+		mMeshSize = rhs.mMeshSize;
+	}
 
 	sd_model::~sd_model()
 	{
@@ -86,6 +127,23 @@ namespace bso { namespace structural_design {
 		mGeometries.push_back(new component::quad_hexahedron(g));
 		return mGeometries.back();
 	} // addGeometry(line_segment)
+	
+	void sd_model::setMeshSize(const unsigned int& n)
+	{
+		if (n == 0)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nErrro, cannot set mesh size to zero,\n"
+									 << "(bso/structural_design/sd_model.cpp)" << std::endl;
+			throw std::invalid_argument(errorMessage.str());
+		}
+		mMeshSize = n;
+	} // setMeshSize()
+	
+	void sd_model::mesh()
+	{
+		this->mesh(mMeshSize);
+	} // mesh
 
 	void sd_model::mesh(const unsigned int& n)
 	{
@@ -242,6 +300,22 @@ namespace bso { namespace structural_design {
 
 	void sd_model::analyze(std::string solver /*= : SimplicialLLT*/)
 	{
+		if (!mIsMeshed)
+		{
+			try 
+			{
+				this->mesh();
+			}
+			catch(std::exception& e)
+			{
+				std::stringstream errorMessage;
+				errorMessage << "\nWhen analyzing an unmeshed structural design model,\n"
+										 << "failed to mesh the model, received the following exception:\n"
+										 << e.what() << "\n"
+										 << "(bso/structural_design/sd_model.cpp)" << std::endl;
+				throw std::runtime_error(errorMessage.str());
+			}
+		}
 		try
 		{
 			mFEA->solve(solver);

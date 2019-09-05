@@ -62,7 +62,7 @@ namespace bso { namespace structural_design { namespace element {
 
 	} //
 	
-	void node::addDisplacements(const std::map<component::load_case*, Eigen::VectorXd>& displacements)
+	void node::addDisplacements(const std::map<component::load_case, Eigen::VectorXd>& displacements)
 	{
 		mDisplacements.clear();
 		for (const auto& i : displacements)
@@ -80,7 +80,7 @@ namespace bso { namespace structural_design { namespace element {
 		}
 	}
 	
-	void node::addLoadCase(load_case* lc)
+	void node::addLoadCase(load_case lc)
 	{
 		mLoads[lc] = Eigen::Vector6d::Zero();
 	} // addLoadCase()
@@ -90,14 +90,14 @@ namespace bso { namespace structural_design { namespace element {
 		mDisplacements.clear();
 	} // clearDisplacements()
 	
-	Eigen::Vector6d node::getDisplacements(component::load_case* lc) const
+	Eigen::Vector6d node::getDisplacements(component::load_case lc) const
 	{
 		auto lcSearch = mDisplacements.find(lc);
 		if (lcSearch == mDisplacements.end())
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, could not access displacements for load case:\n"
-									 << *lc << ".\n"
+									 << lc << ".\n"
 									 << "In node: " << *this << ".\n"
 									 << "(bso/structural_design/element/node.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
@@ -105,14 +105,14 @@ namespace bso { namespace structural_design { namespace element {
 		return lcSearch->second; 
 	}
 	
-	Eigen::Vector6d node::getLoads(component::load_case* lc) const
+	Eigen::Vector6d node::getLoads(component::load_case lc) const
 	{
 		auto lcSearch = mLoads.find(lc);
 		if (lcSearch == mLoads.end())
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, could not access loads for load case:\n"
-									 << *lc << ".\n"
+									 << lc << ".\n"
 									 << "In node: " << *this << ".\n"
 									 << "(bso/structural_design/element/node.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
@@ -148,9 +148,9 @@ namespace bso { namespace structural_design { namespace element {
 		return mNFS[n];
 	}
 	
-	std::vector<component::load_case*> node::getLoadCases() const
+	std::vector<component::load_case> node::getLoadCases() const
 	{
-		std::vector<component::load_case*> temp;
+		std::vector<component::load_case> temp;
 		for (auto& i : mLoads) temp.push_back(i.first);
 		return temp;
 	} // get LoadCases()
@@ -195,7 +195,7 @@ namespace bso { namespace structural_design { namespace element {
 		return mNFT.find(localDOF)->second;
 	} //
 	
-	bool node::checkLoad(component::load_case* lc, const unsigned int& localDOF, double& load) const
+	bool node::checkLoad(component::load_case lc, const unsigned int& localDOF, double& load) const
 	{ 
 		if (mNFS(localDOF) == 1 && mConstraints(localDOF) == 0)
 		{

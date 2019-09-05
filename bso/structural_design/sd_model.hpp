@@ -18,10 +18,12 @@ namespace bso { namespace structural_design {
 		
 		fea* mFEA;
 		
+		unsigned int mMeshSize = 1;
 		bool mIsMeshed = false;
 		void clearMesh();
 	public:
 		sd_model();
+		sd_model(const sd_model& rhs);
 		~sd_model();
 		
 		component::point* addPoint(bso::utilities::geometry::vertex p);
@@ -29,6 +31,8 @@ namespace bso { namespace structural_design {
 		component::geometry* addGeometry(const bso::utilities::geometry::quadrilateral& g);
 		component::geometry* addGeometry(const bso::utilities::geometry::quad_hexahedron& g);
 		
+		void setMeshSize(const unsigned int& n);
+		void mesh();
 		void mesh(const unsigned int& n);
 		void analyze(std::string solver = "SimplicialLDLT");
 		

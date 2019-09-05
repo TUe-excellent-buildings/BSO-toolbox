@@ -21,8 +21,8 @@ namespace bso { namespace structural_design { namespace element {
 		std::map<unsigned int, unsigned long> mNFT; // nodal freedom table, contains the global indices of the node's DOFs
 		Eigen::Vector6i mNFS; // nodal freedom signature, for each local DOF index, contains info if it is active or not
 		Eigen::Vector6i mConstraints; // constraints, for each local DOF index, contains if it is constrained or not
-		std::map<component::load_case*, Eigen::Vector6d> mLoads; // indexe dby load case, contains for each local DOF index, the magnitude of the load
-		std::map<component::load_case*, Eigen::Vector6d> mDisplacements; // indexed by load case, contains for each local DOF index, the magnitude of the displacement
+		std::map<component::load_case, Eigen::Vector6d> mLoads; // indexe dby load case, contains for each local DOF index, the magnitude of the load
+		std::map<component::load_case, Eigen::Vector6d> mDisplacements; // indexed by load case, contains for each local DOF index, the magnitude of the displacement
 		
 		void initializeVariables();
 	public:
@@ -33,21 +33,21 @@ namespace bso { namespace structural_design { namespace element {
 		void updateNFS(const Eigen::Vector6i& EFS); // updates the nodal freedom signature with that of an element
 		void addConstraint(const unsigned int& localDOF); // adds a constraint to the local DOF
 		void addLoad(const load& l);
-		void addDisplacements(const std::map<component::load_case*, Eigen::VectorXd>& displacements);
-		void addLoadCase(load_case* lc);
+		void addDisplacements(const std::map<component::load_case, Eigen::VectorXd>& displacements);
+		void addLoadCase(load_case lc);
 		void clearDisplacements();
 
-		Eigen::Vector6d getDisplacements(component::load_case* lc) const;
-		Eigen::Vector6d getLoads(component::load_case* lc) const;
+		Eigen::Vector6d getDisplacements(component::load_case lc) const;
+		Eigen::Vector6d getLoads(component::load_case lc) const;
 		const int& getConstraint(const unsigned int& n) const;
 		const int& getNFS(const unsigned int& n) const;
 		const unsigned long& ID() const {return mID;}
-		std::vector<component::load_case*> getLoadCases() const;
+		std::vector<component::load_case> getLoadCases() const;
 		
 		void generateNFT(unsigned long& NFM); // this will map the local DOFs to the global DOFs of this node
 		unsigned long getGlobalDOF(const unsigned int& localDOF) const;
 		
-		bool checkLoad(component::load_case* lc, const unsigned int& localDOF, double& load) const;
+		bool checkLoad(component::load_case lc, const unsigned int& localDOF, double& load) const;
 	};
 
 } // namespace element

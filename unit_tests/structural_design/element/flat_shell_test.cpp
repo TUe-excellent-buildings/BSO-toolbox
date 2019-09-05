@@ -197,26 +197,26 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		bso::structural_design::component::load_case lc_test("test_case");
 		Eigen::VectorXd displacementValues(DOFCount);
 		displacementValues << 0,0.5,0,0,0,0,0.2,0,0,0,0,0,0.2,0,0,0.01,0,0.001,0,0,0,0,0,0;
-		std::map<bso::structural_design::component::load_case*, Eigen::VectorXd> displacements;
-		displacements[&lc_test] = displacementValues;
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacements;
+		displacements[lc_test] = displacementValues;
 		n1.addDisplacements(displacements);
 		n2.addDisplacements(displacements);
 		n3.addDisplacements(displacements);
 		n4.addDisplacements(displacements);
 
-		fs1.computeResponse(&lc_test);
-		BOOST_REQUIRE(abs(fs1.getEnergy(&lc_test)            / 1.62679e6 - 1) < 1e-5);
-		BOOST_REQUIRE(abs(fs1.getEnergy(&lc_test,"normal")   / 842491    - 1) < 1e-5);
-		BOOST_REQUIRE(abs(fs1.getEnergy(&lc_test,"shear")    / 160256    - 1) < 1e-5);
-		BOOST_REQUIRE(abs(fs1.getEnergy(&lc_test,"bending")  / 623855    - 1) < 1e-5);
-		BOOST_REQUIRE(abs((fs1.getEnergy(&lc_test,"normal")
-										 + fs1.getEnergy(&lc_test,"shear")
-										 + fs1.getEnergy(&lc_test,"bending")) / 1.6266e6  - 1) < 1e-5);
+		fs1.computeResponse(lc_test);
+		BOOST_REQUIRE(abs(fs1.getEnergy(lc_test)            / 1.62679e6 - 1) < 1e-5);
+		BOOST_REQUIRE(abs(fs1.getEnergy(lc_test,"normal")   / 842491    - 1) < 1e-5);
+		BOOST_REQUIRE(abs(fs1.getEnergy(lc_test,"shear")    / 160256    - 1) < 1e-5);
+		BOOST_REQUIRE(abs(fs1.getEnergy(lc_test,"bending")  / 623855    - 1) < 1e-5);
+		BOOST_REQUIRE(abs((fs1.getEnergy(lc_test,"normal")
+										 + fs1.getEnergy(lc_test,"shear")
+										 + fs1.getEnergy(lc_test,"bending")) / 1.6266e6  - 1) < 1e-5);
 										
 		bso::structural_design::component::load_case lc_invalid("invalid_case");
-		BOOST_REQUIRE_THROW(fs1.getEnergy(&lc_invalid), std::runtime_error);
-		BOOST_REQUIRE_THROW(fs1.getEnergy(&lc_invalid,"normal"), std::invalid_argument);
-		BOOST_REQUIRE_THROW(fs1.getEnergy(&lc_test,"bad_type"), std::invalid_argument);
+		BOOST_REQUIRE_THROW(fs1.getEnergy(lc_invalid), std::runtime_error);
+		BOOST_REQUIRE_THROW(fs1.getEnergy(lc_invalid,"normal"), std::invalid_argument);
+		BOOST_REQUIRE_THROW(fs1.getEnergy(lc_test,"bad_type"), std::invalid_argument);
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_1 )

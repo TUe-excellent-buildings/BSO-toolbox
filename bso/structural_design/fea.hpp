@@ -14,9 +14,9 @@ namespace bso { namespace structural_design {
 		std::vector<element::element*> mElements;
 		
 		unsigned long mDOFCount = 0;
-		std::vector<element::load_case*> mLoadCases;
-		std::map<element::load_case*,Eigen::VectorXd> mLoads;
-		std::map<element::load_case*,Eigen::VectorXd> mDisplacements;
+		std::vector<element::load_case> mLoadCases;
+		std::map<element::load_case,Eigen::VectorXd> mLoads;
+		std::map<element::load_case,Eigen::VectorXd> mDisplacements;
 		
 		Eigen::SparseMatrix<double> mGSM;
 		bool mSystemInitialized = false;
@@ -38,7 +38,7 @@ namespace bso { namespace structural_design {
 		
 		void solve(std::string solver = "SimplicialLDLT");
 		
-		Eigen::VectorXd getDisplacements(element::load_case* lc) const;
+		Eigen::VectorXd getDisplacements(element::load_case lc) const;
 		const std::vector<element::node*>& getNodes() const {return mNodes;}
 		std::vector<element::node*>& getNodes() {return mNodes;}
 		const std::vector<element::element*>& getElements() const {return mElements;}

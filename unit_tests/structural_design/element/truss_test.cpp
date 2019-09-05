@@ -153,14 +153,14 @@ BOOST_AUTO_TEST_SUITE( sd_truss_test )
 		bso::structural_design::component::load_case lc_test("test_case");
 		Eigen::VectorXd displacementValues(DOFCount);
 		displacementValues << 0.1,0,0.2,0,0;
-		std::map<bso::structural_design::component::load_case*, Eigen::VectorXd> displacements;
-		displacements[&lc_test] = displacementValues;
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacements;
+		displacements[lc_test] = displacementValues;
 		n1.addDisplacements(displacements);
 		n2.addDisplacements(displacements);
 		
-		t1.computeResponse(&lc_test);
+		t1.computeResponse(lc_test);
 		
-		BOOST_REQUIRE(abs(t1.getEnergy(&lc_test) - 0.005) < 1e-9);
+		BOOST_REQUIRE(abs(t1.getEnergy(lc_test) - 0.005) < 1e-9);
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_1 )

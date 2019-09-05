@@ -21,8 +21,9 @@ VISUALIZE   = $(BSO)/unit_tests/visualization/visualization_test.cpp
 BSO_ALL			= $(BSO)/unit_tests/all_test.cpp
 XML				  = $(BSO)/unit_tests/spatial_design/xml/xml_test.cpp
 DATA				= $(BSO)/unit_tests/utilities/data_handling_test.cpp
+GRAMMAR			= $(BSO)/unit_tests/grammar/grammar_test.cpp
 
-.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry building_physics structural_design clean visualization xml data
+.PHONY: all ms_space ms_building sc_building conformal trim_cast geometry building_physics structural_design clean visualization xml data grammar
 
 #make arguments
 cls:
@@ -53,6 +54,8 @@ xml:
 	$(CPP) -o xml_test $(ALL_LIB) $(XML) $(FLAGS)
 data:
 	$(CPP) -o data_test $(ALL_LIB) $(DATA) $(FLAGS)
+grammar:
+	$(CPP) -o grammar_test $(ALL_LIB) $(GRAMMAR) $(FLAGS)
 clean:
 	@rm -f ms_space_test
 	@rm -f ms_building_test
@@ -66,3 +69,4 @@ clean:
 	@rm -f vis_test
 	@rm -f xml_test
 	@rm -f data_test
+	@rm -f grammar_test

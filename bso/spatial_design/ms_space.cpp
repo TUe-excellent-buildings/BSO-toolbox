@@ -104,19 +104,7 @@ ms_space::ms_space(std::string line)
 		case 8: // only a space type has been defined
 		{
 			mSpaceType = *(++token);
-			boost::algorithm::trim(mSpaceType);
-			
-			if (mSpaceType == "" )
-			{
-				std::stringstream errorMessage;
-				errorMessage << std::endl
-										 << "Expected a space type while initializing an ms_space, got nothing for space with ID: " << mID << "." << std::endl
-										 << "When trying to parse the following input line: " << std::endl
-										 << line << std::endl
-										 << "(a) (bso/spatial_design/ms_space.cpp)" << std::endl;
-				throw std::invalid_argument(errorMessage.str());
-			}
-			
+			boost::algorithm::trim(mSpaceType);			
 			break;
 		}
 		case 13: // only surface types have been defind
@@ -126,17 +114,7 @@ ms_space::ms_space(std::string line)
 			{
 				mSpaceType = *(++token);
 				boost::algorithm::trim(mSpaceType);
-				
-				if (mSpaceType == "" )
-				{
-					std::stringstream errorMessage;
-					errorMessage << std::endl
-											 << "Expected a space type while initializing an ms_space, got nothing for space with ID: " << mID << "." << std::endl
-											 << "When trying to parse the following input line: " << std::endl
-											 << line << std::endl
-											 << "(bso/spatial_design/ms_space.cpp)" << std::endl;
-					throw std::invalid_argument(errorMessage.str());
-				}
+
 			}
 			
 			mSurfaceTypes.clear();
@@ -146,16 +124,6 @@ ms_space::ms_space(std::string line)
 			{
 				temp = *(++token);
 				boost::algorithm::trim(temp);
-				if (temp == "" )
-				{
-					std::stringstream errorMessage;
-					errorMessage << std::endl
-											 << "Expected a surface type while initializing an ms_space, got nothing for space with ID: " << mID << "." << std::endl
-											 << "When trying to parse the following input line: " << std::endl
-											 << line << std::endl
-											 << "(bso/spatial_design/ms_space.cpp)" << std::endl;
-					throw std::invalid_argument(errorMessage.str());
-				}
 				mSurfaceTypes.push_back(temp);
 			}
 

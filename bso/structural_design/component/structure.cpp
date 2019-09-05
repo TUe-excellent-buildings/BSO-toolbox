@@ -115,6 +115,10 @@ namespace bso { namespace structural_design { namespace component {
 			if (mHeightAssigned) additionalVariables.push_back("height");
 			if (mThicknessAssigned) additionalVariables.push_back("thickness");
 		}
+		else if (mType == "none")
+		{
+			// do nothing
+		}
 		else
 		{
 			std::stringstream errorMessage;
@@ -169,6 +173,11 @@ namespace bso { namespace structural_design { namespace component {
 			throw std::runtime_error(errorMessage.str());
 		}
 	} // badRequest()
+	
+	structure::structure()
+	{
+		mType = "none";
+	}
 	
 	template <class CONTAINER>
 	structure::structure(const std::string& type, const CONTAINER& l)

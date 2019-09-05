@@ -32,7 +32,7 @@ namespace bso { namespace structural_design {
 			catch (std::exception& e)
 			{
 				std::stringstream errorMessage;
-				errorMessage << "\nWhen solving FEA system with SimplicialLLT for load case: " << *lc << "\n"
+				errorMessage << "\nWhen solving FEA system with SimplicialLLT for load case: " << lc << "\n"
 										 << "received the following error:\n" << e.what() << "\n"
 										 << "(bso/structural_design/fea.cpp)" << std::endl;
 				throw std::runtime_error(errorMessage.str());
@@ -66,7 +66,7 @@ namespace bso { namespace structural_design {
 			catch (std::exception& e)
 			{
 				std::stringstream errorMessage;
-				errorMessage << "\nWhen solving FEA system with SimplicialLDLT for load case: " << *lc << "\n"
+				errorMessage << "\nWhen solving FEA system with SimplicialLDLT for load case: " << lc << "\n"
 										 << "received the following error:\n" << e.what() << "\n"
 										 << "(bso/structural_design/fea.cpp)" << std::endl;
 				throw std::runtime_error(errorMessage.str());
@@ -99,7 +99,7 @@ namespace bso { namespace structural_design {
 			catch (std::exception& e)
 			{
 				std::stringstream errorMessage;
-				errorMessage << "\nWhen solving FEA system with BiCGSTAB for load case: " << *lc << "\n"
+				errorMessage << "\nWhen solving FEA system with BiCGSTAB for load case: " << lc << "\n"
 										 << "received the following error:\n" << e.what() << "\n"
 										 << "(bso/structural_design/fea.cpp)" << std::endl;
 				throw std::runtime_error(errorMessage.str());
@@ -154,7 +154,7 @@ namespace bso { namespace structural_design {
 			catch (std::exception& e)
 			{
 				std::stringstream errorMessage;
-				errorMessage << "\nWhen solving FEA system with scaled BiCGSTAB for load case: " << *lc << "\n"
+				errorMessage << "\nWhen solving FEA system with scaled BiCGSTAB for load case: " << lc << "\n"
 										 << "received the following error:\n" << e.what() << "\n"
 										 << "(bso/structural_design/fea.cpp)" << std::endl;
 				throw std::runtime_error(errorMessage.str());
@@ -295,14 +295,14 @@ namespace bso { namespace structural_design {
 		}		
 	} // solve()
 	
-	Eigen::VectorXd fea::getDisplacements(element::load_case* lc) const
+	Eigen::VectorXd fea::getDisplacements(element::load_case lc) const
 	{
 		auto dispSearch = mDisplacements.find(lc);
 		if (dispSearch == mDisplacements.end())
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nRequested displacements for unknown load case:\n"
-									 << *lc << "\n"
+									 << lc << "\n"
 									 << "(bso/structural_design/fea.cpp)" << std::endl;
 			throw std::invalid_argument(errorMessage.str());
 		}

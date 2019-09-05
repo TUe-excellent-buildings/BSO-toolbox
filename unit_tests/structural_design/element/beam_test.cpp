@@ -175,17 +175,17 @@ BOOST_AUTO_TEST_SUITE( sd_beam_test )
 		bso::structural_design::component::load_case lc_test("test_case");
 		Eigen::VectorXd displacementValues(DOFCount);
 		displacementValues << 0.1,0,0,0,0,0,0.2,0,0,0,0,0;
-		std::map<bso::structural_design::component::load_case*, Eigen::VectorXd> displacements;
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacements;
 		
-		displacements[&lc_test] = displacementValues;
+		displacements[lc_test] = displacementValues;
 		n1.addDisplacements(displacements);
 		n2.addDisplacements(displacements);
 
-		b1.computeResponse(&lc_test);
+		b1.computeResponse(lc_test);
 
-		BOOST_REQUIRE(abs(b1.getEnergy(&lc_test)/5714285.71429 - 1) < 1e-9);
+		BOOST_REQUIRE(abs(b1.getEnergy(lc_test)/5714285.71429 - 1) < 1e-9);
 		bso::structural_design::component::load_case lc_invalid("invalid_case");
-		BOOST_REQUIRE_THROW(b1.getEnergy(&lc_invalid), std::runtime_error);
+		BOOST_REQUIRE_THROW(b1.getEnergy(lc_invalid), std::runtime_error);
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_1 )

@@ -15,7 +15,7 @@ namespace bso { namespace spatial_design { namespace conformal {
 		for (const auto& i : mLineSegments)
 		{
 			mCFLines.push_back(mGeometryModel->addLine(i));
-			mCFVertices.back()->addRectangle(this);
+			mCFLines.back()->addRectangle(this);
 		}
 	} // ctor
 	

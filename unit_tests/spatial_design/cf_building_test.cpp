@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_SUITE( cf_building_tests )
 		for (const auto& i : cf.cfSpaces()) typeAssignments << i->getSpaceType();
 		for (const auto& i : cf.cfSurfaces()) typeAssignments << i->getSurfaceType();
 
-		BOOST_REQUIRE(typeAssignments.str() == "ADEBCGF");
+		BOOST_REQUIRE(typeAssignments.str() == "ADCBEGF");
 	}
 	
 	BOOST_AUTO_TEST_CASE( cf_test_2_txt )

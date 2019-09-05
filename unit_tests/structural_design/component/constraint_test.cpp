@@ -20,7 +20,7 @@ using namespace bso::structural_design::component;
 
 BOOST_AUTO_TEST_SUITE( sd_constraint_component )
 	
-	BOOST_AUTO_TEST_CASE( load_test )
+	BOOST_AUTO_TEST_CASE( constraint_test )
 	{
 		constraint c1(0);
 		BOOST_REQUIRE(c1.DOF() == 0);

@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedrononent )
 		qh1.addStructure(st1);
 		
 		load_case lc1("test_case");
-		load l1(&lc1,80,0);
+		load l1(lc1,80,0);
 		qh1.addLoad(l1);
 		
 		std::vector<point*> pointStore;

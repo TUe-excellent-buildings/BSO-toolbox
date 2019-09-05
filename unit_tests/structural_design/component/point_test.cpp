@@ -51,11 +51,11 @@ BOOST_AUTO_TEST_SUITE( sd_point_component )
 	{
 		point pc1(0,{0,1,2});
 		load_case lc1("test_case");
-		load l1(&lc1, -300, 2);
+		load l1(lc1, -300, 2);
 		pc1.addLoad(l1);
 		
 		auto retrievedLoad = pc1.getLoads()[0];
-		BOOST_REQUIRE(retrievedLoad.loadCase() == &lc1);
+		BOOST_REQUIRE(retrievedLoad.loadCase() == lc1);
 		BOOST_REQUIRE(retrievedLoad.magnitude() == -300);
 		BOOST_REQUIRE(retrievedLoad.DOF() == 2);
 	}

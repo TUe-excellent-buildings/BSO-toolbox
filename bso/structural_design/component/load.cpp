@@ -21,13 +21,39 @@ namespace bso { namespace structural_design { namespace component {
 		return mDescription;
 	}
 	
+	bool load_case::operator == (const load_case& rhs) const
+	{
+		return (mDescription == rhs.mDescription);
+	} // operator ==
+	
+	bool load_case::operator > (const load_case& rhs) const
+	{
+		return (mDescription > rhs.mDescription);
+	} // operator >
+	
+	bool load_case::operator >= (const load_case& rhs) const
+	{
+		return (mDescription >= rhs.mDescription);
+	} // operator >=
+	
+	bool load_case::operator < (const load_case& rhs) const
+	{
+		return (mDescription < rhs.mDescription);
+	} // operator <
+	
+	bool load_case::operator <= (const load_case& rhs) const
+	{
+		return (mDescription <= rhs.mDescription);
+	} // operator <=
+	
+	
 	std::ostream& operator << (std::ostream& stream, const load_case& lc)
 	{
 		stream << lc.mDescription;
 		return stream;
 	}
 	
-	load::load(load_case* lc, const double& magnitude, const unsigned int& DOF)
+	load::load(load_case lc, const double& magnitude, const unsigned int& DOF)
 	{
 		mLoadCase = lc;
 		mMagnitude = magnitude;

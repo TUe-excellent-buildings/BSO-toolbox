@@ -56,9 +56,9 @@ BOOST_AUTO_TEST_SUITE( sd_load_component )
 	BOOST_AUTO_TEST_CASE( load_test )
 	{
 		load_case lc("test_case");
-		load l1(&lc,300,0);
+		load l1(lc,300,0);
 		
-		BOOST_REQUIRE(l1.loadCase() == &lc);
+		BOOST_REQUIRE(l1.loadCase() == lc);
 		BOOST_REQUIRE(l1.magnitude() == 300);
 		BOOST_REQUIRE(l1.DOF() == 0);
 	}
@@ -66,17 +66,17 @@ BOOST_AUTO_TEST_SUITE( sd_load_component )
 	BOOST_AUTO_TEST_CASE( invalid_DOF )
 	{
 		load_case lc("test_case");
-		BOOST_REQUIRE_THROW(load l1(&lc,300,-1), std::invalid_argument);
-		BOOST_REQUIRE_THROW(load l1(&lc,300, 6), std::invalid_argument);
-		BOOST_REQUIRE_NO_THROW(load l1(&lc,300,0));
-		BOOST_REQUIRE_NO_THROW(load l1(&lc,300,3));
-		BOOST_REQUIRE_NO_THROW(load l1(&lc,300,5));
+		BOOST_REQUIRE_THROW(load l1(lc,300,-1), std::invalid_argument);
+		BOOST_REQUIRE_THROW(load l1(lc,300, 6), std::invalid_argument);
+		BOOST_REQUIRE_NO_THROW(load l1(lc,300,0));
+		BOOST_REQUIRE_NO_THROW(load l1(lc,300,3));
+		BOOST_REQUIRE_NO_THROW(load l1(lc,300,5));
 	}
 	
 	BOOST_AUTO_TEST_CASE( arithmetic )
 	{
 		load_case lc("test_case");
-		load l1(&lc,100,0);
+		load l1(lc,100,0);
 		
 		l1 += 100;
 		BOOST_REQUIRE(l1.magnitude() == 200);

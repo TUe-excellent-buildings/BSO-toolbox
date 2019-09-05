@@ -14,7 +14,7 @@ private:
 	utilities::geometry::vector mDimensions; // {width,depth,height}
 	unsigned int mID; // Identification number of the space
 	std::string mSpaceType; // a type which can be defined by a user and which can subsequently be assigned to the space
-	std::vector<std::string> mSurfaceTypes; // each surface can also be assigned a user defined type. Convention: {+y,-x,-y,+x,+z,-z}/{north,east,south,west,top,bottom}
+	std::vector<std::string> mSurfaceTypes; // each surface can also be assigned a user defined type. Convention: {+y,+x,-y,-x,+z,-z}/{north,east,south,west,top,bottom}
 	void reset(); // resets the space to initial values
 	bool checkValidity() const; // check is the space is valid
 public:

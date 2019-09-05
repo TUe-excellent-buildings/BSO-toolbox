@@ -13,20 +13,25 @@ namespace bso { namespace structural_design { namespace component {
 		
 		const std::string& description() const;
 		
+		bool operator == (const load_case& rhs) const;
+		bool operator > (const load_case& rhs) const;
+		bool operator >= (const load_case& rhs) const;
+		bool operator < (const load_case& rhs) const;
+		bool operator <= (const load_case& rhs) const;
 		friend std::ostream& operator << (std::ostream& stream, const load_case& lc);
 	};
 	
 	class load
 	{
 	private:
-		load_case* mLoadCase;
+		load_case mLoadCase;
 		double mMagnitude;
 		unsigned int mDOF;
 	public:
-		load(load_case* lc, const double& magnitude, const unsigned int& DOF);
+		load(load_case lc, const double& magnitude, const unsigned int& DOF);
 		~load();
 		
-		load_case* loadCase() const {return mLoadCase;};
+		const load_case& loadCase() const {return mLoadCase;};
 		const double& magnitude() const {return mMagnitude;};
 		const unsigned int& DOF() const {return mDOF;};
 		

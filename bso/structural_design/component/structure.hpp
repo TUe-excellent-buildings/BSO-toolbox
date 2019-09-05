@@ -35,6 +35,7 @@ namespace bso { namespace structural_design { namespace component {
 		bool mIsGhostComponent = false;
 		bool mIsVisible = true;
 	public:
+		structure();
 		template <class CONTAINER>
 		structure(const std::string& type, const CONTAINER& l);
 		structure(const std::string& type, const std::initializer_list<std::pair<std::string,double>>& l);

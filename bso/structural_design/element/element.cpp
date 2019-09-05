@@ -68,7 +68,7 @@ namespace bso { namespace structural_design { namespace element {
 		return tripletList;
 	} //
 
-	void element::computeResponse(load_case* lc)
+	void element::computeResponse(load_case lc)
 	{ //
 		Eigen::VectorXd elementDisplacements(mSM.rows());
 		elementDisplacements.setZero();
@@ -119,7 +119,7 @@ namespace bso { namespace structural_design { namespace element {
 		return this->getVolume();
 	} // getVolumeSensitivity()
 
-	const double& element::getEnergy(load_case* lc, const std::string& type/*= ""*/) const
+	const double& element::getEnergy(load_case lc, const std::string& type/*= ""*/) const
 	{ //
 		if (mEnergies.find(lc) != mEnergies.end())
 		{
@@ -129,13 +129,13 @@ namespace bso { namespace structural_design { namespace element {
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, when retrieving energies from an element.\n"
-									 << "Could not find it for load case: " << *lc << "\n"
+									 << "Could not find it for load case: " << lc << "\n"
 									 << "(bso/structural_design/element.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}
 	} //
 
-	const Eigen::VectorXd& element::getDisplacements(load_case* lc) const
+	const Eigen::VectorXd& element::getDisplacements(load_case lc) const
 	{ //
 		if (mDisplacements.find(lc) != mDisplacements.end())
 		{
@@ -145,7 +145,7 @@ namespace bso { namespace structural_design { namespace element {
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, when retrieving displacement from an element.\n"
-									 << "Could not find it for load case: " << *lc << "\n"
+									 << "Could not find it for load case: " << lc << "\n"
 									 << "(bso/structural_design/element.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}

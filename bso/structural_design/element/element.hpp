@@ -28,8 +28,8 @@ namespace bso { namespace structural_design { namespace element {
 		Eigen::MatrixXd mOriginalSM; // the element stiffness matrix before applying topology densities
 		Eigen::MatrixXd mSM; // the element stiffness matrix after applying topology densities
 		
-		std::map<load_case*, Eigen::VectorXd> mDisplacements;
-		std::map<load_case*, double> mEnergies;
+		std::map<load_case, Eigen::VectorXd> mDisplacements;
+		std::map<load_case, double> mEnergies;
 		double mTotalEnergy;
 		
 		// Variables related to the stiffness of this element, mostly related to topology optimization
@@ -52,7 +52,7 @@ namespace bso { namespace structural_design { namespace element {
 		
 		virtual void generateEFT();
 		virtual std::vector<triplet> getSMTriplets() const;
-		virtual void computeResponse(load_case* lc);
+		virtual void computeResponse(load_case lc);
 		virtual void clearResponse();
 		
 		virtual void updateDensity(const double& x, const double& penal = 1);
@@ -74,8 +74,8 @@ namespace bso { namespace structural_design { namespace element {
 		virtual const bool& isActiveInCompliance() const {return mActiveInCompliance;}
 		virtual bool& isActiveInCompliance() {return mActiveInCompliance;}
 		virtual const double& getDensity() const {return mDensity;}
-		virtual const double& getEnergy(load_case* lc, const std::string& type = "") const;
-		virtual const Eigen::VectorXd& getDisplacements(load_case* lc) const;
+		virtual const double& getEnergy(load_case lc, const std::string& type = "") const;
+		virtual const Eigen::VectorXd& getDisplacements(load_case lc) const;
 		
 	};
 	

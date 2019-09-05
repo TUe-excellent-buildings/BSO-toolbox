@@ -90,18 +90,18 @@ BOOST_AUTO_TEST_SUITE( sd_node_test )
 	{
 		node n({1,2,3}, 4);
 		bso::structural_design::component::load_case lc1("lc1"), lc2("lc2"), lc3("lc3");
-		n.addLoad(load(&lc1, 1.5, 0));
-		n.addLoad(load(&lc1, 2.5, 1));
-		n.addLoad(load(&lc1, 3.5, 2));
-		n.addLoad(load(&lc2, 0.5, 3));
+		n.addLoad(load(lc1, 1.5, 0));
+		n.addLoad(load(lc1, 2.5, 1));
+		n.addLoad(load(lc1, 3.5, 2));
+		n.addLoad(load(lc2, 0.5, 3));
 		
-		BOOST_REQUIRE_NO_THROW(n.getLoads(&lc1));
-		BOOST_REQUIRE_NO_THROW(n.getLoads(&lc2));
-		BOOST_REQUIRE(n.getLoads(&lc1)(0) == 1.5);
-		BOOST_REQUIRE(n.getLoads(&lc1)(1) == 2.5);
-		BOOST_REQUIRE(n.getLoads(&lc1)(2) == 3.5);
-		BOOST_REQUIRE(n.getLoads(&lc2)(3) == 0.5);
-		BOOST_REQUIRE_THROW(n.getLoads(&lc3), std::runtime_error);
+		BOOST_REQUIRE_NO_THROW(n.getLoads(lc1));
+		BOOST_REQUIRE_NO_THROW(n.getLoads(lc2));
+		BOOST_REQUIRE(n.getLoads(lc1)(0) == 1.5);
+		BOOST_REQUIRE(n.getLoads(lc1)(1) == 2.5);
+		BOOST_REQUIRE(n.getLoads(lc1)(2) == 3.5);
+		BOOST_REQUIRE(n.getLoads(lc2)(3) == 0.5);
+		BOOST_REQUIRE_THROW(n.getLoads(lc3), std::runtime_error);
 	}
 	
 	BOOST_AUTO_TEST_CASE( add_displacements )
@@ -116,16 +116,16 @@ BOOST_AUTO_TEST_SUITE( sd_node_test )
 		displacements << 0.5,0.3,0.4;
 		bso::structural_design::component::load_case lc1("lc1"), lc2("lc2");
 		
-		std::map<bso::structural_design::component::load_case*,Eigen::VectorXd> tempMap;
-		tempMap[&lc1] = displacements;
+		std::map<bso::structural_design::component::load_case,Eigen::VectorXd> tempMap;
+		tempMap[lc1] = displacements;
 		
 		n.addDisplacements(tempMap);
 		std::vector<double> check1 = {0.5,0.3,0,0,0.4,0};
 		for (unsigned int i = 0; i < 6; ++i)
 		{
-			BOOST_REQUIRE(n.getDisplacements(&lc1)[i] == check1[i]);
+			BOOST_REQUIRE(n.getDisplacements(lc1)[i] == check1[i]);
 		}
-		BOOST_REQUIRE_THROW(auto temp = n.getDisplacements(&lc2), std::runtime_error);
+		BOOST_REQUIRE_THROW(auto temp = n.getDisplacements(lc2), std::runtime_error);
 	}
 	
 	BOOST_AUTO_TEST_CASE( generate_nodal_freedom_table )

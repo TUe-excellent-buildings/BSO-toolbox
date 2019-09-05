@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_SUITE( sd_fea_test )
 		n2->addConstraint(2);
 		
 		element::load_case lc1("test_case");
-		element::load l1(&lc1,1e9,0);
+		element::load l1(lc1,1e9,0);
 		n2->addLoad(l1);
 
 		testFEA.addElement(new element::truss(0,1e5,1e3,{n1,n2}));
@@ -101,23 +101,23 @@ BOOST_AUTO_TEST_SUITE( sd_fea_test )
 		
 		testFEA.solve();
 		
-		BOOST_REQUIRE(abs(n1->getDisplacements(&lc1)(1)) < 1e-9);
-		BOOST_REQUIRE(abs(n1->getDisplacements(&lc1)(2)) < 1e-9);
-		BOOST_REQUIRE(abs(n2->getDisplacements(&lc1)(0)/10-1) < 1e-9);
+		BOOST_REQUIRE(abs(n1->getDisplacements(lc1)(1)) < 1e-9);
+		BOOST_REQUIRE(abs(n1->getDisplacements(lc1)(2)) < 1e-9);
+		BOOST_REQUIRE(abs(n2->getDisplacements(lc1)(0)/10-1) < 1e-9);
 		
 		testFEA.clearResponse();
 		testFEA.solve("BiCGSTAB");
 
-		BOOST_REQUIRE(abs(n1->getDisplacements(&lc1)(1)) < 1e-3);
-		BOOST_REQUIRE(abs(n1->getDisplacements(&lc1)(2)) < 1e-3);
-		BOOST_REQUIRE(abs(n2->getDisplacements(&lc1)(0)/10-1) < 1e-3);
+		BOOST_REQUIRE(abs(n1->getDisplacements(lc1)(1)) < 1e-3);
+		BOOST_REQUIRE(abs(n1->getDisplacements(lc1)(2)) < 1e-3);
+		BOOST_REQUIRE(abs(n2->getDisplacements(lc1)(0)/10-1) < 1e-3);
 		
 		testFEA.clearResponse();
 		testFEA.solve("scaledBiCGSTAB");
 
-		BOOST_REQUIRE(abs(n1->getDisplacements(&lc1)(1)) < 1e-3);
-		BOOST_REQUIRE(abs(n1->getDisplacements(&lc1)(2)) < 1e-3);
-		BOOST_REQUIRE(abs(n2->getDisplacements(&lc1)(0)/10-1) < 1e-3);
+		BOOST_REQUIRE(abs(n1->getDisplacements(lc1)(1)) < 1e-3);
+		BOOST_REQUIRE(abs(n1->getDisplacements(lc1)(2)) < 1e-3);
+		BOOST_REQUIRE(abs(n2->getDisplacements(lc1)(0)/10-1) < 1e-3);
 		
 		testFEA.clearResponse();
 		BOOST_REQUIRE_THROW(testFEA.solve("notASolver"), std::invalid_argument);

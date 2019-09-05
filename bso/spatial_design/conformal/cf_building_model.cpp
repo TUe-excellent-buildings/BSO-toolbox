@@ -11,8 +11,8 @@ namespace bso { namespace spatial_design { namespace conformal {
 		cornerPoints.reserve(8);
 		auto coords = msSpace.getCoordinates();
 		auto dims   = msSpace.getDimensions();
-		
-		for (unsigned int i = 0; i < 8; ++i)
+		std::vector<unsigned int> vertexOrder = {0,1,3,2,4,5,7,6};
+		for (const auto& i : vertexOrder)
 		{
 			auto tempPoint = coords;
 			for (unsigned int j = 0; j < 3; j++)
@@ -50,7 +50,6 @@ namespace bso { namespace spatial_design { namespace conformal {
 		if (surfaceTypesAvailable)
 		{
 			std::swap(possibleSurfaceTypes[0],possibleSurfaceTypes[2]);
-			std::swap(possibleSurfaceTypes[1],possibleSurfaceTypes[3]);
 			std::swap(possibleSurfaceTypes[4],possibleSurfaceTypes[5]);
 		}
 		auto typeIte = possibleSurfaceTypes.begin();
@@ -111,11 +110,17 @@ namespace bso { namespace spatial_design { namespace conformal {
 		mCFCuboids.erase(std::remove_if(mCFCuboids.begin(), mCFCuboids.end(), [](const auto& i){ return i->deletion(); }), mCFCuboids.end());
 			
 	} //  makeConformal()
+	
+	cf_building_model::cf_building_model(const cf_building_model& rhs, const double& tol /*= 1e-3*/)
+	{
+		auto newPtr = new cf_building_model(rhs.mMSModel, tol);
+		*this = *newPtr;
+	} // copy ctor()
 
 	cf_building_model::cf_building_model(const ms_building& msModel, const double& tol /*= 1e-3*/)
+	:	cf_geometry_model(tol), mMSModel(msModel)
 	{ // 
-		mTol = tol;
-		for (const auto& i : msModel)
+		for (const auto& i : mMSModel)
 		{
 			addSpace(*i);
 		}
