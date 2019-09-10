@@ -33,13 +33,10 @@ namespace bso { namespace structural_design { namespace element {
 		Eigen::Matrix3d lambda;
 		lambda << vx, vy, vz;
 
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 8; i++)
 		{ // for each node
-			for (int j = 0; j < 2; j++)
-			{ // and for both: displacements and rotations
-				// add the transformation term lambda
-				mT.block<3,3>((2*i+j)*3,(2*i+j)*3) = lambda.transpose();
-			}
+			// add the transformation term lambda
+			mT.block<3,3>((i)*3,(i)*3) = lambda.transpose();
 		}
 		
 		Eigen::MatrixXd locCoords;
@@ -164,7 +161,9 @@ namespace bso { namespace structural_design { namespace element {
 
 		// transform the element stiffness matrix from local to global coordinate system
 		mSM = mT.transpose() * mSM * mT;
+		if (mSM(0,0) < 0) mSM *= -1;
 		mOriginalSM = mSM;
+		
 	}
 	
 	template<class CONTAINER>

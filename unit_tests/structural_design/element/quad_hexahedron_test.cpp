@@ -209,7 +209,53 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 
 	BOOST_AUTO_TEST_CASE( energy_from_displacement )
 	{
+		node n1({-1,-1,-1},1);
+		node n2({ 1,-1,-1},2);
+		node n3({ 1, 1,-1},3);
+		node n4({-1, 1,-1},4);
+		node n5({-1,-1, 1},5);
+		node n6({ 1,-1, 1},6);
+		node n7({ 1, 1, 1},7);
+		node n8({-1, 1, 1},8);
+		double E = 1e5;
+		double v = 0.3;
+		quad_hexahedron qh1(1,E,v,{&n1,&n2,&n3,&n4,&n5,&n6,&n7,&n8});
 
+		unsigned long DOFCount = 0;
+		n1.generateNFT(DOFCount);
+		n2.generateNFT(DOFCount);
+		n3.generateNFT(DOFCount);
+		n4.generateNFT(DOFCount);
+		n5.generateNFT(DOFCount);
+		n6.generateNFT(DOFCount);
+		n7.generateNFT(DOFCount);
+		n8.generateNFT(DOFCount);
+		qh1.generateEFT();
+		
+		bso::structural_design::component::load_case lc_test("test_case");
+		Eigen::VectorXd displacementValues(DOFCount);
+		displacementValues << 0,0,0, // disp node 1
+													0,0,0, // disp node 2
+													0,0,0, // disp node 3
+													0,0,0, // disp node 4
+													0,-1,0, // disp node 5
+													0,-1,0, // disp node 6
+													0,-1,0, // disp node 7
+													0,-1,0; // disp node 8
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacements;
+		displacements[lc_test] = displacementValues;
+		n1.addDisplacements(displacements);
+		n2.addDisplacements(displacements);
+		n3.addDisplacements(displacements);
+		n4.addDisplacements(displacements);
+		n5.addDisplacements(displacements);
+		n6.addDisplacements(displacements);
+		n7.addDisplacements(displacements);
+		n8.addDisplacements(displacements);
+		
+		qh1.computeResponse(lc_test);
+		// std::cout << qh1.getEnergy(lc_test) << std::endl;
+		// BOOST_REQUIRE(abs(qh1.getEnergy(lc_test) - 0.005) < 1e-9);
 	}
 
 	BOOST_AUTO_TEST_CASE( benchmark_1 )

@@ -158,6 +158,9 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedrononent )
 		BOOST_REQUIRE(qh1.getMeshedPoints()[25]->isSameAs({ 1, 1, 0}));
 		BOOST_REQUIRE(qh1.getMeshedPoints()[26]->isSameAs({ 1, 1, 1}));
 		
+		BOOST_REQUIRE(qh1.getElementPoints().size() == 8);
+		BOOST_REQUIRE(qh1.getMeshedPoints().size() == 27);
+		
 		qh1.clearMesh();
 		BOOST_REQUIRE(qh1.getElementPoints().size() == 0);
 		BOOST_REQUIRE(qh1.getMeshedPoints().size() == 0);
