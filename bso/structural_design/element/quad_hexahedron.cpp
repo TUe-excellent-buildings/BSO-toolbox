@@ -161,7 +161,7 @@ namespace bso { namespace structural_design { namespace element {
 
 		// transform the element stiffness matrix from local to global coordinate system
 		mSM = mT.transpose() * mSM * mT;
-		if (mSM(0,0) < 0) mSM *= -1;
+		//if (mSM(0,0) < 0) mSM *= -1;
 		mOriginalSM = mSM;
 		
 	}

@@ -82,6 +82,17 @@ namespace bso { namespace utilities { namespace geometry {
 			throw std::invalid_argument(errorMessage.str());
 		}
 		
+		vector curVc0 = current[0] - current.getCenter();
+		vector curVc1 = current[1] - current.getCenter();
+		vertex rotationCheckVertex = (curVc1.cross(curVc0) * sqrt(current.getArea()) + current.getCenter());
+		vertex quadHexCenter = {0,0,0};
+		for (const auto& i : mVertices) quadHexCenter += i;
+		quadHexCenter /= 8;
+		if (current.sameSide(quadHexCenter,rotationCheckVertex))
+		{
+			current = quadrilateral({current[0],current[3],current[1],current[2]},tol);
+		}
+		
 		unsigned int indexFive;
 		bool indexFound = false;
 		bool orderedCounterDirection = false;

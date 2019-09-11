@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_SUITE( quad_hexahedron_tests )
 														 { 1, 1, 1},{ 1, 1,-1},{ 1,-1, 1},{ 1,-1,-1}};
 		std::stringstream check1;
 		check1 << qhex1;
-		BOOST_REQUIRE(check1.str() == "{{-1,-1,-1},{-1,-1,1},{-1,1,1},{-1,1,-1},{1,-1,-1},{1,-1,1},{1,1,1},{1,1,-1}}");
+		BOOST_REQUIRE(check1.str() == "{{-1,-1,-1},{-1,1,-1},{-1,1,1},{-1,-1,1},{1,-1,-1},{1,1,-1},{1,1,1},{1,-1,1}}");
 	  
 		vertex p1 = { 1, 1, 1};
 		vertex p2 = { 1, 1,-1};
@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_SUITE( quad_hexahedron_tests )
 		quad_hexahedron qhex1(cont1);
 		std::stringstream check1;
 		check1 << qhex1;
-		BOOST_REQUIRE(check1.str() == "{{-1,-1,-1},{-1,-1,1},{-1,1,1},{-1,1,-1},{1,-1,-1},{1,-1,1},{1,1,1},{1,1,-1}}");
+		BOOST_REQUIRE(check1.str() == "{{-1,-1,-1},{-1,1,-1},{-1,1,1},{-1,-1,1},{1,-1,-1},{1,1,-1},{1,1,1},{1,-1,1}}");
 	  BOOST_REQUIRE_THROW(quad_hexahedron(std::vector<vertex>({{0,0,0},{1,1,1}})), std::invalid_argument);
 		
 		vertex cont2[8] = {{-1,-1,-1},{-1,-1, 1},{-1, 1,-1},{-1, 1, 1},
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_SUITE( quad_hexahedron_tests )
 		quad_hexahedron qhex2(cont2);
 		std::stringstream check2;
 		check2 << qhex2;
-		BOOST_REQUIRE(check2.str() == "{{-1,-1,-1},{-1,-1,1},{-1,1,1},{-1,1,-1},{1,-1,-1},{1,-1,1},{1,1,1},{1,1,-1}}");
+		BOOST_REQUIRE(check2.str() == "{{-1,-1,-1},{-1,1,-1},{-1,1,1},{-1,-1,1},{1,-1,-1},{1,1,-1},{1,1,1},{1,-1,1}}");
 	}
 	
 	BOOST_AUTO_TEST_CASE( copy_init )
