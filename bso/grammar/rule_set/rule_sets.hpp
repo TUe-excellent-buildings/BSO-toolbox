@@ -1,5 +1,5 @@
-#ifndef BSO_GRAMMAR_PROPERTIES_HPP
-#define BSO_GRAMMAR_PROPERTIES_HPP
+#ifndef BSO_GRAMMAR_RULE_SETS_HPP
+#define BSO_GRAMMAR_RULE_SETS_HPP
 
 #include <bso/grammar/rule_set/property_base.hpp>
 #include <bso/grammar/rule_set/vertex_property.hpp>
@@ -17,7 +17,7 @@
 #endif
 
 #ifdef BSO_BP_MODEL_HPP
-// #include <bso/grammar/rule_set/bp_rule_set/bp_rule_sets.hpp>
+#include <bso/grammar/rule_set/bp_rule_set/bp_rule_sets.hpp>
 #endif
 
 namespace bso { namespace grammar { namespace rule_set {
@@ -30,4 +30,4 @@ namespace bso { namespace grammar { namespace rule_set {
 
 
 
-#endif // BSO_GRAMMAR_PROPERTIES_HPP
+#endif // BSO_GRAMMAR_RULE_SETS_HPP

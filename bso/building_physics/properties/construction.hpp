@@ -28,6 +28,8 @@ public:
 	const std::pair<std::string,Eigen::Vector4d>& getVisualizationProperties() const {return mVisualizationProperties;}
 	const std::string& getID() const {return mID;}
 	const double& getThickness() const {return mThickness;}
+	
+	construction& operator = (const construction& rhs);
 };
 
 } // namespace properties 

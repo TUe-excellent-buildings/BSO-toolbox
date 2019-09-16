@@ -12,6 +12,7 @@ glazing::glazing(const std::string& ID, const double& U,
 :	mID(ID), mU(U), mCapacitancePerArea(capacitancePerArea),
 	mVisualizationProperties(visualizationProps)
 {
+	// mVisualizationProperties = std::pair<std::string,Eigen::Vector4d>(visualizationProps.first, visualizationProps.second);
 	if (mU <= 0)
 	{
 		std::stringstream errorMessage;
@@ -32,10 +33,21 @@ glazing::glazing(const std::string& ID, const double& U,
 	}
 } // ctor()
 
+
 glazing::~glazing()
 {
-	
+
 } // dtor()
+
+glazing& glazing::operator = (const glazing& rhs)
+{
+	mID = rhs.mID;
+	mVisualizationProperties.first = rhs.mVisualizationProperties.first;
+	mVisualizationProperties.second << rhs.mVisualizationProperties.second;mID = rhs.mID;
+	mCapacitancePerArea = rhs.mCapacitancePerArea;
+	
+	return *this;
+}
 
 } // namespace properties 
 } // namespace building_physics 

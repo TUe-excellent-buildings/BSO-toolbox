@@ -26,6 +26,9 @@ public:
 	const std::pair<std::string,Eigen::Vector4d>& getVisualizationProperties() const {return mConstruction.getVisualizationProperties();}
 	const double& getThickness() const {return mConstruction.getThickness();}
 	const double& getArea() const {return mArea;}
+	const bso::building_physics::properties::construction& getConstruction() const {return mConstruction;}
+	state* getSide1() const {return mSide1;}
+	state* getSide2() const {return mSide2;}
 	bso::utilities::geometry::polygon* getGeometry() const;
 };
 

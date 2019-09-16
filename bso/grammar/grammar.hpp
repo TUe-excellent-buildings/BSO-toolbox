@@ -2,7 +2,7 @@
 #define BSO_GRAMMAR_HPP
 
 #include <bso/spatial_design/cf_building.hpp>
-#include <bso/grammar/rule_set/properties.hpp>
+#include <bso/grammar/rule_set/rule_sets.hpp>
 
 namespace bso { namespace grammar {
 
@@ -50,18 +50,27 @@ private:
 	#endif
 	
 	#ifdef BSO_BP_MODEL_HPP
-	// std::map<spatial_design::conformal::cf_space*, rule_set::bp_space_rule*> mBPSpaceRules;
-	// std::map<spatial_design::conformal::cf_rectangle*, rule_set::bp_rectangle_rule*> mBPRectangleRules;
+	std::map<spatial_design::conformal::cf_space*, rule_set::bp_space_rule*> mBPSpaceRules;
+	std::map<spatial_design::conformal::cf_rectangle*, rule_set::bp_rectangle_rule*> mBPRectangleRules;
 	
-	// building_physics::bp_model mBPModel;
-	// std::vector<building_physics::bp_model> mIntermediateBPModels;
+	boost::posix_time::time_duration mBPWarmUpDuration;
+	boost::posix_time::time_duration mBPTimeStepSize;
+	double mBPGroundTemperature = 0;
+	std::map<std::string,boost::posix_time::time_period> mBPSimulationPeriods;
+	std::map<std::string,bso::building_physics::properties::space_settings> mBPSpaceSettings;
+	std::map<std::pair<std::string,std::string>,bso::building_physics::properties::construction> mBPWallConstructions;
+	std::map<std::pair<std::string,std::string>,bso::building_physics::properties::construction> mBPFloorConstructions;
+	std::map<std::pair<std::string,std::string>,bso::building_physics::properties::glazing> mBPWallGlazings;
+	std::map<std::pair<std::string,std::string>,bso::building_physics::properties::glazing> mBPFloorGlazings;
+	
+	building_physics::bp_model mBPModel;
+	std::vector<building_physics::bp_model> mIntermediateBPModels;
+	void mReadBPSettings(const std::string& fileName);
 	#endif
 	
 public:
 	grammar(const spatial_design::cf_building& cf);
 	~grammar();
-	
-	//void read 
 	
 	#ifdef SD_MODEL_HPP
 	template <typename T = DEFAULT_SD_GRAMMAR>
@@ -72,10 +81,11 @@ public:
 	#endif
 	
 	#ifdef BSO_BP_MODEL_HPP
-	// template <typename T = DEFAULT_BP_GRAMMAR>
-	// building_physics::bp_model bp_grammar(const std::string& fileName);
-	// const std::vector<building_physics::bp_model> getIntermediateBPModels() const 
-		// {return mIntermediateBPModels;}
+	template <typename T = DEFAULT_BP_GRAMMAR>
+	bso::building_physics::bp_model bp_grammar(const std::string& fileName,
+		const bool& b1 = false, const bool& b2 = false, const bool& b3 = false);
+	const std::vector<building_physics::bp_model> getIntermediateBPModels() const 
+		{return mIntermediateBPModels;}
 	#endif
 };
 	
@@ -90,8 +100,8 @@ public:
 #endif
 
 #ifdef BSO_BP_MODEL_HPP
-// #include <bso/grammar/grammar_bp_specifics.cpp>
-// #include <bso/grammar/bp_grammars/default_bp_grammar.cpp>
+#include <bso/grammar/grammar_bp_specifics.cpp>
+#include <bso/grammar/bp_grammars/default_bp_grammar.cpp>
 #endif
 
 #endif // BSO_GRAMMAR_HPP

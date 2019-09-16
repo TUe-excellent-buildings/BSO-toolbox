@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_SUITE( grammar_default_sd_test )
 			for (const auto& j : i->getConstraints()) ++constraintCount;
 		}
 
-		BOOST_REQUIRE(flatShellCount = 3);
+		BOOST_REQUIRE(flatShellCount == 3);
 		BOOST_REQUIRE(trussCount == 4);
 		BOOST_REQUIRE(beamCount == 2);
 		BOOST_REQUIRE(loadPanelCount == 3);

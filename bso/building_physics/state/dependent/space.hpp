@@ -30,6 +30,7 @@ public:
 	const double& getVolume() const {return mVolume;}
 	const double& getCumulativeHeatingEnergy() const {return mCumulativeHeatingEnergy;}
 	const double& getCumulativeCoolingEnergy() const {return mCumulativeCoolingEnergy;}
+	const bso::building_physics::properties::space_settings& getSettings() const {return mSettings;}
 	bso::utilities::geometry::polyhedron* getGeometry() const;
 };
 

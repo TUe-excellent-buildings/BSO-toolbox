@@ -150,6 +150,83 @@ bp_model::bp_model() : mSystem(state_space_system(0,0)),
 	mGroundProfile = nullptr;
 } // ctor()
 
+bp_model::bp_model(const bp_model& rhs) : mSystem(state_space_system(0,0))
+{
+	std::map<state::state*, state::state*> stateCopies;
+	auto weatherPtr = new state::weather_profile(this->getNextIndependentIndex());
+	stateCopies.emplace(rhs.mWeatherProfile, weatherPtr);
+	this->addState(weatherPtr);
+
+	auto groundPtr = new state::ground_profile(this->getNextIndependentIndex(),
+		mGroundProfile->getTemperature());
+	stateCopies.emplace(rhs.mGroundProfile, groundPtr);
+	this->addState(groundPtr);
+	
+	for (const auto& i : rhs.mSpaces)
+	{
+		auto spacePtr = new state::space(this->getNextDependentIndex(), i->getGeometry(),
+			i->getSettings(), mWeatherProfile);
+		stateCopies.emplace(i,spacePtr);
+		this->addState(spacePtr);
+	}
+	for (const auto& i : rhs.mWalls)
+	{
+		auto side1Search = stateCopies.find(i->getSide1());
+		auto side2Search = stateCopies.find(i->getSide2());
+		
+		if (side1Search == stateCopies.end() || side2Search == stateCopies.end())
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nError, trying to copy a bp_wall\n"
+									 << "cannot find the state on one of its sides.\n"
+									 << "(bso/building_physics/bp_model.cpp)" << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+		
+		this->addState(new state::wall(this->getNextDependentIndex(), i->getGeometry(),
+			i->getConstruction(),side1Search->second, side2Search->second));
+	}
+	for (const auto& i : rhs.mFloors)
+	{
+		auto side1Search = stateCopies.find(i->getSide1());
+		auto side2Search = stateCopies.find(i->getSide2());
+		
+		if (side1Search == stateCopies.end() || side2Search == stateCopies.end())
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nError, trying to copy a bp_floor\n"
+									 << "cannot find the state on one of its sides.\n"
+									 << "(bso/building_physics/bp_model.cpp)" << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+		
+		this->addState(new state::floor(this->getNextDependentIndex(), i->getGeometry(),
+			i->getConstruction(),side1Search->second, side2Search->second));
+	}
+	for (const auto& i : rhs.mWindows)
+	{
+		auto side1Search = stateCopies.find(i->getSide1());
+		auto side2Search = stateCopies.find(i->getSide2());
+		
+		if (side1Search == stateCopies.end() || side2Search == stateCopies.end())
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nError, trying to copy a bp_window\n"
+									 << "cannot find the state on one of its sides.\n"
+									 << "(bso/building_physics/bp_model.cpp)" << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+		
+		this->addState(new state::window(this->getNextDependentIndex(), i->getGeometry(),
+			i->getGlazing(),side1Search->second, side2Search->second));
+	}
+	
+	mSimulationPeriods = rhs.mSimulationPeriods;
+	mWarmUpDuration = rhs.mWarmUpDuration;
+	mTimeStepSize = rhs.mTimeStepSize;
+	mInitialStateTemperatures = rhs.mInitialStateTemperatures;
+}
+
 bp_model::~bp_model()
 {
 	for (auto& i : mStates)

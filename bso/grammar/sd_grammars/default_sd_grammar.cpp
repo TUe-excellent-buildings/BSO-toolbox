@@ -107,6 +107,12 @@ structural_design::sd_model grammar::sd_grammar<DEFAULT_SD_GRAMMAR>(const std::s
 	for (const auto& i : mSDLineRules) i.second->apply(mSDModel);
 	for (const auto& i : mSDRectangleRules) i.second->apply(mSDModel);
 	mSDModel.setMeshSize(mMeshSize);
+	
+	// delete the rules
+	for (auto& i : mSDVertexRules) delete i.second;
+	for (auto& i : mSDLineRules) delete i.second;
+	for (auto& i : mSDRectangleRules) delete i.second;
+	
 	return mSDModel;
 } // default_sd_grammar
 	

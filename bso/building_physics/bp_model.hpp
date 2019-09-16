@@ -45,8 +45,10 @@ private:
 	template <class STEPPER_TYPE>
 	void mSimulate(const boost::posix_time::time_period& period, std::ostream& out,
 		const double& absError /* = 0.0*/, const double& relError /* = 0.0*/);
+	bp_model& operator = (bp_model& rhs) = default;
 public:
 	bp_model();
+	bp_model(const bp_model& rhs);
 	~bp_model();
 
 	void addState(state::state*);

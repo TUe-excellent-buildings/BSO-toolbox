@@ -56,6 +56,19 @@ construction::~construction()
 	
 } // dtor()
 
+construction& construction::operator = (const construction& rhs)
+{
+	mID = rhs.mID;
+	mVisualizationProperties.first = rhs.mVisualizationProperties.first;
+	mVisualizationProperties.second << rhs.mVisualizationProperties.second;
+	mLayers = rhs.mLayers;
+	mThickness = rhs.mThickness;
+	mCapacitancePerArea = rhs.mCapacitancePerArea;
+	mResistanceSide1 = rhs.mResistanceSide1;
+	mResistanceSide2 = rhs.mResistanceSide2;
+	mRelativeMeasurePoint = rhs.mRelativeMeasurePoint;
+}
+
 } // namespace properties 
 } // namespace building_physics 
 } // namespace bso

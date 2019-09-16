@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		n7.addDisplacements(displacements);
 		n8.addDisplacements(displacements);
 		
-		qh1.computeResponse(lc_test);std::cout << qh1.getEnergy(lc_test) << std::endl;
+		qh1.computeResponse(lc_test);
 		BOOST_REQUIRE(abs(qh1.getEnergy(lc_test)/0.02 -1) < 1e-9);
 	}
 

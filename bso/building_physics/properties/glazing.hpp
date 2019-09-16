@@ -19,6 +19,8 @@ public:
 	const std::pair<std::string,Eigen::Vector4d> & getVisualizationProperties() const {return mVisualizationProperties;}
 	const double& getU() const {return mU;}
 	const double& getCapacitancePerArea() const {return mCapacitancePerArea;}
+	
+	glazing& operator = (const glazing& rhs);
 };
 
 } // namespace properties 

@@ -24,10 +24,8 @@
 #include <unit_tests/grammar/rule_set/sd_rule_set/sd_line_rule_test.cpp>
 #include <unit_tests/grammar/rule_set/sd_rule_set/sd_rectangle_rule_test.cpp>
 
-// #include <unit_tests/grammar/rule_set/bp_rule_set/sd_rectangle_rule_test.cpp>
-// #include <unit_tests/grammar/rule_set/bp_rule_set/sd_space_rule_test.cpp>
-
-
+#include <unit_tests/grammar/rule_set/bp_rule_set/bp_rectangle_rule_test.cpp>
+#include <unit_tests/grammar/rule_set/bp_rule_set/bp_space_rule_test.cpp>
 
 /*
 BOOST_TEST()

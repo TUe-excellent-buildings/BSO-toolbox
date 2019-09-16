@@ -27,8 +27,9 @@ BOOST_AUTO_TEST_SUITE( grammar_default_bp_test )
 		bso::spatial_design::cf_building cf(ms);
 
 		bso::grammar::grammar gram(cf);
-
+		bso::building_physics::bp_model bp = gram.bp_grammar<DEFAULT_BP_GRAMMAR>("grammar/bp_settings_1.txt");
 	}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

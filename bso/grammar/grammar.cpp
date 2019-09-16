@@ -52,17 +52,6 @@ grammar::~grammar()
 	for (auto& i : mEdgeProperties) delete i.second;
 	for (auto& i : mSurfaceProperties) delete i.second;
 	for (auto& i : mSpaceProperties) delete i.second;
-	
-	#ifdef SD_MODEL_HPP
-	for (auto& i : mSDVertexRules) delete i.second;
-	for (auto& i : mSDLineRules) delete i.second;
-	for (auto& i : mSDRectangleRules) delete i.second;
-	#endif
-
-	#ifdef BSO_BP_MODEL_HPP
-	// for (auto& i : mBPSpaceRules) delete i.second;
-	// for (auto& i : mBPRectangleRules) delete i.second;
-	#endif
 } // dtor()
 	
 } // namespace grammar
