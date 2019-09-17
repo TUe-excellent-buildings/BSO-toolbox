@@ -20,8 +20,7 @@ BOOST_AUTO_TEST_SUITE( bp_dep_state_space_test )
 
 	BOOST_AUTO_TEST_CASE( intialization )
 	{
-		bso::utilities::geometry::quad_hexahedron* qh1 = 
-		new bso::utilities::geometry::quad_hexahedron({
+		bso::utilities::geometry::quad_hexahedron qh1 ({
 			{0,0,0},{1,0,0},{1,1,0},{0,1,0},{0,0,1},{1,0,1},{1,1,1},{0,1,1}});
 		bso::building_physics::properties::space_settings
 			setting1("space_setting_1",100,150,20,25,1.0);
@@ -30,8 +29,8 @@ BOOST_AUTO_TEST_SUITE( bp_dep_state_space_test )
 		boost::posix_time::ptime t2(boost::posix_time::from_iso_string("19760705T240000"));
 		wp1.loadNewPeriod(t1,t2,"building_physics/test_weather_data_1.txt");
 		
-		BOOST_REQUIRE_NO_THROW(dependent::space space1(1,qh1,setting1,&wp1));
-		dependent::space space1(1,qh1,setting1,&wp1);
+		BOOST_REQUIRE_NO_THROW(dependent::space space1(1,&qh1,setting1,&wp1));
+		dependent::space space1(1,&qh1,setting1,&wp1);
 		
 		BOOST_REQUIRE(space1.getIndex() == 1);
 		BOOST_REQUIRE( space1.isDependent());
@@ -44,7 +43,6 @@ BOOST_AUTO_TEST_SUITE( bp_dep_state_space_test )
 		BOOST_REQUIRE(!space1.isGroundProfile() );
 		BOOST_REQUIRE(space1.getVolume() == 1e-9);
 		BOOST_REQUIRE(space1.getCapacitance() == 3.6e-6);
-		//delete qh1;
 		//BOOST_REQUIRE_THROW(space1.getGeometry(),std::runtime_error);
 	}
 	
