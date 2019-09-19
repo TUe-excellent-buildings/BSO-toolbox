@@ -63,16 +63,8 @@ MS_Model::MS_Model(const spatial_design::ms_building& ms,
 	for (const auto& i : ms)
 	{
 		namespace geom = bso::utilities::geometry;
-		std::vector<geom::vertex> spaceVertices;
-		for (unsigned int j = 0; j < 8; ++j)
-		{
-			spaceVertices.push_back(i->getCoordinates());
-			for (unsigned int k = 0; k < 3; ++k)
-			{
-				if (std::bitset<3>(j)[k]) spaceVertices.back()[k] += i->getDimensions()[k];
-			}
-		}
-		geom::quad_hexahedron spaceGeometry(spaceVertices);
+	
+		geom::quad_hexahedron spaceGeometry = i->getGeometry();
 		std::stringstream centerLabel;
 		centerLabel << i->getID();
 		

@@ -140,6 +140,17 @@ BOOST_AUTO_TEST_SUITE( space_initialization )
 		BOOST_CHECK_EQUAL_COLLECTIONS(checkSurfaceTypes.begin(), checkSurfaceTypes.end(), surfaceTypes.begin(), surfaceTypes.end());
 	}
 	
+	BOOST_AUTO_TEST_CASE( getGeometryTest )
+	{
+		ms_space s1("78,3000,3000,3000,1000,1000,1000");
+		bso::utilities::geometry::quad_hexahedron spaceGeom = s1.getGeometry();
+		bso::utilities::geometry::quad_hexahedron checkGeom = {
+			{1000,1000,1000},{4000,1000,1000},{4000,4000,1000},{1000,4000,1000},
+			{1000,1000,4000},{4000,1000,4000},{4000,4000,4000},{1000,4000,4000}
+		};
+		BOOST_CHECK_EQUAL_COLLECTIONS(spaceGeom.begin(), spaceGeom.end(), checkGeom.begin(), checkGeom.end());
+	}
+	
 	BOOST_AUTO_TEST_CASE( initialization_by_assignment )
 	{
 		ms_space s1;

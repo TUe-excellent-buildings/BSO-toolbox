@@ -8,6 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include <exception>
 #include <stdexcept>
+#include <bitset>
 
 #include <bso/utilities/trim_and_cast.hpp>
 
@@ -273,6 +274,23 @@ utilities::geometry::vector ms_space::getDimensions() const
 {
 	return mDimensions;
 } // getDimensions
+
+utilities::geometry::quad_hexahedron ms_space::getGeometry() const
+{ // return the geometry of the space
+	std::vector<utilities::geometry::vertex> cornerPoints;
+	cornerPoints.reserve(8);
+	std::vector<unsigned int> vertexOrder = {0,1,3,2,4,5,7,6};
+	for (const auto& i : vertexOrder)
+	{
+		auto tempPoint = mCoordinates;
+		for (unsigned int j = 0; j < 3; j++)
+		{
+			if (std::bitset<3>(i)[j]) tempPoint[j] += mDimensions[j];
+		}
+		cornerPoints.push_back(tempPoint);
+	}
+	return bso::utilities::geometry::quad_hexahedron(cornerPoints);
+} // getGeometry
 
 bool ms_space::getSpaceType(std::string& spaceType) const
 {

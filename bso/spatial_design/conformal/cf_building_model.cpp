@@ -7,22 +7,7 @@ namespace bso { namespace spatial_design { namespace conformal {
 	
 	void cf_building_model::addSpace(const ms_space& msSpace)
 	{ // 
-		std::vector<utilities::geometry::vertex> cornerPoints;
-		cornerPoints.reserve(8);
-		auto coords = msSpace.getCoordinates();
-		auto dims   = msSpace.getDimensions();
-		std::vector<unsigned int> vertexOrder = {0,1,3,2,4,5,7,6};
-		for (const auto& i : vertexOrder)
-		{
-			auto tempPoint = coords;
-			for (unsigned int j = 0; j < 3; j++)
-			{
-				if (std::bitset<3>(i)[j]) tempPoint[j] += dims[j];
-			}
-			cornerPoints.push_back(tempPoint);
-		}
-		
-		mCFSpaces.push_back(new cf_space(cornerPoints, this));
+		mCFSpaces.push_back(new cf_space(msSpace.getGeometry(), this));
 		mCFSpaces.back()->setSpaceID(msSpace.getID());
 		std::string possibleSpaceType;
 		if (msSpace.getSpaceType(possibleSpaceType))

@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		comp::constraint c2(2);
 
 		comp::load_case lc1("vertical load");
-		comp::load l1(&lc1,-1e5,2);
+		comp::load l1(lc1,-1e5,2);
 		
 		comp::structure str1("quad_hexahedron",{{"E",1e5},{"poisson",0.3}});
 		
@@ -145,7 +145,7 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		comp::constraint c5(5);
 		
 		comp::load_case lc1("vertical load");
-		comp::load l1(&lc1, 1,2);
+		comp::load l1(lc1, 1,2);
 		
 		comp::structure str1("flat_shell",{{"E",1},{"thickness",1},{"poisson",0.3}});
 		

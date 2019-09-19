@@ -31,6 +31,7 @@ public:
 	unsigned int getID() const; // returns the ID of the space
 	utilities::geometry::vertex getCoordinates() const; // return the coodinates of the space
 	utilities::geometry::vector getDimensions() const; // return the dimensions of the space
+	utilities::geometry::quad_hexahedron getGeometry() const; // return the geometry of the space
 	bool getSpaceType(std::string& spaceType) const; // returns TRUE if space type is assigned FALSE if not. Assigns the space type to the argument that is passed by reference
 	bool getSurfaceTypes(std::vector<std::string>& surfaceTypes) const; // returns TRUE is surface types are asssigned FALSE if not. Assigns the surface types to the argument that is passed by reference
 	double getVolume() const;
