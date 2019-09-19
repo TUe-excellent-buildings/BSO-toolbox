@@ -38,6 +38,11 @@ public:
 	std::vector<data_point> findFurthestIn(const CONTAINER& dataCollection,
 		const double& tol = 1e-3) const;
 	
+	double aggregateToSum(data_point weights = data_point(0)) const;
+	double aggregateToProduct(data_point weights = data_point(0)) const;
+	double aggregateToDistance(const data_point& measurePoint,
+		data_point weights = data_point(0)) const;
+	
 	auto begin() {return mData.data();}
 	auto end() {return mData.data() + mData.size();}
 	void addLabel(const std::string& label) {mLabels.push_back(label);}

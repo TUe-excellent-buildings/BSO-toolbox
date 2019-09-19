@@ -291,6 +291,33 @@ std::vector<data_point> data_point::findFurthestIn(const CONTAINER& dataCollecti
 	return furthest;
 } // findFurthestIn()
 
+double data_point::aggregateToSum(data_point weights /*= data_point(0)*/) const
+{
+	if (weights.size() == 0) weights.mData = Eigen::VectorXd::Ones(mData.size());
+	this->mCheckValidDimensions(weights);
+	auto weighedData = mData.cwiseProduct(weights.mData);
+	return weighedData.sum();
+} // aggregateToSum()
+
+double data_point::aggregateToProduct(data_point weights /*= data_point(0)*/) const
+{
+	if (weights.size() == 0) weights.mData = Eigen::VectorXd::Ones(mData.size());
+	this->mCheckValidDimensions(weights);
+	auto weighedData = mData.cwiseProduct(weights.mData);
+	return weighedData.prod();
+} // aggregateToProduct()
+
+double data_point::aggregateToDistance(const data_point& measurePoint,
+	data_point weights /*= data_point(0)*/) const
+{
+	if (weights.size() == 0) weights.mData = Eigen::VectorXd::Ones(mData.size());
+	this->mCheckValidDimensions(weights);
+	this->mCheckValidDimensions(measurePoint);
+	data_point weighedData(mData.cwiseProduct(weights.mData));
+	data_point weighedMeasurePoint(measurePoint.mData.cwiseProduct(weights.mData));
+	return weighedData.calcDistanceTo(weighedMeasurePoint);
+} // aggregateToDistance()
+
 std::ostream& operator << (std::ostream& stream, const data_point& p)
 {
 	Eigen::IOFormat layout(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", ",", "{", "}", "", "");

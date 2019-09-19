@@ -141,6 +141,58 @@ BOOST_AUTO_TEST_SUITE( data_point_tests )
 		}
 	}
 	
+	BOOST_AUTO_TEST_CASE( aggregate_to_sum )
+	{
+		data_point dp1 = {1.0,1.0,1.0};
+		data_point dp2 = {1.0,0.5,1.0};
+		data_point dp3 = {1.0,1.0,3.0};
+		
+		BOOST_REQUIRE(dp1.aggregateToSum() == 3.0);
+		BOOST_REQUIRE(dp2.aggregateToSum() == 2.5);
+		BOOST_REQUIRE(dp3.aggregateToSum() == 5.0);
+		
+		data_point weights = {1.0,2.0,3.0};
+		
+		BOOST_REQUIRE(dp1.aggregateToSum(weights) == 6.0);
+		BOOST_REQUIRE(dp2.aggregateToSum(weights) == 5.0);
+		BOOST_REQUIRE(dp3.aggregateToSum(weights) == 12.0);
+	}
+	
+	BOOST_AUTO_TEST_CASE( aggregate_to_product )
+	{
+		data_point dp1 = {1.0,1.0,1.0};
+		data_point dp2 = {1.0,0.5,1.0};
+		data_point dp3 = {1.0,1.0,3.0};
+		
+		BOOST_REQUIRE(dp1.aggregateToProduct() == 1.0);
+		BOOST_REQUIRE(dp2.aggregateToProduct() == 0.5);
+		BOOST_REQUIRE(dp3.aggregateToProduct() == 3.0);
+		
+		data_point weights = {1.0,2.0,3.0};
+		
+		BOOST_REQUIRE(dp1.aggregateToProduct(weights) == 6.0);
+		BOOST_REQUIRE(dp2.aggregateToProduct(weights) == 3.0);
+		BOOST_REQUIRE(dp3.aggregateToProduct(weights) == 18.0);
+	}
+	
+	BOOST_AUTO_TEST_CASE( aggregate_to_distance )
+	{
+		data_point dp1 = {1.0,1.0,1.0};
+		data_point dp2 = {1.0,0.5,1.0};
+		data_point dp3 = {1.0,1.0,3.0};
+		data_point measurePoint = {1.0,1.0,1.0};
+		
+		BOOST_REQUIRE(dp1.aggregateToDistance(measurePoint) == 0.0);
+		BOOST_REQUIRE(dp2.aggregateToDistance(measurePoint) == 0.5);
+		BOOST_REQUIRE(dp3.aggregateToDistance(measurePoint) == 2.0);
+		
+		data_point weights = {1.0,2.0,3.0};
+		
+		BOOST_REQUIRE(dp1.aggregateToDistance(measurePoint,weights) == 0.0);
+		BOOST_REQUIRE(dp2.aggregateToDistance(measurePoint,weights) == 1.0);
+		BOOST_REQUIRE(dp3.aggregateToDistance(measurePoint,weights) == 6.0);
+	}
+	
 	BOOST_AUTO_TEST_CASE( addition_operator )
 	{
 		data_point p1 = {1,2,3};
