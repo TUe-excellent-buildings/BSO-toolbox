@@ -54,6 +54,10 @@ namespace bso { namespace utilities { namespace geometry {
 		auto polygonBegin() const {return mPolygons.begin();}
 		auto polygonEnd() const {return mPolygons.end();}
 		
+		const auto& getVertices() const {return mVertices;}
+		const auto& getLines() const {return mLineSegments;}
+		const auto& getPolygons() const {return mPolygons;}
+		
 		const vertex& operator [] (const unsigned int& index) const;
 		
 		friend std::ostream& operator << (std::ostream& stream, const polyhedron& pol);

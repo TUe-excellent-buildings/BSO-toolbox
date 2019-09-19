@@ -483,10 +483,153 @@ void ms_building::snapOn(const std::vector<std::pair<unsigned int, double> >& sn
 	}
 } // snapOn()
 
-bool ms_building::checkSCCEll(const sc_building& sc, const unsigned int& cellIndex, const unsigned int& spaceIndex, utilities::geometry::vertex /*= {0.0,0.0,0.0}*/) const 
+bool ms_building::hasOverlappingSpaces(std::multimap<ms_space*,ms_space*>& overlappingSpaces,
+	const double tol /*= 1e-3*/) const
 {
+	std::vector<bso::utilities::geometry::quad_hexahedron> spaceGeoms;
+	for (const auto& i : mSpaces)
+	{
+		spaceGeoms.push_back(i->getGeometry());
+	}
 	
-}
+	for (unsigned int i = 0; i < spaceGeoms.size(); ++i)
+	{
+		for (unsigned int j = 0; j < spaceGeoms.size(); ++j)
+		{
+			if (i == j) continue;
+			bool foundOverlap = false;
+			for (const auto& k : spaceGeoms[i])
+			{
+				if (spaceGeoms[j].isInside(k,tol))
+				{
+					overlappingSpaces.emplace(mSpaces[j], mSpaces[i]);
+					foundOverlap = true;
+					break;
+				}
+			}
+			if (foundOverlap) break;
+			unsigned int linePolygonIntersections = 0;
+			for (const auto& k : spaceGeoms[j].getLines())
+			{
+				for (const auto& l : spaceGeoms[i].getPolygons())
+				{
+					if (l->intersectsWith(k,tol))
+					{
+						++linePolygonIntersections;
+						if (linePolygonIntersections == 2)
+						{
+							overlappingSpaces.emplace(mSpaces[j], mSpaces[i]);
+							foundOverlap = true;
+							break;
+						}
+					}
+				}
+				if (foundOverlap) break;
+			}
+		}
+	}
+	
+	return (overlappingSpaces.size() != 0);
+} // hasOverlappingSpaces()
+
+bool ms_building::hasFloatingSpaces(std::vector<ms_space*>& floatingSpaces, 
+	const double tol /*= 1e-3*/) const
+{
+	std::vector<bso::utilities::geometry::quad_hexahedron> groundedSpaceGeoms;
+	floatingSpaces = mSpaces;
+	bool hasFloatingSpaces = false;
+	bool addedSpaceToGroundedSpaceGeoms = true; // initial
+	while (addedSpaceToGroundedSpaceGeoms)
+	{
+		addedSpaceToGroundedSpaceGeoms = false;
+		auto spaceIt = floatingSpaces.begin();
+		while (spaceIt != floatingSpaces.end())
+		{
+			auto spaceGeom = (*spaceIt)->getGeometry();
+
+			// check if this space has any vertex with a z-coordinate at or below zero
+			bool isGrounded = false;
+			for (const auto& j : spaceGeom)
+			{
+				if (j(2) < abs(tol))
+				{
+					isGrounded = true;
+					break;
+				}
+			}
+			if (isGrounded)
+			{
+				groundedSpaceGeoms.push_back(spaceGeom);
+				addedSpaceToGroundedSpaceGeoms = true;
+				floatingSpaces.erase(spaceIt);
+				continue;
+			}
+			
+			// check if this space is connected to any of the grounded spaces
+			bool isConnectedToGroundedSpace = false;
+			for (const auto& i : groundedSpaceGeoms)
+			{
+				for (const auto& j : spaceGeom)
+				{
+					if (i.isInside(j,tol))
+					{ // if any vertex j of the space is inside a grounded space
+						isConnectedToGroundedSpace = true;
+						break;
+					}
+					for (const auto& k : i.getPolygons())
+					{
+						if (k->isInside(j,tol))
+						{ // if any vertex j of the space is inside the surface of a grounded space
+							isConnectedToGroundedSpace = true;
+							break;
+						}
+					}
+					if (isConnectedToGroundedSpace) break;
+					for (const auto& k : i.getLines())
+					{
+						if (k.isOnLine(j,tol))
+						{ // if any vertex j of the space is on a line segment of a grounded space
+							isConnectedToGroundedSpace = true;
+							break;
+						}
+					}
+					if (isConnectedToGroundedSpace) break;
+					for (const auto& k : i)
+					{
+						if (k.isSameAs(j,tol))
+						{ // if any vertex j of the space is collocated with a vertex of a grounded space
+							isConnectedToGroundedSpace = true;
+							break;
+						}
+					}
+					if (isConnectedToGroundedSpace) break;
+				}
+				for (const auto& j : i)
+				{
+					if (spaceGeom.isInside(j,tol))
+					{ // if any vertex j of a grounded space i is inside the space
+						isConnectedToGroundedSpace = true;
+						break;
+					}
+				}
+				if (isConnectedToGroundedSpace) break;
+			}
+			
+			if (isConnectedToGroundedSpace)
+			{
+				groundedSpaceGeoms.push_back(spaceGeom);
+				addedSpaceToGroundedSpaceGeoms = true;
+				floatingSpaces.erase(spaceIt);
+				continue;
+			}
+			
+			++spaceIt;
+		}
+	}
+	
+	
+	return (floatingSpaces.size() != 0);
+} // hasFloatingSpaces()
 
 bool ms_building::operator == (const ms_building& rhs)
 {

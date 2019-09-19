@@ -2,6 +2,7 @@
 #define MS_BUILDING_HPP
 
 #include <vector>
+#include <map>
 #include <utility>
 #include <bso/spatial_design/ms_space.hpp>
 #include <bso/spatial_design/sc_building.hpp>
@@ -40,7 +41,10 @@ public:
 	const auto begin() const {return mSpaces.begin();}
 	const auto end() const {return mSpaces.end();}
 	
-	bool checkSCCEll(const sc_building& sc, const unsigned int& cellIndex, const unsigned int& spaceIndex, utilities::geometry::vertex = {0.0,0.0,0.0}) const;
+	bool hasOverlappingSpaces(std::multimap<ms_space*,ms_space*>& overlappingSpaces,
+		const double tol = 1e-3) const;
+	bool hasFloatingSpaces(std::vector<ms_space*>& floatingSpaces, 
+		const double tol = 1e-3) const;
 	
 	bool operator == (const ms_building& rhs);
 	bool operator != (const ms_building& rhs);

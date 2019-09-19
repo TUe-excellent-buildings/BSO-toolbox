@@ -275,6 +275,77 @@ BOOST_AUTO_TEST_SUITE( building_functions )
 		BOOST_REQUIRE_THROW(b1.splitSpace(spacePtr,{{1,2},{2,3}}), std::runtime_error); // spacePtr does not belong to b1 anymore and cannot be split
 	}
 	
+	BOOST_AUTO_TEST_CASE( has_overlapping_spaces )
+	{
+		std::multimap<ms_space*, ms_space*> overlaps;
+		ms_building ms1;
+		ms1.addSpace(ms_space("1,1000,1000,1000,0,0,0"));
+		ms1.addSpace(ms_space("2,2000,2000,2000,-500,-500,-500"));
+		BOOST_REQUIRE(ms1.hasOverlappingSpaces(overlaps));
+		BOOST_REQUIRE(overlaps.size() == 1);
+
+		overlaps.clear();
+		ms_building ms2;
+		ms2.addSpace(ms_space("1,1000,1000,3000,0,0,-1000"));
+		ms2.addSpace(ms_space("2,2000,2000,2000,-500,-500,-500"));
+		BOOST_REQUIRE(ms2.hasOverlappingSpaces(overlaps));
+		BOOST_REQUIRE(overlaps.size() == 1);
+		
+		overlaps.clear();
+		ms_building ms3;
+		ms3.addSpace(ms_space("1,1000,1000,1000,0,0,0"));
+		ms3.addSpace(ms_space("2,1000,1000,1000,500,500,0"));
+		BOOST_REQUIRE(ms3.hasOverlappingSpaces(overlaps));
+		BOOST_REQUIRE(overlaps.size() == 2);
+		
+		overlaps.clear();
+		ms_building ms4;
+		ms4.addSpace(ms_space("1,1000,1000,1000,0,0,500"));
+		ms4.addSpace(ms_space("2,1000,1000,1000,500,500,0"));
+		BOOST_REQUIRE(ms4.hasOverlappingSpaces(overlaps));
+		BOOST_REQUIRE(overlaps.size() == 2);
+		
+		overlaps.clear();
+		ms_building ms5;
+		ms5.addSpace(ms_space("1,1000,1000,1000,0,0,1000"));
+		ms5.addSpace(ms_space("2,1000,1000,1000,500,500,0"));
+		BOOST_REQUIRE(!ms5.hasOverlappingSpaces(overlaps));
+		BOOST_REQUIRE(overlaps.size() == 0);
+	}
+	
+	BOOST_AUTO_TEST_CASE( has_floating_spaces )
+	{
+		std::vector<ms_space*> floatingSpaces;
+		ms_building ms1;
+		ms1.addSpace(ms_space("1,1000,1000,1000,0,0,0"));
+		ms1.addSpace(ms_space("2,1000,1000,1000,0,0,1500"));
+		BOOST_REQUIRE(ms1.hasFloatingSpaces(floatingSpaces));
+
+		floatingSpaces.clear();
+		ms_building ms2;
+		ms2.addSpace(ms_space("1,1000,1000,1000,0,0,0"));
+		ms2.addSpace(ms_space("2,1000,1000,1000,1000,1000,1000"));
+		BOOST_REQUIRE(!ms2.hasFloatingSpaces(floatingSpaces));
+		
+		floatingSpaces.clear();
+		ms_building ms3;
+		ms3.addSpace(ms_space("1,1000,1000,1000,0,0,0"));
+		ms3.addSpace(ms_space("2,1000,1000,1000,1000,0,1000"));
+		BOOST_REQUIRE(!ms3.hasFloatingSpaces(floatingSpaces));
+		
+		floatingSpaces.clear();
+		ms_building ms4;
+		ms4.addSpace(ms_space("1,1000,1000,1000,0,0,0"));
+		ms4.addSpace(ms_space("2,1000,1000,1000,1000,500,500"));
+		BOOST_REQUIRE(!ms4.hasFloatingSpaces(floatingSpaces));
+		
+		floatingSpaces.clear();
+		ms_building ms5;
+		ms5.addSpace(ms_space("1,1000,1000,1000,0,0,0"));
+		ms5.addSpace(ms_space("2,1000,1000,1000,0,0,1000"));
+		BOOST_REQUIRE(!ms5.hasFloatingSpaces(floatingSpaces));
+	}
+	
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE( ms_sc_conversion )
