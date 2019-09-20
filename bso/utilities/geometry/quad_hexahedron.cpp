@@ -47,11 +47,11 @@ namespace bso { namespace utilities { namespace geometry {
 					bool intersection = false;
 					if (opposingFound)
 					{ // check if any of the line segments between the two quadrilaterals intersect
-						for (auto l = current.lineBegin(); l != current.lineEnd(); ++l)
+						for (const auto& l : current.getLines())
 						{
-							for (auto m = opposing.lineBegin(); m != opposing.lineEnd(); ++m)
+							for (const auto& m : opposing.getLines())
 							{
-								if (l->intersectsWith(*m, tol))
+								if (l.intersectsWith(m, tol))
 								{
 									intersection = true;
 									break;
@@ -105,11 +105,11 @@ namespace bso { namespace utilities { namespace geometry {
 				quadrilateral quad2({current[2],current[3],opposing[(i+2)%4],opposing[(i+3)%4]},tol);
 
 				bool intersection = false;
-				for (auto j = quad1.lineBegin(); j != quad1.lineEnd(); ++j)
+				for (const auto& j : quad1.getLines())
 				{
-					for (auto k = quad2.lineBegin(); k != quad2.lineEnd(); ++k)
+					for (const auto& k : quad2.getLines())
 					{
-						if (j->intersectsWith(*k,tol))
+						if (j.intersectsWith(k,tol))
 						{
 							intersection = true;
 							break;
@@ -287,9 +287,9 @@ namespace bso { namespace utilities { namespace geometry {
 		bool onTetSurface = false;
 		for (const auto& i : mTetrahedrons)
 		{
-			for (auto j = i.polygonBegin(); j != i.polygonEnd(); ++j)
+			for (auto j : i.getPolygons())
 			{
-				if ((*j)->isInside(p1,tol))
+				if (j->isInside(p1,tol))
 				{
 					onTetSurface = true;
 					break;

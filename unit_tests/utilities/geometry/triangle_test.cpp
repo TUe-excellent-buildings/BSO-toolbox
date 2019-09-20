@@ -69,9 +69,9 @@ BOOST_AUTO_TEST_SUITE( triangle_tests )
 		BOOST_REQUIRE(check1.str() == "{{0,0,0},{1,0,0},{0.5,1,0}}");
 		
 		std::stringstream check2;
-		for (auto i = t2.lineBegin(); i != t2.lineEnd(); ++i)
+		for (const auto& i : t2.getLines())
 		{
-			check2 << *i << "\n";
+			check2 << i << "\n";
 		}
 		BOOST_REQUIRE(check2.str() == "{{0,0,0},{1,0,0}}\n{{1,0,0},{0.5,1,0}}\n{{0.5,1,0},{0,0,0}}\n");
 	}

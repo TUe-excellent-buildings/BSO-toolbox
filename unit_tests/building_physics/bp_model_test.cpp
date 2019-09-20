@@ -66,16 +66,16 @@ BOOST_AUTO_TEST_SUITE( bp_model_test )
 		bso::building_physics::properties::construction wallConstruction("testWall",layers);
 		
 		unsigned int counter = 0;
-		for (auto i = bpGeom.polygonBegin(); i != bpGeom.polygonEnd(); ++i)
+		for (const auto& i : bpGeom.getPolygons())
 		{
 			if (counter == 0)
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, gp));
 			}
 			else
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, wp));
 			}
 			counter++;
@@ -137,16 +137,16 @@ BOOST_AUTO_TEST_SUITE( bp_model_test )
 		bso::building_physics::properties::construction wallConstruction("testWall",layers);
 		
 		unsigned int counter = 0;
-		for (auto i = bpGeom.polygonBegin(); i != bpGeom.polygonEnd(); ++i)
+		for (const auto& i : bpGeom.getPolygons())
 		{
 			if (counter == 0)
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, gp));
 			}
 			else
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, wp));
 			}
 			counter++;
@@ -208,16 +208,16 @@ BOOST_AUTO_TEST_SUITE( bp_model_test )
 		bso::building_physics::properties::construction wallConstruction("testWall",layers);
 		
 		unsigned int counter = 0;
-		for (auto i = bpGeom.polygonBegin(); i != bpGeom.polygonEnd(); ++i)
+		for (const auto& i : bpGeom.getPolygons())
 		{
 			if (counter == 0)
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, gp));
 			}
 			else
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, wp));
 			}
 			counter++;
@@ -279,16 +279,16 @@ BOOST_AUTO_TEST_SUITE( bp_model_test )
 		bso::building_physics::properties::construction wallConstruction("testWall",layers);
 		
 		unsigned int counter = 0;
-		for (auto i = bpGeom.polygonBegin(); i != bpGeom.polygonEnd(); ++i)
+		for (const auto& i : bpGeom.getPolygons())
 		{
 			if (counter == 0)
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, gp));
 			}
 			else
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, wp));
 			}
 			counter++;
@@ -350,16 +350,16 @@ BOOST_AUTO_TEST_SUITE( bp_model_test )
 		bso::building_physics::properties::construction wallConstruction("testWall",layers);
 		
 		unsigned int counter = 0;
-		for (auto i = bpGeom.polygonBegin(); i != bpGeom.polygonEnd(); ++i)
+		for (const auto& i : bpGeom.getPolygons())
 		{
 			if (counter == 0)
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, gp));
 			}
 			else
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, wp));
 			}
 			counter++;

@@ -67,9 +67,9 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		tetrahedron tet2 = *tet1;
 		delete tet1;
 		std::stringstream check;
-		for (auto i = tet2.polygonBegin(); i != tet2.polygonEnd(); ++i)
+		for (const auto& i : tet2.getPolygons())
 		{
-			BOOST_REQUIRE_NO_THROW(check << **i); // this will throw an error if the copy constructor is not working properly
+			BOOST_REQUIRE_NO_THROW(check << *i); // this will throw an error if the copy constructor is not working properly
 		}
 	}
 	

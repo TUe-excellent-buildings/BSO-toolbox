@@ -84,9 +84,9 @@ BOOST_AUTO_TEST_SUITE( quad_hexahedron_tests )
 		quad_hexahedron qhex2 = *qhex1;
 		delete qhex1;
 		std::stringstream check;
-		for (auto i = qhex2.polygonBegin(); i != qhex2.polygonEnd(); ++i)
+		for (const auto& i : qhex2.getPolygons())
 		{
-			BOOST_REQUIRE_NO_THROW(check << **i); // this will throw an error if the copy constructor is not working properly
+			BOOST_REQUIRE_NO_THROW(check << *i); // this will throw an error if the copy constructor is not working properly
 		}
 	}
 	

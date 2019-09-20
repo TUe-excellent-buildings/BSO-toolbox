@@ -222,14 +222,14 @@ namespace bso { namespace structural_design { namespace component {
 			for (unsigned int j = 0; j < 8; ++j)
 			{ // for each of the element's vertices j, find the (partition) volume that corresponds to how much of the load is carried to that vertex
 				std::vector<geom::vertex> partitionVertices;
-				for (auto k = elementGeometry.lineBegin(); k!= elementGeometry.lineEnd(); ++k)
+				for (const auto& k : elementGeometry.getLines())
 				{ // each line segment k in the element's geometry
-					for (const auto& l : *k)
+					for (const auto& l : k)
 					{ // for each vertex l in line segment k
 						if (elementGeometry[j].isSameAs(l))
 						{ // if vertex j is in line segment l
 							// add the center of line segment l to the partition
-							partitionVertices.push_back(k->getCenter());
+							partitionVertices.push_back(k.getCenter());
 							break;
 						}
 					}
@@ -244,14 +244,14 @@ namespace bso { namespace structural_design { namespace component {
 											 << "(bso/structural_design/component/quad_hexahedron.cpp)" << std::endl;
 					throw std::runtime_error(errorMessage.str());
 				}
-				for (auto k = elementGeometry.polygonBegin(); k != elementGeometry.polygonEnd(); ++k)
+				for (const auto& k : elementGeometry.getPolygons())
 				{ // for each polygon k in the element's geometry
-					for (auto l = (*k)->begin(); l != (*k)->end(); ++l)
+					for (const auto l : *k)
 					{ // for each vertex l in polygon k
-						if (elementGeometry[j].isSameAs(*l))
+						if (elementGeometry[j].isSameAs(l))
 						{
 							// add the center of line segment l to the partition
-							partitionVertices.push_back((*k)->getCenter());
+							partitionVertices.push_back(k->getCenter());
 							break;
 						}
 					}

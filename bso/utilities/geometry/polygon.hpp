@@ -55,9 +55,8 @@ namespace bso { namespace utilities { namespace geometry {
 		auto begin() const {return mVertices.begin();}
 		auto end() const {return mVertices.end();}
 		
-		auto lineBegin() const {return mLineSegments.begin();}
-		auto lineEnd() const {return mLineSegments.end();}
-		
+		const auto& getLines() const {return mLineSegments;}
+
 		const vertex& operator [] (const unsigned int& index) const;
 		
 		friend std::ostream& operator << (std::ostream& stream, const polygon& pol);

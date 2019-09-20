@@ -167,17 +167,17 @@ namespace bso { namespace spatial_design { namespace conformal {
 					// next find the vertices on each of the lines of the surface
 					for (unsigned int j = 0; j < 2; ++j)
 					{
-						for (auto k = mPolygons[splitSurfaces[j]]->lineBegin(); k != mPolygons[splitSurfaces[j]]->lineEnd(); ++k)
+						for (const auto& k : mPolygons[splitSurfaces[j]]->getLines())
 						{
-							newVertices.push_back(mGeometryModel->addVertex(k->getPointClosestTo(*(newVertices[j]))));
-							if (!k->isOnLine(*(newVertices.back()), mGeometryModel->tolerance()))
+							newVertices.push_back(mGeometryModel->addVertex(k.getPointClosestTo(*(newVertices[j]))));
+							if (!k.isOnLine(*(newVertices.back()), mGeometryModel->tolerance()))
 							{
 								std::stringstream errorMessage;
 								errorMessage << "\nError, found a point closest to a line segment,\n"
 														 << "but that point is not on the line segment.\n"
 														 << "When splitting cuboid at surface.\n"
 														 << "Surface:\n" << *mPolygons[splitSurfaces[j]] << "\n"
-														 << "Line:\n" << *k << "\n"
+														 << "Line:\n" << k << "\n"
 														 << "Split point: " << pPtr->transpose() << "\n"
 														 << "Found point: " << newVertices.back()->transpose() << "\n"
 														 << "(bso/spatial_design/conformal/cf_cuboid)." << std::endl;
@@ -186,11 +186,11 @@ namespace bso { namespace spatial_design { namespace conformal {
 						}
 					}
 					
-					for (auto j = mPolygons[opposite]->begin(); j != mPolygons[opposite]->end(); ++j)
+					for (const auto j : *(mPolygons[opposite]))
 					{
 						std::vector<utilities::geometry::vertex> cornerPoints;
 						cornerPoints.push_back(*pPtr);
-						cornerPoints.push_back(*j);
+						cornerPoints.push_back(j);
 						for (const auto& k : normals)
 						{
 							double projectedDistance = k.dot(cornerPoints[1] - cornerPoints[0]);

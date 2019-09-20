@@ -16,16 +16,16 @@ namespace bso { namespace spatial_design { namespace conformal {
 		}
 
 		auto spPtr = mCFSpaces.back();
-		for (auto i = spPtr->begin(); i != spPtr->end(); ++i)
+		for (const auto& i : *spPtr)
 		{
-			mCFPoints.push_back(new cf_point(*i, this));
+			mCFPoints.push_back(new cf_point(i, this));
 			mCFPoints.back()->addSpace(spPtr);
 			spPtr->addPoint(mCFPoints.back());
 		}
 		
-		for (auto i = spPtr->lineBegin(); i != spPtr->lineEnd(); ++i)
+		for (const auto& i : spPtr->getLines())
 		{
-			mCFEdges.push_back(new cf_edge(*i, this));
+			mCFEdges.push_back(new cf_edge(i, this));
 			mCFEdges.back()->addSpace(spPtr);
 			spPtr->addEdge(mCFEdges.back());
 		}
@@ -38,9 +38,9 @@ namespace bso { namespace spatial_design { namespace conformal {
 			std::swap(possibleSurfaceTypes[4],possibleSurfaceTypes[5]);
 		}
 		auto typeIte = possibleSurfaceTypes.begin();
-		for (auto i = spPtr->polygonBegin(); i != spPtr->polygonEnd(); ++i)
+		for (const auto& i : spPtr->getPolygons())
 		{
-			mCFSurfaces.push_back(new cf_surface(**i, this));
+			mCFSurfaces.push_back(new cf_surface(*i, this));
 			mCFSurfaces.back()->addSpace(spPtr);
 			spPtr->addSurface(mCFSurfaces.back());
 			if (surfaceTypesAvailable)

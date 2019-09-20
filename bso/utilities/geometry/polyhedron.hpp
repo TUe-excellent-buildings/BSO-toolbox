@@ -48,11 +48,11 @@ namespace bso { namespace utilities { namespace geometry {
 		auto begin() const {return mVertices.begin();}
 		auto end() const {return mVertices.end();}
 		
-		auto lineBegin() const {return mLineSegments.begin();}
-		auto lineEnd() const {return mLineSegments.end();}
+		// auto lineBegin() const {return mLineSegments.begin();}
+		// auto lineEnd() const {return mLineSegments.end();}
 		
-		auto polygonBegin() const {return mPolygons.begin();}
-		auto polygonEnd() const {return mPolygons.end();}
+		// auto polygonBegin() const {return mPolygons.begin();}
+		// auto polygonEnd() const {return mPolygons.end();}
 		
 		const auto& getVertices() const {return mVertices;}
 		const auto& getLines() const {return mLineSegments;}

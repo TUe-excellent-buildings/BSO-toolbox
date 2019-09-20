@@ -75,9 +75,9 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		BOOST_REQUIRE(check1.str() == "{{0,0,0},{1,0,0},{1,1,0},{0,1,0}}");
 		
 		std::stringstream check2;
-		for (auto i = q2.lineBegin(); i != q2.lineEnd(); ++i)
+		for (const auto& i : q2.getLines())
 		{
-			check2 << *i << "\n";
+			check2 << i << "\n";
 		}
 		BOOST_REQUIRE(check2.str() == "{{0,0,0},{1,0,0}}\n{{1,0,0},{1,1,0}}\n{{1,1,0},{0,1,0}}\n{{0,1,0},{0,0,0}}\n");
 	}
