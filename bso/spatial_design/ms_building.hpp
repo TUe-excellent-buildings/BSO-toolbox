@@ -33,6 +33,9 @@ public:
 	void addSpace(const ms_space& space);
 	void deleteSpace(ms_space* spacePtr);
 	void deleteSpace(ms_space& space);
+	void sweep(const bso::utilities::geometry::vertex& location,
+		const std::vector<std::pair<unsigned int, double> >& distances =
+		{{0,1.0},{1,0.0},{2,0.0}}, const double& tol = 1e-3);
 	void scale(const std::vector<std::pair<unsigned int, double> >& scales = {{0,sqrt(2.0)},{1,sqrt(2.0)}});
 	void splitSpace(ms_space* spacePtr, const std::vector<std::pair<unsigned int, unsigned int> >& splits = {{0,2},{1,2}});
 	void splitSpace(ms_space& space, const std::vector<std::pair<unsigned int, unsigned int> >& splits = {{0,2},{1,2}});

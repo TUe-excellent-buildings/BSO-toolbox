@@ -302,6 +302,67 @@ void ms_building::deleteSpace(ms_space& space)
 	this->deleteSpace(this->getSpacePtr(space));
 }
 
+void ms_building::sweep(const bso::utilities::geometry::vertex& location,
+		const std::vector<std::pair<unsigned int, double> >& distances 
+		/*= {{0,1.0},{1,0.0},{2,0.0}}*/, const double& tol /*=1e-3*/)
+{
+	bso::utilities::geometry::vertex coords;
+	bso::utilities::geometry::vector tempSum;
+	
+	unsigned int axis;
+	double distance;
+	bool checkDouble[3] = {false};
+	
+	for (auto i : distances)
+	{
+		axis = i.first;
+		if (axis != 0 && axis != 1 && axis != 2)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "Trying to sweep an MS building spatial design over the \n"
+									 << "following non-existent axis: " << axis << std::endl
+									 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
+			throw std::invalid_argument(errorMessage.str());
+		}
+		
+		if (checkDouble[axis])
+		{
+			std::stringstream errorMessage;
+			errorMessage << "Defined a scaling factor to scale and MS building \n"
+									 << "spatial design twice for the same axis, axis: " << axis << std::endl
+									 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
+			throw std::invalid_argument(errorMessage.str());
+		}
+		else checkDouble[axis] = true;
+	}
+	
+	for (auto i : mSpaces)
+	{
+		coords = i->getCoordinates();
+		tempSum = coords + i->getDimensions();
+
+		for (auto j : distances)
+		{
+			axis = j.first;
+			distance = j.second;
+			
+			if (distance < 0)
+			{
+				if (coords(axis)  + tol < location(axis)) coords(axis)  += distance;
+				if (tempSum(axis) + tol < location(axis)) tempSum(axis) += distance;
+			}
+			else 
+			{
+				if (coords(axis)  - tol > location(axis)) coords(axis)  += distance;
+				if (tempSum(axis) - tol > location(axis)) tempSum(axis) += distance;
+			}
+		}
+
+		i->setCoordinates(coords);
+		i->setDimensions(tempSum - coords);
+	}
+} // sweep()
+
 void ms_building::scale(const std::vector<std::pair<unsigned int, double> >& scales /*= {{0,sqrt(2.0)},{1,sqrt(2.0)}}*/)
 {
 	utilities::geometry::vertex coords;
@@ -317,7 +378,8 @@ void ms_building::scale(const std::vector<std::pair<unsigned int, double> >& sca
 		if (axis != 0 && axis != 1 && axis != 2)
 		{
 			std::stringstream errorMessage;
-			errorMessage << "Trying to scale an MS building spatial design over the following non-existent axis: " << axis << std::endl
+			errorMessage << "Trying to sweep an MS building spatial design over the \n"
+									 << "following non-existent axis: " << axis << std::endl
 									 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
 			throw std::invalid_argument(errorMessage.str());
 		}
@@ -325,7 +387,8 @@ void ms_building::scale(const std::vector<std::pair<unsigned int, double> >& sca
 		if (checkDouble[axis])
 		{
 			std::stringstream errorMessage;
-			errorMessage << "Defined a scaling factor to scale and MS building spatial design twice for the same axis, axis: " << axis << std::endl
+			errorMessage << "Defined a scaling factor to scale and MS building \n"
+									 << "spatial design twice for the same axis, axis: " << axis << std::endl
 									 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
 			throw std::invalid_argument(errorMessage.str());
 		}

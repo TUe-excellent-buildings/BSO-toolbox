@@ -211,6 +211,20 @@ BOOST_AUTO_TEST_SUITE( building_functions )
 		BOOST_REQUIRE_THROW(b2.deleteSpace(s1), std::runtime_error);
 	}
 	
+	BOOST_AUTO_TEST_CASE( sweep )
+	{
+		ms_building b1("spatial_design/ms_test_2.txt");
+		std::stringstream sstr;
+		
+		b1.sweep({3000,1500,0.0},{{0,300},{1,500},{2,1000}});
+		sstr << b1;
+		BOOST_REQUIRE(sstr.str() == "R,1,3000,3500,4000,0,0,0\nR,2,3300,3500,4000,3000,0,0\nR,3,3000,3000,4000,0,3500,0\nR,4,3300,3000,4000,3000,3500,0");
+		sstr.str(std::string());
+
+		BOOST_REQUIRE_THROW(b1.sweep({3000,1500,0.0},{{3,1.5}}), std::invalid_argument);
+		BOOST_REQUIRE_THROW(b1.sweep({3000,1500,0.0},{{1,1.0},{1,1.0}}), std::invalid_argument);
+	}
+	
 	BOOST_AUTO_TEST_CASE( scale )
 	{
 		ms_building b1("spatial_design/ms_test_3.txt");

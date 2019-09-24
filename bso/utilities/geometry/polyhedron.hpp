@@ -47,13 +47,7 @@ namespace bso { namespace utilities { namespace geometry {
 		// only allow const accessers because we dont allow geometric member variables to be changed, to prevent sortings to be distorted
 		auto begin() const {return mVertices.begin();}
 		auto end() const {return mVertices.end();}
-		
-		// auto lineBegin() const {return mLineSegments.begin();}
-		// auto lineEnd() const {return mLineSegments.end();}
-		
-		// auto polygonBegin() const {return mPolygons.begin();}
-		// auto polygonEnd() const {return mPolygons.end();}
-		
+			
 		const auto& getVertices() const {return mVertices;}
 		const auto& getLines() const {return mLineSegments;}
 		const auto& getPolygons() const {return mPolygons;}
