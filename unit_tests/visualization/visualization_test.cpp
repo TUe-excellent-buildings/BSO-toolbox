@@ -89,6 +89,7 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 
 		visualize(sd,"component","Visualization of sd model without ghost components",false);
 		visualize(sd,"component","Visualization of sd model with ghost components",true);
+		visualize(sd,"component","Visualization of sd model with ghost components",true,{{{1,0,0},{1,1,10}},{{-0.5,0,0},{1,0,0}}});
 		
 		sd.mesh(2);
 		visualize(sd,"element","Visualization of meshed sd model without ghost elements",false);
@@ -215,26 +216,26 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		bso::building_physics::properties::glazing windowGlazing("testGlass",1.2,3e4,{"windowVis",windowVisProp});
 		
 		unsigned int counter = 0;
-		for (auto i = bpGeom.polygonBegin(); i != bpGeom.polygonEnd(); ++i)
+		for (const auto& i : bpGeom.getPolygons())
 		{
 			if (counter == 5)
 			{
-				bp.addState(new state::floor(bp.getNextDependentIndex(),*i,floorConstruction,
+				bp.addState(new state::floor(bp.getNextDependentIndex(),i,floorConstruction,
 					spacePtr, gp));
 			}
 			else if (counter == 4)
 			{
-				bp.addState(new state::floor(bp.getNextDependentIndex(),*i,floorConstruction,
+				bp.addState(new state::floor(bp.getNextDependentIndex(),i,floorConstruction,
 					spacePtr, wp));
 			}
 			else if (counter == 0)
 			{
-				bp.addState(new state::window(bp.getNextDependentIndex(),*i,windowGlazing,
+				bp.addState(new state::window(bp.getNextDependentIndex(),i,windowGlazing,
 					spacePtr, wp));
 			}
 			else
 			{
-				bp.addState(new state::wall(bp.getNextDependentIndex(),*i,wallConstruction,
+				bp.addState(new state::wall(bp.getNextDependentIndex(),i,wallConstruction,
 					spacePtr, wp));
 			}
 			counter++;

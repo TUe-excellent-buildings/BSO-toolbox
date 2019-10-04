@@ -183,9 +183,11 @@ void visualize(const bso::building_physics::bp_model& bp_model, const std::strin
 
 #ifdef SD_MODEL_HPP
 void visualize(const bso::structural_design::sd_model& sd, const std::string& type ="component",
-							 const std::string& title ="sd_model", const bool& ghostly = false)
+							 const std::string& title ="sd_model", const bool& ghostly = false,
+							 const std::vector<std::pair<bso::utilities::geometry::vertex,
+							 bso::utilities::geometry::vector>>& cuttingPlanes = {})
 {
-	vpmanager.addviewport(new viewport(new SD_Model(sd, type, title, ghostly)));
+	vpmanager.addviewport(new viewport(new SD_Model(sd, type, title, ghostly, cuttingPlanes)));
 }
 #endif // SD_MODEL_HPP
 

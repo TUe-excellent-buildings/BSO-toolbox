@@ -40,6 +40,7 @@ class model_base
 protected:
 
 	vertex_store   store;
+	std::vector<std::pair<bso::utilities::geometry::vertex, bso::utilities::geometry::vector>> mCuttingPlanes;
 	
 	aabboxd        bbox; //the bounding box of the model
 											 //the functions below that create
@@ -66,6 +67,7 @@ protected:
 											const bso::utilities::geometry::vertex& pos);
 
 public:
+	model_base(const std::vector<std::pair<bso::utilities::geometry::vertex, bso::utilities::geometry::vector>>& cuttingPlanes = {});
 	virtual ~model_base() {}
 	
 	virtual void render(const camera &cam) const = 0;
@@ -74,6 +76,12 @@ public:
 	virtual bool key_pressed(int key) { (void)key; return false; }
 	
 }; // model_base
+
+model_base::model_base(const std::vector<std::pair<bso::utilities::geometry::vertex, bso::utilities::geometry::vector>>& cuttingPlanes /*= {}*/)
+:	mCuttingPlanes(cuttingPlanes)
+{
+	
+}
 
 void model_base::addLineSegment(std::list<polygon*> &plist, bso::utilities::geometry::line_segment const* l,
 									polygon_props* pprops, line_props* lprops, const double& width /*= 0*/,
@@ -128,18 +136,96 @@ void model_base::addPolygon(std::list<polygon*> &plist, bso::utilities::geometry
 	pNormal.normalize();
 	if (thickness <= 0)
 	{ // add the 2D polygon
-		vertex vertices[4];
-		std::copy(p->begin(), p->end(), std::begin(vertices));
+
+		std::vector<bso::utilities::geometry::vertex> orderedVertices(std::distance(
+			p->begin(),p->end()));
+		std::copy(p->begin(),p->end(),orderedVertices.begin());
+		for (const auto& i : mCuttingPlanes)
+		{
+			if (orderedVertices.empty()) break;
+			auto cutPoint = i.first;
+			auto cutNormal = i.second;
+			std::vector<bso::utilities::geometry::vertex> newOrderedVertices;
+			
+			for (unsigned int j = 0; j < orderedVertices.size(); ++j)
+			{
+				auto v0 = orderedVertices[j];
+
+				if (cutNormal.dot(v0-cutPoint) >= -1e-3)
+				{ // if it is on the cutting plane, or on the right side of it, push it back to the new orderedVertices
+					newOrderedVertices.push_back(v0);
+					for (unsigned int k = 0; k < orderedVertices.size(); ++k)
+					{
+						v0 = orderedVertices[(j+k)%orderedVertices.size()];
+						auto v1 = orderedVertices[(j+k+1)%orderedVertices.size()];
+						bool v0Retained = (cutNormal.dot(v0-cutPoint) >= -1e-3);
+						bool v1Retained = (cutNormal.dot(v1-cutPoint) >= -1e-3);
+						
+						if (!v0Retained && !v1Retained)
+						{ // both of them are cut off, do nothing
+
+						}
+						else if (v0Retained && v1Retained)
+						{ // none of them are cut off, can push back v1
+							newOrderedVertices.push_back(v1);
+						}
+						else
+						{ // only one of them is cut off, need to find the intersection point of line v0 - v1 with the cuttingplance
+							//find intersection point
+							bso::utilities::geometry::vector vec1 = v1-v0;
+							bso::utilities::geometry::vector vec2 = cutPoint-v0;
+							bso::utilities::geometry::vertex intersection;
+							//check if the line intersects with the plane
+							double r = (cutNormal.dot(vec2))/(cutNormal.dot(vec1));
+							if (r > -1e-3 && r < (1 + 1e-3))
+							{ // if it does, compute the point
+								intersection = v0 + r * vec1;
+							}
+							else 
+							{
+								std::stringstream errorMessage;
+								errorMessage << "\nError, while cutting a model, expected an intersection\n"
+														 << "between a line segment and a plane, but did not find one: s = " 
+														 << r << "\n"
+														 << "(bso/vizualization/models/model_base.hpp)" << std::endl;
+								throw std::runtime_error(errorMessage.str());
+							}
+							
+							// check whcih points should be pushed back
+							if (v0Retained)
+							{ // only push back the intersection point
+								if (r > 1e-3) newOrderedVertices.push_back(intersection);
+							}
+							else if (v1Retained)
+							{ // push back intersection point, and then v1
+								if (r < 1-1e-3) newOrderedVertices.push_back(intersection);
+								if (k != orderedVertices.size()-1) newOrderedVertices.push_back(v1);
+							}
+						}
+					}
+					break;
+				}
+			}
+			
+			if (newOrderedVertices.size() < 3) newOrderedVertices.clear();
+			orderedVertices = newOrderedVertices;
+		}
+		if (orderedVertices.empty()) return;
+
+		vertex vertices[orderedVertices.size()];
+		for (unsigned int i = 0; i < orderedVertices.size(); ++i)
+		{
+			vertices[i] = orderedVertices[i];
+		}
 		normal normals[] = {pNormal};
-		int indices[2*std::distance(p->begin(), p->end())];
-		for (unsigned int i = 0; i < std::distance(p->begin(), p->end()); ++i)
+		int indices[2*orderedVertices.size()];
+		for (unsigned int i = 0; i < orderedVertices.size(); ++i)
 		{
 			indices[i*2]   = i;
 			indices[i*2+1] = 0;
 		}
-
 		plist.push_back(this->create_polygon(pprops,lprops,vertices,normals,
-																				 indices,std::distance(p->begin(), p->end())));
+																				 indices,orderedVertices.size()));
 	}
 	else 
 	{ // make a 3D polygon out of it
@@ -157,9 +243,94 @@ void model_base::addPolygon(std::list<polygon*> &plist, bso::utilities::geometry
 void model_base::addPolyhedron(std::list<polygon*> &plist, bso::utilities::geometry::polyhedron const* p,
 									 polygon_props* pprops, line_props* lprops)
 {
-	for (auto i = p->polygonBegin(); i != p->polygonEnd(); ++i)
+	for (const auto& i : p->getPolygons())
 	{
-		this->addPolygon(plist, *i, pprops, lprops, 0.0);
+		this->addPolygon(plist, i, pprops, lprops, 0.0);
+	}
+	for (const auto& i : mCuttingPlanes)
+	{
+		auto cutPoint = i.first;
+		auto cutNormal = i.second;
+		std::vector<bso::utilities::geometry::vertex> unOrderedVertices;
+		
+		
+		for (const auto& j : p->getLines())
+		{
+			bso::utilities::geometry::vector vec1 = j[1]-j[0];
+			bso::utilities::geometry::vector vec2 = cutPoint-j[0];
+			
+			//check if the line intersects with the plane
+			double r = (cutNormal.dot(vec2))/(cutNormal.dot(vec1));
+			if (r > -1e-3 && r < (1 + 1e-3))
+			{ // if it does, compute the point
+				bso::utilities::geometry::vertex intersection = j[0] + r * vec1;
+				bool alreadyFound = false;
+				for (const auto& k : unOrderedVertices)
+				{
+					if (k.isSameAs(intersection))
+					{
+						alreadyFound = true;
+						break;
+					}
+				}
+				if (!alreadyFound) unOrderedVertices.push_back(intersection);
+			}
+		}
+		
+		if (unOrderedVertices.size() < 3) unOrderedVertices.clear();
+		if (unOrderedVertices.empty()) continue;
+		
+		if (unOrderedVertices.size() == 3)
+		{
+			bso::utilities::geometry::triangle tr(unOrderedVertices);
+			this->addPolygon(plist, &tr, pprops, lprops, 0.0);
+		}
+		else if (unOrderedVertices.size() == 4)
+		{
+			bso::utilities::geometry::quadrilateral quad(unOrderedVertices);
+			this->addPolygon(plist, &quad, pprops, lprops, 0.0);
+		}
+		else 
+		{ // error
+			
+		}
+		
+		/*bso::utilities::geometry::vertex center = {0,0,0};
+		for (const auto& j : unOrderedVertices) center += j;
+		center /= unOrderedVertices.size();
+		bso::utilities::geometry::vector refx = *(unOrderedVertices.begin()) - center;
+		refx.normalize();
+		bso::utilities::geometry::vector refy = cutNormal.cross(refx);
+		refy.normalize();
+		
+		std::map<double,bso::utilities::geometry::vertex> orderedVertices;
+		
+		for (const auto& j : unOrderedVertices)
+		{
+			bso::utilities::geometry::vector centerVect = j - center;
+			centerVect.normalize();
+			double angle = atan2(refy.dot(centerVect),refx.dot(centerVect));
+			orderedVertices[angle] = j;
+		}
+		
+		vertex vertices[orderedVertices.size()];
+		unsigned int vertexCounter = 0;
+		for (const auto& j : orderedVertices)
+		{
+			vertices[vertexCounter] = j.second;
+			++vertexCounter;
+		}
+		bso::utilities::geometry::vector viewNormal = -1 * cutNormal;
+		normal normals[] = {viewNormal};
+		int indices[2*orderedVertices.size()];
+		for (unsigned int j = 0; j < orderedVertices.size(); ++j)
+		{
+			indices[j*2]   = j;
+			indices[j*2+1] = 0;
+		}
+		plist.push_back(this->create_polygon(pprops,lprops,vertices,normals,
+																				 indices,orderedVertices.size()));
+		*/
 	}
 } // 
 

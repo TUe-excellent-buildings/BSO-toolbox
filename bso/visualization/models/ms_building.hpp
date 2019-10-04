@@ -89,7 +89,7 @@ MS_Model::MS_Model(const spatial_design::ms_building& ms,
 			{
 				centerLabel.str(std::string());
 				centerLabel << surfaceTypes[j];
-				auto tempSurface = *(spaceGeometry.polygonBegin() + j);
+				auto tempSurface = spaceGeometry.getPolygons()[j];
 				auto surfaceCenter = tempSurface->getCenter();
 				std::vector<geom::vertex> surfaceVertices;
 				for (unsigned int k = 0; k < 4; ++k)

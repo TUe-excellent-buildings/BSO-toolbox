@@ -22,7 +22,9 @@ public:
 	SD_Model(const bso::structural_design::sd_model& sd,
 					 const std::string& type ="component",
 					 const std::string& title ="sd_model",
-					 const bool& ghostly = false);
+					 const bool& ghostly = false,
+					 const std::vector<std::pair<bso::utilities::geometry::vertex,
+					 bso::utilities::geometry::vector>>& cuttingPlanes = {});
 	~SD_Model();
 	void render(const camera &cam) const;
 	const std::string get_description();
@@ -54,7 +56,10 @@ private:
 SD_Model::SD_Model(const bso::structural_design::sd_model& sd,
 									 const std::string& type /*="component"*/,
 									 const std::string& title /*="sd_model"*/,
-									 const bool& ghostly /*= false*/)
+									 const bool& ghostly /*= false*/,
+									 const std::vector<std::pair<bso::utilities::geometry::vertex,
+									 bso::utilities::geometry::vector>>& cuttingPlanes /*= {}*/)
+: model_base(cuttingPlanes)
 {
 	mTitle = title;
 	lprops_t = rgba(0.0,0.0,0.0,0.1);
