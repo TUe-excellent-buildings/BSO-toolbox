@@ -58,6 +58,11 @@ namespace bso { namespace utilities { namespace geometry {
 			throw std::invalid_argument(errorMessage.str());
 		}
 	} // 
+	
+	polygon* triangle::clone()
+	{
+		return new triangle(*this);
+	} // virtual copy constructor
 
 	double triangle::getArea() const
 	{

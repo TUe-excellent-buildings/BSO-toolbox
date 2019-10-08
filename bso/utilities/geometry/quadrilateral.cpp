@@ -84,6 +84,11 @@ namespace bso { namespace utilities { namespace geometry {
 			throw std::invalid_argument(errorMessage.str());
 		}
 	} // ctor with initializer list
+	
+	polygon* quadrilateral::clone()
+	{
+		return new quadrilateral(*this);
+	} // virtual copy constructor
 
 	double quadrilateral::getArea() const
 	{ // only holds for convex quadrilaterals

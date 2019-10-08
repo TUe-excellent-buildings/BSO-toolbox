@@ -6,7 +6,7 @@ namespace bso { namespace building_physics { namespace state { namespace depende
 wall::wall(const unsigned int& index,  bso::utilities::geometry::polygon* geometry,
 	const bso::building_physics::properties::construction& construction,
 	state* side1, state* side2)
-: dependent_state(index), mGeometry(geometry), mArea(geometry->getArea()*1e-6),
+: dependent_state(index), mGeometry(geometry->clone()), mArea(geometry->getArea()*1e-6),
 	mConstruction(construction), mSide1(side1), mSide2(side2)
 {
 	mIsWall = true;
@@ -50,7 +50,7 @@ wall::wall(const unsigned int& index,  bso::utilities::geometry::polygon* geomet
 
 wall::~wall()
 {
-	
+	delete mGeometry;
 } // dtor()
 
 bso::utilities::geometry::polygon* wall::getGeometry() const

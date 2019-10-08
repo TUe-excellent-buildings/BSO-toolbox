@@ -34,6 +34,7 @@ namespace bso { namespace utilities { namespace geometry {
 		polyhedron(const CONTAINER& l, const double& tol = 1e-3);
 		polyhedron(const std::initializer_list<vertex>&& l, const double& tol = 1e-3);
 		virtual ~polyhedron();
+		virtual polyhedron* clone() = 0;
 		
 		virtual double getVolume() const = 0;
 		virtual double getSurfaceArea() const;

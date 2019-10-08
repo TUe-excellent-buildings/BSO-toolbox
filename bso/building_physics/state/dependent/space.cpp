@@ -6,7 +6,7 @@ namespace bso { namespace building_physics { namespace state { namespace depende
 space::space(const unsigned int index, bso::utilities::geometry::polyhedron* geometry,
 	const bso::building_physics::properties::space_settings& settings,
 	bso::building_physics::state::state* outside_ptr)
-: dependent_state(index), mGeometry(geometry), mVolume(geometry->getVolume()*1e-9),
+: dependent_state(index), mGeometry(geometry->clone()), mVolume(geometry->getVolume()*1e-9),
 	mSettings(settings)
 {
 	mIsSpace = true;
@@ -22,7 +22,7 @@ space::space(const unsigned int index, bso::utilities::geometry::polyhedron* geo
 
 space::~space()
 {
-
+	delete mGeometry;
 } // dtor()
 
 void space::updateSystem(bso::building_physics::state_space_system& system)

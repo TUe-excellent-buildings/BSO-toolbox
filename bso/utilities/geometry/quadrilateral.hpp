@@ -14,6 +14,7 @@ namespace bso { namespace utilities { namespace geometry {
 		template <class CONTAINER>
 		quadrilateral(const CONTAINER& l, const double& tol = 1e-3);
 		quadrilateral(const std::initializer_list<vertex>&& l, const double& tol = 1e-3);
+		polygon* clone();
 		
 		double getArea() const;
 		bool isInside(const vertex& p1, const double& tol = 1e-3) const;

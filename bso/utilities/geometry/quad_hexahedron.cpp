@@ -271,6 +271,11 @@ namespace bso { namespace utilities { namespace geometry {
 		this->sortPoints(); // without try-catch construction, since it is initailized from a valid quadrilateral faced hexahedron
 	} //
 	
+	polyhedron* quad_hexahedron::clone()
+	{
+		return new quad_hexahedron(*this);
+	} // virtual copy constructor
+	
 	double quad_hexahedron::getVolume() const
 	{ // 
 		double volume = 0;	

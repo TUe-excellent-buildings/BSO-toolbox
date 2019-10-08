@@ -86,6 +86,11 @@ namespace bso { namespace utilities { namespace geometry {
 		this->sortPoints(tol); // sort it without the try-catch structure, as it is initialized from a proper tetrahedron already
 		// mPolygons is reinitialized in the sort points
 	} // ocpy ctor
+	
+	polyhedron* tetrahedron::clone()
+	{
+		return new tetrahedron(*this);
+	} // virtual copy constructor
 
 	double tetrahedron::getVolume() const
 	{ //
