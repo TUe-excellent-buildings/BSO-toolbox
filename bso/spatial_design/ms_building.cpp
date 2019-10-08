@@ -247,6 +247,34 @@ double ms_building::getVolume() const
 	return volume;
 } // getVolume()
 
+std::vector<ms_space*> ms_building::selectSpacesGeometrically(
+		const bso::utilities::geometry::vertex& location,
+		const bso::utilities::geometry::vector& direction,
+		const bool includePartialSpaces /*= false*/) const
+{
+	std::vector<ms_space*> spaceSelection;
+	for (const auto& i : mSpaces)
+	{
+		bool allVerticesSelected = true;
+		bool oneOrMoreVerticesSelected = false;
+		for (const auto& j : i->getGeometry())
+		{
+			double checkValue = direction.dot(j - location);
+			if (checkValue >= -1e-3)
+			{ // check if point j lies behind the plane defined by the location and the direction
+				if (checkValue >= 1e-3) oneOrMoreVerticesSelected = true;
+			}
+			else
+			{
+				allVerticesSelected = false;
+			}
+		}
+		if (allVerticesSelected) spaceSelection.push_back(i);
+		else if (oneOrMoreVerticesSelected && includePartialSpaces) spaceSelection.push_back(i);
+	}
+	return spaceSelection;
+}
+
 void ms_building::setZZero()
 {
 	double min = mSpaces[0]->getCoordinates()(2); // set an initial value to the minimum
