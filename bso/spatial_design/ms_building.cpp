@@ -757,6 +757,7 @@ ms_building::operator sc_building() const
 	try
 	{
 		sc_building sc;
+		bso::utilities::geometry::vertex minMSPoint = {0,0,0};
 		std::vector<std::vector<double> > coordValues(3); // {xValues,yValues,Zvalues}
 		
 		// store all coordinate values in this MS building model in the three std::vectors
@@ -764,10 +765,11 @@ ms_building::operator sc_building() const
 		{
 			utilities::geometry::vertex p1 = i->getCoordinates();
 			utilities::geometry::vertex p2 = i->getDimensions() + p1;
-			for (unsigned int i = 0; i < 3; i++)
+			for (unsigned int j = 0; j < 3; j++)
 			{
-				coordValues[i].push_back(p1(i));
-				coordValues[i].push_back(p2(i));
+				if (p1[j] < minMSPoint[j]) minMSPoint[j] = p1[j];
+				coordValues[j].push_back(p1(j));
+				coordValues[j].push_back(p2(j));
 			}
 		}
 		
@@ -797,19 +799,19 @@ ms_building::operator sc_building() const
 		// for each space, create an emtpy bit mask, and subsequently find out which cells in that mask belong to the space, and should be activated
 		for (auto i : mSpaces)
 		{
-			std::vector<int> tempRow(cubeSize + 1);
-			tempRow[0] = i->getID();
-			
+			sc.mBValues.push_back(std::vector<int>(cubeSize + 1));
+			sc.mBValues.back()[0] = i->getID();
 			utilities::geometry::vertex p1 = i->getCoordinates();
 			utilities::geometry::vertex p2 = i->getDimensions() + p1;
-			
-			for (unsigned int j = 1; j < tempRow.size(); j++)
+
+			for (unsigned int j = 1; j < sc.mBValues.back().size(); j++)
 			{
-				utilities::geometry::vertex pCheck = utilities::geometry::vertex();
-				pCheck[0] = sc.getWValue(j);
-				pCheck[1] = sc.getDValue(j);
-				pCheck[2] = sc.getHValue(j);
-				
+				utilities::geometry::vertex pCheck = minMSPoint;
+			
+				for (unsigned int k = 0; k < sc.getWIndex(j); ++k) pCheck[0] += sc.getWValue(k);
+				for (unsigned int k = 0; k < sc.getDIndex(j); ++k) pCheck[1] += sc.getDValue(k);
+				for (unsigned int k = 0; k < sc.getHIndex(j); ++k) pCheck[2] += sc.getHValue(k);
+
 				bool belongsToSpace = true;
 				for (unsigned int k = 0; k < 3; k++)
 				{
@@ -819,9 +821,8 @@ ms_building::operator sc_building() const
 						break;
 					}
 				}
-				tempRow[j] = belongsToSpace;
+				sc.mBValues.back()[j] = belongsToSpace;
 			}
-			sc.mBValues.push_back(tempRow);
 		}
 		sc.checkValidity();
 		return sc;
