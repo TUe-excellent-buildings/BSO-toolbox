@@ -290,17 +290,10 @@ namespace bso { namespace utilities { namespace geometry {
 		
 		// check if it is on the surface on a tetrahedron
 		bool onTetSurface = false;
-		for (const auto& i : mTetrahedrons)
+		for (const auto& i : mTetrahedrons) if (i.isInsideOrOn(p1, tol)) 
 		{
-			for (auto j : i.getPolygons())
-			{
-				if (j->isInside(p1,tol))
-				{
-					onTetSurface = true;
-					break;
-				}
-			}
-			if (onTetSurface) break;
+			onTetSurface = true;
+			break;
 		}
 		
 		if (onTetSurface)
@@ -309,7 +302,7 @@ namespace bso { namespace utilities { namespace geometry {
 			bool onQuadSurface = false;
 			for (const auto& i : mPolygons)
 			{
-				if (i->isInside(p1,tol))
+				if (i->isInsideOrOn(p1,tol))
 				{
 					onQuadSurface = true;
 					break;
@@ -320,6 +313,13 @@ namespace bso { namespace utilities { namespace geometry {
 			else return true;
 		}
 		else return false;
+	} //
+
+	bool quad_hexahedron::isInsideOrOn(const vertex& p1, const double& tol /*= 1e-3*/) const
+	{ // 
+		// check if it is inside a tetrahedron
+		for (const auto& i : mTetrahedrons) if (i.isInsideOrOn(p1, tol)) return true;
+		return false;
 	} //
 
 } // namespace geometry

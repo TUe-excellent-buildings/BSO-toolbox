@@ -92,6 +92,15 @@ namespace bso { namespace utilities { namespace geometry {
 		return true;
 	} // isInside()
 	
+	bool triangle::isInsideOrOn(const vertex& p1, const double& tol /*= 1e-3*/) const
+	{ // solution by Michael Ulm on: https://math.stackexchange.com/questions/4322/check-whether-a-point-is-within-a-3d-triangle
+		if (!this->isCoplanar(p1,tol)) return false;
+		for (const auto& i : mVertices) if (i.isSameAs(p1,tol)) return true; // its on
+		for (const auto& i : mLineSegments) if (i.isOnLine(p1,tol)) return true; // it on
+		
+		return isInside(p1,tol); // check if it is ins
+	} // isInsideOrOn()
+	
 } // namespace geometry
 } // namespace utilities
 } // namespace bso

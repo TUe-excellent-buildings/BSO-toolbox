@@ -106,6 +106,13 @@ namespace bso { namespace utilities { namespace geometry {
 		return (t1.isInside(p1,tol) || t2.isInside(p1,tol) || l1.isOnLine(p1,tol));
 	} //  isInside()
 
+	bool quadrilateral::isInsideOrOn(const vertex& p1, const double& tol /*= 1e-3*/) const
+	{ // only holds for convex quadrilaterals
+		triangle t1 = {mVertices[0],mVertices[1],mVertices[2]};
+		triangle t2 = {mVertices[0],mVertices[3],mVertices[2]};
+
+		return (t1.isInsideOrOn(p1,tol) || t2.isInsideOrOn(p1,tol));
+	} //  isInside()
 	
 } // namespace geometry
 } // namespace utilities

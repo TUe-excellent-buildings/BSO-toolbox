@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_SUITE( triangle_tests )
 		BOOST_REQUIRE(check2.str() == "{{0,0,0},{1,0,0}}\n{{1,0,0},{0.5,1,0}}\n{{0.5,1,0},{0,0,0}}\n");
 	}
 	
-	BOOST_AUTO_TEST_CASE( is_inside )
+	BOOST_AUTO_TEST_CASE( is_inside_or_on )
 	{
 		triangle t = {{1,0,0},{1,1,0},{0,1,0}};
 		vertex p1 = {0.5,0.5,0};
@@ -85,6 +85,7 @@ BOOST_AUTO_TEST_SUITE( triangle_tests )
 		vertex p4 = {0.75,0.75,0.0001};
 		vertex p5 = {0.51,0.51,0};
 		vertex p6 = {0.75,0.75,0.1};
+		vertex p7 = {0.49,0.49,0.0};
 		
 		BOOST_REQUIRE(!t.isInside(p1));
 		BOOST_REQUIRE( t.isInside(p2));
@@ -92,6 +93,14 @@ BOOST_AUTO_TEST_SUITE( triangle_tests )
 		BOOST_REQUIRE( t.isInside(p4));
 		BOOST_REQUIRE( t.isInside(p5));
 		BOOST_REQUIRE(!t.isInside(p6));
+		
+		BOOST_REQUIRE( t.isInsideOrOn(p1));
+		BOOST_REQUIRE( t.isInsideOrOn(p2));
+		BOOST_REQUIRE( t.isInsideOrOn(p3));
+		BOOST_REQUIRE( t.isInsideOrOn(p4));
+		BOOST_REQUIRE( t.isInsideOrOn(p5));
+		BOOST_REQUIRE(!t.isInsideOrOn(p6));
+		BOOST_REQUIRE(!t.isInsideOrOn(p7));
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_same_as )

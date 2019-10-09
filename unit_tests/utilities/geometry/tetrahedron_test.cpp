@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		BOOST_REQUIRE(abs(tet1.getVolume()-(4.0/3.0)) < 1e-3);
 	}
 	
-	BOOST_AUTO_TEST_CASE( is_inside )
+	BOOST_AUTO_TEST_CASE( is_inside_or_on )
 	{
 		tetrahedron tet = {{1,1,1},{3,1,1},{1,3,1},{1.5,1.5,3}};
 		vertex p1 = {1.3,1.3,1.5};
@@ -87,6 +87,9 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		vertex p3 = {1.5,1.5,1.0001};
 		vertex p4 = {1.5,1.5,1.1};
 		vertex p5 = {2.5,2,2};
+		vertex p6 = {1,2,1};
+		vertex p7 = {0.9999,1,1};
+		vertex p8 = {0.99,1,1};
 		
 		BOOST_REQUIRE( tet.isInside(p1));
 		BOOST_REQUIRE(!tet.isInside(p2));
@@ -94,6 +97,16 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		BOOST_REQUIRE( tet.isInside(p4));
 		BOOST_REQUIRE(!tet.isInside(p4,1e1));
 		BOOST_REQUIRE(!tet.isInside(p5));
+		
+		BOOST_REQUIRE( tet.isInsideOrOn(p1));
+		BOOST_REQUIRE( tet.isInsideOrOn(p2));
+		BOOST_REQUIRE( tet.isInsideOrOn(p3));
+		BOOST_REQUIRE( tet.isInsideOrOn(p4));
+		BOOST_REQUIRE( tet.isInsideOrOn(p4,1e1));
+		BOOST_REQUIRE(!tet.isInsideOrOn(p5));
+		BOOST_REQUIRE( tet.isInsideOrOn(p6));
+		BOOST_REQUIRE( tet.isInsideOrOn(p7));
+		BOOST_REQUIRE(!tet.isInsideOrOn(p8));
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_same_as )

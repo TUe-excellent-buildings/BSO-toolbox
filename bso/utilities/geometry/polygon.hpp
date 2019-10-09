@@ -34,6 +34,7 @@ namespace bso { namespace utilities { namespace geometry {
 		
 		virtual double getArea() const = 0;
 		virtual bool isInside(const vertex& p1, const double& tol = 1e-3) const = 0;
+		virtual bool isInsideOrOn(const vertex& p1, const double& tol = 1e-3) const = 0;
 		
 		bool isSameAs(const polygon& pol, const double& tol = 1e-3) const;
 		bool intersectsWith(const line_segment& l1, vertex& pInt, const double& tol = 1e-3) const;

@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		BOOST_REQUIRE(check2.str() == "{{0,0,0},{1,0,0}}\n{{1,0,0},{1,1,0}}\n{{1,1,0},{0,1,0}}\n{{0,1,0},{0,0,0}}\n");
 	}
 	
-	BOOST_AUTO_TEST_CASE( is_inside )
+	BOOST_AUTO_TEST_CASE( is_inside_or_on )
 	{
 		quadrilateral q = {{-1,-1,0},{1,-1,0},{-1,1,0},{1,1,0}};
 		vertex p1 = {0,0,0};
@@ -91,6 +91,9 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		vertex p4 = {0.9,0,0};
 		vertex p5 = {0,0,0.0001};
 		vertex p6 = {0,0,0.1};
+		vertex p7 = {1,1,0};
+		vertex p8 = {1.0001,0,0};
+		vertex p9 = {1.01,0,0};
 		
 		BOOST_REQUIRE( q.isInside(p1));
 		BOOST_REQUIRE(!q.isInside(p2));
@@ -98,6 +101,16 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		BOOST_REQUIRE( q.isInside(p4));
 		BOOST_REQUIRE( q.isInside(p5));
 		BOOST_REQUIRE(!q.isInside(p6));
+		
+		BOOST_REQUIRE( q.isInsideOrOn(p1));
+		BOOST_REQUIRE( q.isInsideOrOn(p2));
+		BOOST_REQUIRE( q.isInsideOrOn(p3));
+		BOOST_REQUIRE( q.isInsideOrOn(p4));
+		BOOST_REQUIRE( q.isInsideOrOn(p5));
+		BOOST_REQUIRE(!q.isInsideOrOn(p6));
+		BOOST_REQUIRE( q.isInsideOrOn(p7));
+		BOOST_REQUIRE( q.isInsideOrOn(p8));
+		BOOST_REQUIRE(!q.isInsideOrOn(p9));
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_coplanar )

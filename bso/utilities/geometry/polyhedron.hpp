@@ -39,6 +39,7 @@ namespace bso { namespace utilities { namespace geometry {
 		virtual double getVolume() const = 0;
 		virtual double getSurfaceArea() const;
 		virtual bool isInside(const vertex& p1, const double& tol = 1e-3) const = 0;
+		virtual bool isInsideOrOn(const vertex& p1, const double& tol = 1e-3) const = 0;
 		
 		bool isSameAs(const polyhedron& pol, const double& tol = 1e-3) const;
 		
