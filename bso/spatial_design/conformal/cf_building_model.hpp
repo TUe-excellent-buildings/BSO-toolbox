@@ -13,6 +13,7 @@ namespace bso { namespace spatial_design { namespace conformal {
 		std::vector<cf_surface*> mCFSurfaces;
 		std::vector<cf_space*> mCFSpaces;
 		ms_building mMSModel; // safe it, in case copy consttructor is called
+		double mTol;
 		
 		void addSpace(const ms_space& msSpace);
 		void makeConformal();
@@ -20,7 +21,7 @@ namespace bso { namespace spatial_design { namespace conformal {
 		cf_building_model& operator = (cf_building_model& rhs) = default;
 		friend class cf_geometry_entity;
 	public:
-		cf_building_model(const cf_building_model& rhs, const double& tol = 1e-3);
+		cf_building_model(const cf_building_model& rhs);
 		cf_building_model(const ms_building& msModel, const double& tol = 1e-3);
 		~cf_building_model();
 

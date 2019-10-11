@@ -96,14 +96,14 @@ namespace bso { namespace spatial_design { namespace conformal {
 			
 	} //  makeConformal()
 	
-	cf_building_model::cf_building_model(const cf_building_model& rhs, const double& tol /*= 1e-3*/)
+	cf_building_model::cf_building_model(const cf_building_model& rhs)
 	{
-		auto newPtr = new cf_building_model(rhs.mMSModel, tol);
+		auto newPtr = new cf_building_model(rhs.mMSModel, rhs.mTol);
 		*this = *newPtr;
 	} // copy ctor()
 
 	cf_building_model::cf_building_model(const ms_building& msModel, const double& tol /*= 1e-3*/)
-	:	cf_geometry_model(tol), mMSModel(msModel)
+	:	cf_geometry_model(tol), mMSModel(msModel), mTol(tol)
 	{ // 
 		for (const auto& i : mMSModel)
 		{
