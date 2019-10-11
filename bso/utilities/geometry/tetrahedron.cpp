@@ -152,12 +152,9 @@ namespace bso { namespace utilities { namespace geometry {
 		int sameSignCount = 0;
 		for (unsigned int i = 1; i < 5; i++)
 		{
-			if (abs(determinants[i]) < tol) // p is on a surface of the tet
-			{
-				determinants[i] = 0.0;
-			}
-			if ((determinants[0] >= 0.0) ^ (determinants[i] < 0.0)) sameSignCount++;
+			if ((determinants[0] < 0)? (determinants[i] < tol) : (determinants[i] > -tol) ) sameSignCount++;
 		}
+		
 		if (sameSignCount != 4) // point lies outside of the tetrahedron
 		{
 			return false;

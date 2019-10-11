@@ -9,6 +9,8 @@
 
 namespace bso { namespace structural_design {
 	
+	struct sd_results;
+	
 	class sd_model
 	{
 	private:
@@ -42,12 +44,24 @@ namespace bso { namespace structural_design {
 		void topologyOptimization(const std::string& algorithm, const double& f, 
 															const double& rMin, const double& penal, const double& xMove,
 															const double& tolerance);
-		void getResult();
+		
+		sd_results getTotalResults();
+		sd_results getPartialResults(bso::utilities::geometry::polygon* geom);
+		sd_results getPartialResults(bso::utilities::geometry::polyhedron* geom);
 		
 		fea* getFEA() {return mFEA;}
 		fea* const getFEA() const {return mFEA;}
 		const std::vector<component::point*>& getPoints() const {return mPoints;}
 		const std::vector<component::geometry*> getGeometries() const {return mGeometries;}
+	};
+	
+	struct sd_results
+	{
+		double mTotalStrainEnergy = 0.0;
+		double mTotalStructuralVolume = 0.0;
+		double mGhostStrainEnergy = 0.0;
+		double mGhostStructuralVolume = 0.0;
+		// std::map<element::load_case,double> strainEnergyPerLoadCase = {};
 	};
 	
 } // namespace structural_design

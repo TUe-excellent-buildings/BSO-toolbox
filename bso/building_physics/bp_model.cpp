@@ -380,6 +380,57 @@ void bp_model::simulatePeriods(const std::string& stepperType /*= "runge_kutta_d
 	this->simulatePeriods(dummyStream, stepperType, relError, absError);
 } // simulatePeriods()
 
+// double mTotalHeatingEnergy = 0.0;
+// double mTotalCoolingEnergy = 0.0;
+// double mTotalEnergy = 0.0;
+
+bp_results bp_model::getTotalResults()
+{
+	bp_results results;
+	
+	for (const auto& i : mSpaces)
+	{
+		for (const auto& j : mSimulationPeriods)
+		{
+			results.mTotalHeatingEnergy += mHeatingEnergies[j.first][i];
+			results.mTotalCoolingEnergy += mCoolingEnergies[j.first][i];
+			results.mTotalEnergy				+= mHeatingEnergies[j.first][i];
+			results.mTotalEnergy				+= mCoolingEnergies[j.first][i];
+		}
+	}
+	
+	return results;
+} // getTotalResults()
+
+bp_results bp_model::getPartialResults(bso::utilities::geometry::polyhedron* geom)
+{
+	bp_results results;
+	
+	for (const auto& i : mSpaces)
+	{
+		bool allPointsInsideOrOn = true;
+		for (const auto& j : *(i->getGeometry()))
+		{
+			if (!geom->isInsideOrOn(j))
+			{
+				allPointsInsideOrOn = false;
+				break;
+			}
+		}
+		if (!allPointsInsideOrOn) continue;
+		
+		for (const auto& j : mSimulationPeriods)
+		{
+			results.mTotalHeatingEnergy += mHeatingEnergies[j.first][i];
+			results.mTotalCoolingEnergy += mCoolingEnergies[j.first][i];
+			results.mTotalEnergy				+= mHeatingEnergies[j.first][i];
+			results.mTotalEnergy				+= mCoolingEnergies[j.first][i];
+		}
+	}
+	
+	return results;
+} // getPartialResults()
+
 } // namespace building_physics 
 } // namespace bso
 
