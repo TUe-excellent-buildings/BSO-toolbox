@@ -240,7 +240,7 @@ void grammar::mReadSDSettings(const std::string& fileName)
 		else if (i.second.first == "none")
 		{ // do nothing
 			foundMatch = true;
-			mSDWallProperties[i.first] = structural_design::component::structure();
+			mSDFloorProperties[i.first] = structural_design::component::structure();
 		}
 		if (!foundMatch)
 		{
