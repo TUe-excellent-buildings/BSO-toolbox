@@ -103,7 +103,6 @@ ms_building::ms_building(const sc_building& sc)
 		for (unsigned int i = 1; i < sc.getBRowSize(); i++)
 		{ // for each cell
 			std::vector<unsigned int> indices = {sc.getWIndex(i), sc.getDIndex(i), sc.getHIndex(i)}; // temporarily store the indices (w,d,h)
-			
 			for (unsigned int j = 0; j < sc.getBSize(); j++)
 			{ // for each space
 				if (sc.getBValue(j,i) == 1)
@@ -132,12 +131,12 @@ ms_building::ms_building(const sc_building& sc)
 		{ // for each space
 			// find the indices of the minium and maximum cell index that is active for space i
 			unsigned int max = 0, min = 0;
-			for (unsigned int j = 0; j < sc.getBRowSize(); j++)
+			for (unsigned int j = 1; j <= sc.getBRowSize(); j++)
 			{
 				if (min == 0 && sc.getBValue(i,j) == 1) min = j;
 				if (sc.getBValue(i,j) == 1) max = j;
 			}
-			
+
 			//get the locations and dimensions from these indices
 			utilities::geometry::vertex location;
 			location << globalCoords[0][sc.getWIndex(min)],
@@ -154,7 +153,6 @@ ms_building::ms_building(const sc_building& sc)
 			
 			//initialize a new space with the found location and dimensions
 			mSpaces.push_back(new ms_space(sc.getBValue(i,0), location, dimensions));
-			
 			// check if the last space ID is up to date.
 			if (mLastSpaceID < mSpaces.back()->getID())
 			{ // if it is not, up date it
