@@ -103,7 +103,6 @@ ms_building::ms_building(const sc_building& sc)
 		for (unsigned int i = 1; i < sc.getBRowSize(); i++)
 		{ // for each cell
 			std::vector<unsigned int> indices = {sc.getWIndex(i), sc.getDIndex(i), sc.getHIndex(i)}; // temporarily store the indices (w,d,h)
-			
 			for (unsigned int j = 0; j < sc.getBSize(); j++)
 			{ // for each space
 				if (sc.getBValue(j,i) == 1)
@@ -132,12 +131,12 @@ ms_building::ms_building(const sc_building& sc)
 		{ // for each space
 			// find the indices of the minium and maximum cell index that is active for space i
 			unsigned int max = 0, min = 0;
-			for (unsigned int j = 0; j < sc.getBRowSize(); j++)
+			for (unsigned int j = 1; j <= sc.getBRowSize(); j++)
 			{
 				if (min == 0 && sc.getBValue(i,j) == 1) min = j;
 				if (sc.getBValue(i,j) == 1) max = j;
 			}
-			
+
 			//get the locations and dimensions from these indices
 			utilities::geometry::vertex location;
 			location << globalCoords[0][sc.getWIndex(min)],
@@ -154,7 +153,6 @@ ms_building::ms_building(const sc_building& sc)
 			
 			//initialize a new space with the found location and dimensions
 			mSpaces.push_back(new ms_space(sc.getBValue(i,0), location, dimensions));
-			
 			// check if the last space ID is up to date.
 			if (mLastSpaceID < mSpaces.back()->getID())
 			{ // if it is not, up date it
@@ -246,6 +244,34 @@ double ms_building::getVolume() const
 		
 	return volume;
 } // getVolume()
+
+std::vector<ms_space*> ms_building::selectSpacesGeometrically(
+		const bso::utilities::geometry::vertex& location,
+		const bso::utilities::geometry::vector& direction,
+		const bool includePartialSpaces /*= false*/) const
+{
+	std::vector<ms_space*> spaceSelection;
+	for (const auto& i : mSpaces)
+	{
+		bool allVerticesSelected = true;
+		bool oneOrMoreVerticesSelected = false;
+		for (const auto& j : i->getGeometry())
+		{
+			double checkValue = direction.dot(j - location);
+			if (checkValue >= -1e-3)
+			{ // check if point j lies behind the plane defined by the location and the direction
+				if (checkValue >= 1e-3) oneOrMoreVerticesSelected = true;
+			}
+			else
+			{
+				allVerticesSelected = false;
+			}
+		}
+		if (allVerticesSelected) spaceSelection.push_back(i);
+		else if (oneOrMoreVerticesSelected && includePartialSpaces) spaceSelection.push_back(i);
+	}
+	return spaceSelection;
+}
 
 void ms_building::setZZero()
 {
@@ -729,6 +755,7 @@ ms_building::operator sc_building() const
 	try
 	{
 		sc_building sc;
+		bso::utilities::geometry::vertex minMSPoint = {0,0,0};
 		std::vector<std::vector<double> > coordValues(3); // {xValues,yValues,Zvalues}
 		
 		// store all coordinate values in this MS building model in the three std::vectors
@@ -736,10 +763,11 @@ ms_building::operator sc_building() const
 		{
 			utilities::geometry::vertex p1 = i->getCoordinates();
 			utilities::geometry::vertex p2 = i->getDimensions() + p1;
-			for (unsigned int i = 0; i < 3; i++)
+			for (unsigned int j = 0; j < 3; j++)
 			{
-				coordValues[i].push_back(p1(i));
-				coordValues[i].push_back(p2(i));
+				if (p1[j] < minMSPoint[j]) minMSPoint[j] = p1[j];
+				coordValues[j].push_back(p1(j));
+				coordValues[j].push_back(p2(j));
 			}
 		}
 		
@@ -769,19 +797,19 @@ ms_building::operator sc_building() const
 		// for each space, create an emtpy bit mask, and subsequently find out which cells in that mask belong to the space, and should be activated
 		for (auto i : mSpaces)
 		{
-			std::vector<int> tempRow(cubeSize + 1);
-			tempRow[0] = i->getID();
-			
+			sc.mBValues.push_back(std::vector<int>(cubeSize + 1));
+			sc.mBValues.back()[0] = i->getID();
 			utilities::geometry::vertex p1 = i->getCoordinates();
 			utilities::geometry::vertex p2 = i->getDimensions() + p1;
-			
-			for (unsigned int j = 1; j < tempRow.size(); j++)
+
+			for (unsigned int j = 1; j < sc.mBValues.back().size(); j++)
 			{
-				utilities::geometry::vertex pCheck = utilities::geometry::vertex();
-				pCheck[0] = sc.getWValue(j);
-				pCheck[1] = sc.getDValue(j);
-				pCheck[2] = sc.getHValue(j);
-				
+				utilities::geometry::vertex pCheck = minMSPoint;
+			
+				for (unsigned int k = 0; k < sc.getWIndex(j); ++k) pCheck[0] += sc.getWValue(k);
+				for (unsigned int k = 0; k < sc.getDIndex(j); ++k) pCheck[1] += sc.getDValue(k);
+				for (unsigned int k = 0; k < sc.getHIndex(j); ++k) pCheck[2] += sc.getHValue(k);
+
 				bool belongsToSpace = true;
 				for (unsigned int k = 0; k < 3; k++)
 				{
@@ -791,9 +819,8 @@ ms_building::operator sc_building() const
 						break;
 					}
 				}
-				tempRow[j] = belongsToSpace;
+				sc.mBValues.back()[j] = belongsToSpace;
 			}
-			sc.mBValues.push_back(tempRow);
 		}
 		sc.checkValidity();
 		return sc;

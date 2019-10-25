@@ -1,6 +1,7 @@
 #ifndef SD_TOPOLOGY_OPTIMIZATION_HPP
 #define SD_TOPOLOGY_OPTIMIZATION_HPP
 
+#include <iomanip>
 #include <bso/structural_design/fea.hpp>
 
 namespace bso { namespace structural_design { namespace topology_optimization {

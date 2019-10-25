@@ -29,6 +29,11 @@ public:
 	unsigned int getLastSpaceID() const;
 	double getVolume() const;
 	
+	std::vector<ms_space*> selectSpacesGeometrically(
+		const bso::utilities::geometry::vertex& location,
+		const bso::utilities::geometry::vector& direction,
+		const bool includePartialSpaces = false) const;
+		
 	void setZZero();
 	void addSpace(const ms_space& space);
 	void deleteSpace(ms_space* spacePtr);

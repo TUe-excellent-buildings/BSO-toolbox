@@ -76,6 +76,7 @@ namespace bso { namespace structural_design { namespace element {
 		virtual const double& getDensity() const {return mDensity;}
 		virtual const double& getEnergy(load_case lc, const std::string& type = "") const;
 		virtual const Eigen::VectorXd& getDisplacements(load_case lc) const;
+		const std::vector<node*>& getNodes() const {return mNodes;}
 		
 	};
 	

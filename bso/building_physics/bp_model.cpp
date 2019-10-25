@@ -152,16 +152,18 @@ bp_model::bp_model() : mSystem(state_space_system(0,0)),
 
 bp_model::bp_model(const bp_model& rhs) : mSystem(state_space_system(0,0))
 {
+	mWeatherProfile = nullptr;
+	mGroundProfile = nullptr;
 	std::map<state::state*, state::state*> stateCopies;
 	auto weatherPtr = new state::weather_profile(this->getNextIndependentIndex());
 	stateCopies.emplace(rhs.mWeatherProfile, weatherPtr);
 	this->addState(weatherPtr);
 
 	auto groundPtr = new state::ground_profile(this->getNextIndependentIndex(),
-		mGroundProfile->getTemperature());
+		rhs.mGroundProfile->getTemperature());
 	stateCopies.emplace(rhs.mGroundProfile, groundPtr);
 	this->addState(groundPtr);
-	
+
 	for (const auto& i : rhs.mSpaces)
 	{
 		auto spacePtr = new state::space(this->getNextDependentIndex(), i->getGeometry(),
@@ -216,11 +218,11 @@ bp_model::bp_model(const bp_model& rhs) : mSystem(state_space_system(0,0))
 									 << "(bso/building_physics/bp_model.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}
-		
+
 		this->addState(new state::window(this->getNextDependentIndex(), i->getGeometry(),
 			i->getGlazing(),side1Search->second, side2Search->second));
 	}
-	
+
 	mSimulationPeriods = rhs.mSimulationPeriods;
 	mWarmUpDuration = rhs.mWarmUpDuration;
 	mTimeStepSize = rhs.mTimeStepSize;
@@ -377,6 +379,57 @@ void bp_model::simulatePeriods(const std::string& stepperType /*= "runge_kutta_d
 	std::ostream dummyStream(0);
 	this->simulatePeriods(dummyStream, stepperType, relError, absError);
 } // simulatePeriods()
+
+// double mTotalHeatingEnergy = 0.0;
+// double mTotalCoolingEnergy = 0.0;
+// double mTotalEnergy = 0.0;
+
+bp_results bp_model::getTotalResults()
+{
+	bp_results results;
+	
+	for (const auto& i : mSpaces)
+	{
+		for (const auto& j : mSimulationPeriods)
+		{
+			results.mTotalHeatingEnergy += mHeatingEnergies[j.first][i];
+			results.mTotalCoolingEnergy += mCoolingEnergies[j.first][i];
+			results.mTotalEnergy				+= mHeatingEnergies[j.first][i];
+			results.mTotalEnergy				+= mCoolingEnergies[j.first][i];
+		}
+	}
+	
+	return results;
+} // getTotalResults()
+
+bp_results bp_model::getPartialResults(bso::utilities::geometry::polyhedron* geom)
+{
+	bp_results results;
+	
+	for (const auto& i : mSpaces)
+	{
+		bool allPointsInsideOrOn = true;
+		for (const auto& j : *(i->getGeometry()))
+		{
+			if (!geom->isInsideOrOn(j))
+			{
+				allPointsInsideOrOn = false;
+				break;
+			}
+		}
+		if (!allPointsInsideOrOn) continue;
+		
+		for (const auto& j : mSimulationPeriods)
+		{
+			results.mTotalHeatingEnergy += mHeatingEnergies[j.first][i];
+			results.mTotalCoolingEnergy += mCoolingEnergies[j.first][i];
+			results.mTotalEnergy				+= mHeatingEnergies[j.first][i];
+			results.mTotalEnergy				+= mCoolingEnergies[j.first][i];
+		}
+	}
+	
+	return results;
+} // getPartialResults()
 
 } // namespace building_physics 
 } // namespace bso

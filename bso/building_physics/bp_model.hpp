@@ -10,6 +10,8 @@
 
 namespace bso { namespace building_physics {
 
+struct bp_results;
+
 class bp_model
 {
 private:
@@ -62,6 +64,9 @@ public:
 					const double& relError = 0.0, const double& absError = 0.0);
 	void simulatePeriods(const std::string& stepperType = "runge_kutta_dopri5",
 					const double& relError = 0.0, const double& absError = 0.0);
+					
+	bp_results getTotalResults();
+	bp_results getPartialResults(bso::utilities::geometry::polyhedron* geom);
 	
 	const state_space_system& getStateSpaceSystem() const {return mSystem;}
 	const unsigned int getNextDependentIndex() {return mDependentCount++;}
@@ -78,6 +83,15 @@ public:
 	const std::map<boost::posix_time::time_period,std::map<state::space*,double>>& getHeatingEnergies() const {return mHeatingEnergies;}
 	const std::map<boost::posix_time::time_period,std::map<state::space*,double>>& getCoolingEnergies() const {return mCoolingEnergies;}
 };
+
+struct bp_results
+{
+	double mTotalHeatingEnergy = 0.0;
+	double mTotalCoolingEnergy = 0.0;
+	double mTotalEnergy = 0.0;
+	// heating/cooling per period?
+};
+
 } // namespace building_physics 
 } // namespace bso
 

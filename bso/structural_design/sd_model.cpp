@@ -370,12 +370,91 @@ namespace bso { namespace structural_design {
 		this->topologyOptimization(algorithm,f,rMin,penal,xMove,tolerance,dummyStream);
 	}
 
-	void sd_model::getResult()
+	sd_results sd_model::getTotalResults()
 	{
-		
-	} // getResult()
-
+		sd_results results;
+		for (const auto& i : mFEA->getElements())
+		{
+			if (i->isActiveInCompliance())
+			{
+				results.mTotalStrainEnergy += i->getTotalEnergy();
+				results.mTotalStructuralVolume += i->getVolume();
+			}
+			else
+			{
+				results.mGhostStrainEnergy += i->getTotalEnergy();
+				results.mGhostStructuralVolume += i->getVolume();
+			}
+		}
+		return results;
+	} // getTotalResults()
 	
+	sd_results sd_model::getPartialResults(bso::utilities::geometry::polygon* geom)
+	{
+		sd_results results;
+		
+		for (const auto& i : mFEA->getElements())
+		{
+			bool allPointsInsideOrOn = true;
+			for (const auto& j : i->getNodes())
+			{
+				auto vertexPtr = dynamic_cast<bso::utilities::geometry::vertex*>(j);
+				if (!geom->isInsideOrOn(*vertexPtr))
+				{
+					allPointsInsideOrOn = false;
+					break;
+				}
+			}
+			if (!allPointsInsideOrOn) continue;
+			
+			if (i->isActiveInCompliance())
+			{
+				results.mTotalStrainEnergy += i->getTotalEnergy();
+				results.mTotalStructuralVolume += i->getVolume();
+			}
+			else
+			{
+				results.mGhostStrainEnergy += i->getTotalEnergy();
+				results.mGhostStructuralVolume += i->getVolume();
+			}
+		}
+
+		return results;
+	} // getPartialResults()
+	
+	sd_results sd_model::getPartialResults(bso::utilities::geometry::polyhedron* geom)
+	{
+		sd_results results;
+		
+		for (const auto& i : mFEA->getElements())
+		{
+			bool allPointsInsideOrOn = true;
+			for (const auto& j : i->getNodes())
+			{
+				auto vertexPtr = dynamic_cast<bso::utilities::geometry::vertex*>(j);
+				if (!geom->isInsideOrOn(*vertexPtr))
+				{
+					allPointsInsideOrOn = false;
+					break;
+				}
+			}
+			if (!allPointsInsideOrOn) continue;
+
+			if (i->isActiveInCompliance())
+			{
+				results.mTotalStrainEnergy += i->getTotalEnergy();
+				results.mTotalStructuralVolume += i->getVolume();
+			}
+			else
+			{
+				results.mGhostStrainEnergy += i->getTotalEnergy();
+				results.mGhostStructuralVolume += i->getVolume();
+			}
+		}
+		return results;
+	} // getPartialResults()
+	
+
 } // namespace structural_design
 } // namespace bso
 

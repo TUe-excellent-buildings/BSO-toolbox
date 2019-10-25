@@ -48,8 +48,10 @@ namespace bso { namespace spatial_design { namespace conformal {
 				{
 					std::stringstream errorMessage;
 					errorMessage << "Error. When finding a point on a rectangle's\n"
-											 << "line closest to a point inside a rectangle.\n"
+											 << "line closest to a point inside the rectangle.\n"
 											 << "Found a point that is not on that line.\n"
+											 << "rectangle: " << *this << "\n"
+											 << "point: " << *pPtr << "\n"
 											 << "(bso/spatial_design/conformal/cf_rectangle.cpp)" << std::endl;
 					throw std::runtime_error(errorMessage.str());
 				}

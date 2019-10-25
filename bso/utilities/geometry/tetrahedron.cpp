@@ -86,6 +86,11 @@ namespace bso { namespace utilities { namespace geometry {
 		this->sortPoints(tol); // sort it without the try-catch structure, as it is initialized from a proper tetrahedron already
 		// mPolygons is reinitialized in the sort points
 	} // ocpy ctor
+	
+	polyhedron* tetrahedron::clone()
+	{
+		return new tetrahedron(*this);
+	} // virtual copy constructor
 
 	double tetrahedron::getVolume() const
 	{ //
@@ -121,6 +126,35 @@ namespace bso { namespace utilities { namespace geometry {
 			}
 			if ((determinants[0] >= 0.0) ^ (determinants[i] < 0.0)) sameSignCount++;
 		}
+		if (sameSignCount != 4) // point lies outside of the tetrahedron
+		{
+			return false;
+		}
+		return true;
+	} // isInside()
+	
+	bool tetrahedron::isInsideOrOn(const vertex& p1, const double& tol /*= 1e-3*/) const
+	{ //
+		// algorithm from: http://steve.hollasch.net/cgindex/geometry/ptintet.html
+		Eigen::MatrixXd tempMat = Eigen::MatrixXd::Ones(4,4);
+		std::vector<double> determinants;
+		
+		for (unsigned int i = 0; i < 4; i++) tempMat.block<1,3>(i,1) = mVertices[i].transpose();
+		determinants.push_back(tempMat.determinant());
+		
+		for (unsigned int i = 0; i < 4; i++)
+		{
+			auto checkMat = tempMat;
+			checkMat.block<1,3>(i,1) = p1.transpose();
+			determinants.push_back(checkMat.determinant());	
+		}
+
+		int sameSignCount = 0;
+		for (unsigned int i = 1; i < 5; i++)
+		{
+			if ((determinants[0] < 0)? (determinants[i] < tol) : (determinants[i] > -tol) ) sameSignCount++;
+		}
+		
 		if (sameSignCount != 4) // point lies outside of the tetrahedron
 		{
 			return false;

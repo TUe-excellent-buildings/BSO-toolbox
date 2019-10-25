@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_SUITE( quad_hexahedron_tests )
 		BOOST_REQUIRE(abs(qhex1.getVolume()-8) < 1e-9);
 	}
 	
-	BOOST_AUTO_TEST_CASE( is_inside )
+	BOOST_AUTO_TEST_CASE( is_inside_or_on )
 	{
 		quad_hexahedron qhex = {{-1,-1,-1},{-1,-1, 1},{-1, 1,-1},{-1, 1, 1},
 														{ 1, 1, 1},{ 1, 1,-1},{ 1,-1, 1},{ 1,-1,-1}};
@@ -107,6 +107,9 @@ BOOST_AUTO_TEST_SUITE( quad_hexahedron_tests )
 		vertex p4 = {0.99,0,0};
 		vertex p5 = {0.5,0.5,0};
 		vertex p6 = {-0.5,0.5,0};
+		vertex p7 = {1.0001,0,0};
+		vertex p8 = {1.01,0,0};
+		vertex p9 = {1,1,1};
 
 		BOOST_REQUIRE( qhex.isInside(p1));
 		BOOST_REQUIRE(!qhex.isInside(p2));
@@ -115,6 +118,17 @@ BOOST_AUTO_TEST_SUITE( quad_hexahedron_tests )
 		BOOST_REQUIRE(!qhex.isInside(p4,1e-1));
 		BOOST_REQUIRE( qhex.isInside(p5));
 		BOOST_REQUIRE( qhex.isInside(p6));
+		
+		BOOST_REQUIRE( qhex.isInsideOrOn(p1));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p2));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p3));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p4));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p4,1e-1));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p5));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p6));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p7));
+		BOOST_REQUIRE(!qhex.isInsideOrOn(p8));
+		BOOST_REQUIRE( qhex.isInsideOrOn(p9));
 	}
 	
 	BOOST_AUTO_TEST_CASE( get_surface_area )
