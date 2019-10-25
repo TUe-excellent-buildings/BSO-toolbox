@@ -60,9 +60,23 @@ void sd_line_rule::assignStructure(const std::vector<structural_design::componen
 			continue;
 		} // otherwise either both are ghost component or both are not
 		
-		if (i.type() == "flat_shell")
+		if (i.type() == "quad_hexahedron")
+		{ // quad_hexahedron
+			if (mStructure.type() != "quad_hexahedron")
+			{
+				mStructure = i;
+			}
+			else if (mStructure.type() == "quad_hexahedron")
+			{
+				if (mStructure.E() < i.E())
+				{
+					mStructure = i;
+				}
+			}
+		}
+		else if (i.type() == "flat_shell")
 		{ // flat shell
-			if (mStructure.type() != "flat_shell")
+			if (mStructure.type() != "flat_shell" && mStructure.type() != "quad_hexahedron")
 			{
 				mStructure = i;
 			}
@@ -76,7 +90,8 @@ void sd_line_rule::assignStructure(const std::vector<structural_design::componen
 		}
 		else if (i.type() == "beam")
 		{ // beam
-			if (mStructure.type() != "beam" && mStructure.type() != "flat_shell")
+			if (mStructure.type() != "beam" && mStructure.type() != "flat_shell" &&
+					mStructure.type() != "quad_hexahedron")
 			{
 				mStructure = i;
 			}
@@ -91,7 +106,7 @@ void sd_line_rule::assignStructure(const std::vector<structural_design::componen
 		else if (i.type() == "truss")
 		{ // truss
 			if (mStructure.type() != "beam" && mStructure.type() != "flat_shell" &&
-					mStructure.type() != "truss")
+					mStructure.type() != "truss" && mStructure.type() != "quad_hexahedron")
 			{
 				mStructure = i;
 			}

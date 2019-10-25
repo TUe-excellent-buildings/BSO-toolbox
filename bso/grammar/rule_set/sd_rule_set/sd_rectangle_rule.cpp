@@ -33,7 +33,11 @@ void sd_rectangle_rule::apply(bso::structural_design::sd_model& sd) const
 		quadGeometry = sd.addGeometry(*(mRectangleProperty->getRectanglePtr()));
 		quadGeometry->addStructure(mStructure);
 	}
-
+	else if (mStructure.type() == "quad_hexahedron")
+	{
+		quadGeometry = sd.addGeometry(*(mRectangleProperty->getRectanglePtr()));
+	}
+	
 	// assign possible loads
 	if (mRectangleProperty->isFloor() && mLoads != nullptr)
 	{ // apply a floor load
@@ -124,6 +128,84 @@ void sd_rectangle_rule::assignStructure(structural_design::component::structure 
 {
 	mStructure = structure;
 }
+
+void sd_rectangle_rule::assignStructure(const std::vector<structural_design::component::structure>&
+	potentialStructure)
+{
+	mStructure = structural_design::component::structure();
+	mStructure.isGhostComponent() = true;
+	for (const auto& i : potentialStructure)
+	{
+		if (!(i.isGhostComponent()) && mStructure.isGhostComponent())
+		{
+			mStructure = i;
+			continue;
+		}
+		else if (!(mStructure.isGhostComponent()) && i.isGhostComponent())
+		{
+			continue;
+		} // otherwise either both are ghost component or both are not
+		
+		if (i.type() == "quad_hexahedron")
+		{ // quad_hexahedron
+			if (mStructure.type() != "quad_hexahedron")
+			{
+				mStructure = i;
+			}
+			else if (mStructure.type() == "quad_hexahedron")
+			{
+				if (mStructure.E() < i.E())
+				{
+					mStructure = i;
+				}
+			}
+		}
+		else if (i.type() == "flat_shell")
+		{ // flat shell
+			if (mStructure.type() != "flat_shell" && mStructure.type() != "quad_hexahedron")
+			{
+				mStructure = i;
+			}
+			else if (mStructure.type() == "flat_shell")
+			{
+				if (mStructure.thickness() < i.thickness())
+				{
+					mStructure = i;
+				}
+			}
+		}
+		else if (i.type() == "beam")
+		{ // beam
+			if (mStructure.type() != "beam" && mStructure.type() != "flat_shell" &&
+					mStructure.type() != "quad_hexahedron")
+			{
+				mStructure = i;
+			}
+			else if (mStructure.type() == "beam")
+			{
+				if (mStructure.width()*mStructure.height() < i.width()*i.height())
+				{
+					mStructure = i;
+				}
+			}
+		}
+		else if (i.type() == "truss")
+		{ // truss
+			if (mStructure.type() != "beam" && mStructure.type() != "flat_shell" &&
+					mStructure.type() != "truss" && mStructure.type() != "quad_hexahedron")
+			{
+				mStructure = i;
+			}
+			else if (mStructure.type() == "truss")
+			{
+				if (mStructure.A() < i.A())
+				{
+					mStructure = i;
+				}
+			}
+		}
+	}
+} // assignStructure()
 
 void sd_rectangle_rule::assignLoadPanel(structural_design::component::structure loadPanel)
 {

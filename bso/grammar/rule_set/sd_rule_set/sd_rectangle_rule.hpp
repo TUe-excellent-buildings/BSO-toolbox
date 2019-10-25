@@ -20,6 +20,8 @@ public:
 
 	void apply(bso::structural_design::sd_model& sd) const;
 	void assignStructure(structural_design::component::structure structure);
+	void assignStructure(const std::vector<structural_design::component::structure>&
+				potentialStructure);
 	void assignLoadPanel(structural_design::component::structure loadPanel);
 	void addLoads(std::multimap<std::string, structural_design::component::load>* loads);
 	const structural_design::component::structure& getStructure() const {return mStructure;}

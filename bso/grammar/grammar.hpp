@@ -8,8 +8,7 @@ namespace bso { namespace grammar {
 
 
 #ifdef SD_MODEL_HPP
-//class DEFAULT_SD_GRAMMAR;
-class VOLUME_SD_GRAMMAR;
+class DEFAULT_SD_GRAMMAR;
 #endif
 
 #ifdef BSO_BP_MODEL_HPP
@@ -76,7 +75,7 @@ public:
 	~grammar();
 
 	#ifdef SD_MODEL_HPP
-	template <typename T = VOLUME_SD_GRAMMAR>
+	template <typename T = DEFAULT_SD_GRAMMAR>
 	structural_design::sd_model sd_grammar(const std::string& fileName,
 		const bool& b1 = false, const bool& b2 = false, const bool& b3 = false);
 	const std::vector<structural_design::sd_model>& getIntermediateSDModels() const
@@ -99,7 +98,7 @@ public:
 
 #ifdef SD_MODEL_HPP
 #include <bso/grammar/grammar_sd_specifics.cpp>
-//#include <bso/grammar/sd_grammars/default_sd_grammar.cpp>
+#include <bso/grammar/sd_grammars/default_sd_grammar.cpp>
 #include <bso/grammar/sd_grammars/volume_sd_grammar.cpp>
 #endif
 
