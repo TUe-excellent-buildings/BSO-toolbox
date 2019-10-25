@@ -1,5 +1,5 @@
 #	type_ID_1,	type_ID_2,	Assigned type wall, 	Assigned type_ID wall, assigned_type_floor, assigned type_ID floor
-A,	 ,		 ,		none,					-,		flat_shell,		1
+A,	 ,		 ,		none,					-,		flat_shell,		1a
 A,	 ,		T,		truss,				1,		flat_shell,		1
 A,	 ,		B,		beam,					1,		flat_shell,		1
 A,	 ,		F,		flat_shell,		1,		flat_shell,		1
@@ -51,3 +51,6 @@ G,		1,		150,		30000,		0.3
 
 #load_panel_flat_shell, 	t,		E, 		v
 H, 		150,		0.03,		0
+
+#quad_hexahedron_properties, 	ID,	E [N/mm²],	v [-],
+I,		1,		6000,		0.3	

@@ -21,17 +21,19 @@ void grammar::mReadSDSettings(const std::string& fileName)
 								 << fileName << "\n(bso/grammar/grammar_sd_specifics.cpp)" << std::endl;
 		throw std::invalid_argument(errorMessage.str());
 	}
-	
+
 	mSDWallProperties.clear();
 	mSDFloorProperties.clear();
 	mLoadPanel = structural_design::component::structure();
 	mLoads.clear();
 	std::map<std::pair<std::string,std::string>,std::pair<std::string,std::string> > wallStructureIDs;
 	std::map<std::pair<std::string,std::string>,std::pair<std::string,std::string> > floorStructureIDs;
+	std::map<std::string,std::pair<std::string,std::string> > spaceStructureIDs;
 	std::map<std::string,structural_design::component::structure> flatShellStructures;
 	std::map<std::string,structural_design::component::structure> beamStructures;
 	std::map<std::string,structural_design::component::structure> trussStructures;
-	
+	std::map<std::string,structural_design::component::structure> cuboidStructures;
+
 	std::string line;
 	boost::char_separator<char> sep(","); // defines what separates tokens in a string
 	typedef boost::tokenizer< boost::char_separator<char> > t_tokenizer; // settings for the boost::tokenizer
@@ -66,13 +68,13 @@ void grammar::mReadSDSettings(const std::string& fileName)
 			std::string type2 = *token; ++token;
 			boost::algorithm::trim(type2);
 			auto typePair = std::minmax(type1,type2);
-			
+
 			std::string structuralType = *token; ++token;
 			boost::algorithm::trim(structuralType);
 			std::string structuralTypeID = *token; ++token;
 			boost::algorithm::trim(structuralTypeID);
 			wallStructureIDs[typePair] = {structuralType,structuralTypeID};
-			
+
 			structuralType = *token; ++token;
 			boost::algorithm::trim(structuralType);
 			structuralTypeID = *token; ++token;
@@ -94,16 +96,16 @@ void grammar::mReadSDSettings(const std::string& fileName)
 			std::string loadCaseName = *token; ++token;
 			boost::algorithm::trim(loadCaseName);
 			structural_design::component::load_case lc(loadCaseName);
-			
+
 			double magnitude = utilities::trim_and_cast_double(*token); ++token;
 			double azimuth = utilities::trim_and_cast_double(*token); ++token;
 			double altitude = utilities::trim_and_cast_double(*token); ++token;
 			utilities::geometry::vector direction(std::make_pair(azimuth,altitude));
 			direction.normalize();
-			
+
 			std::string loadType = *token;
 			boost::algorithm::trim(loadType);
-			
+
 			for (unsigned int i = 0; i < 3; ++i)
 			{
 				if (abs(direction(i)) > 1e-9)
@@ -156,11 +158,48 @@ void grammar::mReadSDSettings(const std::string& fileName)
 				{"thickness",thickness},{"E",E},{"poisson",v}});
 			break;
 		}
+		case 'I':
+		{ // cuboid property
+		    std::string type1 = *token; ++token;
+			boost::algorithm::trim(type1);
+		    std::string structuralType = *token; ++token;
+			boost::algorithm::trim(structuralType);
+			std::string structuralTypeID = *token; ++token;
+			boost::algorithm::trim(structuralTypeID);
+			spaceStructureIDs[type1] = {structuralType, structuralTypeID};
+
+			std::string beamID = *token; ++token;
+			boost::algorithm::trim(beamID);
+			double E = bso::utilities::trim_and_cast_double(*token); ++token;
+			double v = bso::utilities::trim_and_cast_double(*token); ++token;
+			cuboidStructures[beamID] = structural_design::component::structure("quad_hexahedron",{
+				{"E",E},{"poisson",v}});
+			break;
+		}
+		case 'J':
+		{ // properties for wallvolume grammar
+		    std::string type1 = *token; ++token;
+			boost::algorithm::trim(type1);
+		    std::string structuralType = *token; ++token;
+			boost::algorithm::trim(structuralType);
+			std::string structuralTypeID = *token; ++token;
+			boost::algorithm::trim(structuralTypeID);
+			spaceStructureIDs[type1] = {structuralType, structuralTypeID};
+
+			std::string beamID = *token; ++token;
+			boost::algorithm::trim(beamID);
+			double t = bso::utilities::trim_and_cast_double(*token); ++token;
+			double E = bso::utilities::trim_and_cast_double(*token); ++token;
+			double v = bso::utilities::trim_and_cast_double(*token); ++token;
+			cuboidStructures[beamID] = structural_design::component::structure("quad_hexahedron",{
+				{"thickness", t},{"E",E},{"poisson",v}});
+			break;
+		}
 		default:
 			break;
 		}
 	} // end of file
-		
+
 	for (const auto& i : wallStructureIDs)
 	{
 		bool foundMatch = false;
@@ -201,7 +240,7 @@ void grammar::mReadSDSettings(const std::string& fileName)
 			std::stringstream errorMessage;
 			errorMessage << "\nError, when reading SD grammar settings, could not find\n"
 									 << "the properties for the following structural type and type ID:\n"
-									 << "\"" << i.second.first << "\" - \"" << i.second.second << "\"\n" 
+									 << "\"" << i.second.first << "\" - \"" << i.second.second << "\"\n"
 									 << "(bso/grammar/grammar_sd_specifics.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}
@@ -240,22 +279,45 @@ void grammar::mReadSDSettings(const std::string& fileName)
 		else if (i.second.first == "none")
 		{ // do nothing
 			foundMatch = true;
-			mSDWallProperties[i.first] = structural_design::component::structure();
+			mSDFloorProperties[i.first] = structural_design::component::structure();
 		}
 		if (!foundMatch)
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, when reading SD grammar settings, could not find\n"
 									 << "the properties for the following structural type and type ID:\n"
-									 << "\"" << i.second.first << "\" - \"" << i.second.second << "\"\n" 
+									 << "\"" << i.second.first << "\" - \"" << i.second.second << "\"\n"
 									 << "(bso/grammar/grammar_sd_specifics.cpp)" << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}
 	}
-	
+
+	for (const auto& i : spaceStructureIDs)
+	{
+		bool foundMatch = false;
+		if (i.second.first == "quad_hexahedron")
+		{
+			auto cuboidSearch = cuboidStructures.find(i.second.second);
+			if (cuboidSearch != cuboidStructures.end())
+			{
+				mSDSpaceProperties[i.first] = cuboidSearch->second;
+				foundMatch = true;
+			}
+		}
+		if (!foundMatch)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nError, when reading SD grammar settings, could not find\n"
+									 << "the properties for the following structural type and type ID:\n"
+									 << "\"" << i.second.first << "\" - \"" << i.second.second << "\"\n"
+									 << "(bso/grammar/grammar_sd_specifics.cpp)" << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+	}
+
 	input.close();
 } // mReadSDSettings()
-	
+
 } // namespace grammar
 } // namespace bso
 

@@ -8,7 +8,8 @@ namespace bso { namespace grammar {
 
 
 #ifdef SD_MODEL_HPP
-class DEFAULT_SD_GRAMMAR;
+//class DEFAULT_SD_GRAMMAR;
+class VOLUME_SD_GRAMMAR;
 #endif
 
 #ifdef BSO_BP_MODEL_HPP
@@ -19,40 +20,42 @@ class grammar
 {
 private:
 	spatial_design::cf_building mCFBuilding;
-	
+
 	// rule sets
 	std::map<spatial_design::conformal::cf_vertex*, rule_set::vertex_property*> mVertexProperties;
 	std::map<spatial_design::conformal::cf_line*, rule_set::line_property*> mLineProperties;
 	std::map<spatial_design::conformal::cf_rectangle*, rule_set::rectangle_property*> mRectangleProperties;
 	std::map<spatial_design::conformal::cf_cuboid*, rule_set::cuboid_property*> mCuboidProperties;
-	
+
 	std::map<spatial_design::conformal::cf_point*, rule_set::point_property*> mPointProperties;
 	std::map<spatial_design::conformal::cf_edge*, rule_set::edge_property*> mEdgeProperties;
 	std::map<spatial_design::conformal::cf_surface*, rule_set::surface_property*> mSurfaceProperties;
 	std::map<spatial_design::conformal::cf_space*, rule_set::space_property*> mSpaceProperties;
-	
+
 	#ifdef SD_MODEL_HPP
 	std::map<spatial_design::conformal::cf_vertex*, rule_set::sd_vertex_rule*> mSDVertexRules;
 	std::map<spatial_design::conformal::cf_line*, rule_set::sd_line_rule*> mSDLineRules;
 	std::map<spatial_design::conformal::cf_rectangle*, rule_set::sd_rectangle_rule*> mSDRectangleRules;
-	
+	std::map<spatial_design::conformal::cf_cuboid*, rule_set::sd_cuboid_rule*> mSDCuboidRules;
+
 	structural_design::sd_model mSDModel;
 	std::vector<structural_design::sd_model> mIntermediateSDModels;
 	std::map<std::pair<std::string,std::string>,
 		structural_design::component::structure> mSDWallProperties;
 	std::map<std::pair<std::string,std::string>,
 		structural_design::component::structure> mSDFloorProperties;
+    std::map<std::string, structural_design::component::structure> mSDSpaceProperties;
 	structural_design::component::structure mLoadPanel;
 	std::multimap<std::string, structural_design::component::load> mLoads;
 	unsigned int mMeshSize = 1;
-	
+
 	void mReadSDSettings(const std::string& fileName);
 	#endif
-	
+
 	#ifdef BSO_BP_MODEL_HPP
 	std::map<spatial_design::conformal::cf_space*, rule_set::bp_space_rule*> mBPSpaceRules;
 	std::map<spatial_design::conformal::cf_rectangle*, rule_set::bp_rectangle_rule*> mBPRectangleRules;
-	
+
 	boost::posix_time::time_duration mBPWarmUpDuration;
 	boost::posix_time::time_duration mBPTimeStepSize;
 	double mBPGroundTemperature = 0;
@@ -62,33 +65,33 @@ private:
 	std::map<std::pair<std::string,std::string>,bso::building_physics::properties::construction> mBPFloorConstructions;
 	std::map<std::pair<std::string,std::string>,bso::building_physics::properties::glazing> mBPWallGlazings;
 	std::map<std::pair<std::string,std::string>,bso::building_physics::properties::glazing> mBPFloorGlazings;
-	
+
 	building_physics::bp_model mBPModel;
 	std::vector<building_physics::bp_model> mIntermediateBPModels;
 	void mReadBPSettings(const std::string& fileName);
 	#endif
-	
+
 public:
 	grammar(const spatial_design::cf_building& cf);
 	~grammar();
-	
+
 	#ifdef SD_MODEL_HPP
-	template <typename T = DEFAULT_SD_GRAMMAR>
+	template <typename T = VOLUME_SD_GRAMMAR>
 	structural_design::sd_model sd_grammar(const std::string& fileName,
 		const bool& b1 = false, const bool& b2 = false, const bool& b3 = false);
 	const std::vector<structural_design::sd_model>& getIntermediateSDModels() const
 		{return mIntermediateSDModels;}
 	#endif
-	
+
 	#ifdef BSO_BP_MODEL_HPP
 	template <typename T = DEFAULT_BP_GRAMMAR>
 	bso::building_physics::bp_model bp_grammar(const std::string& fileName,
 		const bool& b1 = false, const bool& b2 = false, const bool& b3 = false);
-	const std::vector<building_physics::bp_model> getIntermediateBPModels() const 
+	const std::vector<building_physics::bp_model> getIntermediateBPModels() const
 		{return mIntermediateBPModels;}
 	#endif
 };
-	
+
 } // namespace grammar
 } // namespace bso
 
@@ -96,7 +99,8 @@ public:
 
 #ifdef SD_MODEL_HPP
 #include <bso/grammar/grammar_sd_specifics.cpp>
-#include <bso/grammar/sd_grammars/default_sd_grammar.cpp>
+//#include <bso/grammar/sd_grammars/default_sd_grammar.cpp>
+#include <bso/grammar/sd_grammars/volume_sd_grammar.cpp>
 #endif
 
 #ifdef BSO_BP_MODEL_HPP
