@@ -138,7 +138,17 @@ sc_building::sc_building(std::string input, std::string separators /*= ","*/)
 			for (auto&& i : mBValues)
 			{
 				i = std::vector<int>(w*d*h);
-				for (auto&& j : i) j = bso::utilities::trim_and_cast_int(*(++token));
+				for (auto&& j : i) 
+				{
+					try
+					{
+						j = bso::utilities::trim_and_cast_int(*(++token));
+					}
+					catch(std::exception& e)
+					{
+						j = bso::utilities::trim_and_cast_double(*(token));
+					}
+				}
 				i.insert(i.begin(), ++count);
 			}
 		}

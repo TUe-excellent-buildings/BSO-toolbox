@@ -1,6 +1,7 @@
 #ifndef BSO_DATA_POINT_HPP
 #define BSO_DATA_POINT_HPP
 
+#include <vector>
 #include <Eigen/Dense>
 #include <initializer_list>
 
@@ -25,7 +26,8 @@ public:
 	
 	double calcDistanceTo(const data_point& p2) const;
 	double calcSquaredDistanceTo(const data_point& p2) const;
-	void normalize(const data_point& pStart, const data_point& pEnd);
+	void normalize(const data_point& pStart, const data_point& pEnd,
+		const std::vector<unsigned int>& logScales = {});
 	data_point normalized(const data_point& pStart, const data_point& pEnd) const;
 	template<class CONTAINER>
 	void setToUtopia(const CONTAINER& dataCollection);

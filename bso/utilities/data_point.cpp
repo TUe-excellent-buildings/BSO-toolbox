@@ -107,19 +107,32 @@ double data_point::calcSquaredDistanceTo(const data_point& p2) const
 	return squaredDistance;
 }
 
-void data_point::normalize(const data_point& pStart, const data_point& pEnd)
+void data_point::normalize(const data_point& pStart, const data_point& pEnd, 
+	const std::vector<unsigned int>& logScales /*= {}*/)
 {
 	try
 	{
 		this->mCheckValidDimensions(pStart);
 		this->mCheckValidDimensions(pEnd);
-		Eigen::VectorXd totalDifference = pEnd.mData - pStart.mData;
-		Eigen::VectorXd relativeDifference = mData - pStart.mData;
+		double totalDifference;
+		double relativeDifference;
 		for (unsigned int i = 0; i < mData.size(); ++i)
 		{
-			if (totalDifference(i) != 0)
+			double a = pStart(i);
+			double b = pEnd(i);
+			double x = mData(i);
+			if (std::find(logScales.begin(),logScales.end(),i) != logScales.end())
 			{
-				mData(i) = relativeDifference(i) / totalDifference(i);
+				a = ((a>0)? 1 : -1)*log(1+abs(a)/10e-150); // 10e-500 shifts the function so it can handle negative numbers, but this means double looses about half of its exponential precision (11 bits)
+				b = ((a>0)? 1 : -1)*log(1+abs(b)/10e-150);
+				x = ((a>0)? 1 : -1)*log(1+abs(x)/10e-150);
+			}
+			totalDifference = b-a;
+			relativeDifference = x-a;
+
+			if (totalDifference != 0)
+			{
+				mData(i) = relativeDifference / totalDifference;
 			}
 			else mData(i) = 0;
 		}
