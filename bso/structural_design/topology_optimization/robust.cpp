@@ -131,7 +131,7 @@ void robust(fea* FEASystem, const double& f,
 			dv = H * dv;
 			
 			// optimality criteria update of design variables and physical densities
-			double l1 = 1e-4, l2 = 1e9, lmid, upper, lower;
+			double l1 = 1e-50, l2 = 1e50, lmid, upper, lower;
 			while (((l2-l1)/(l1+l2))>1e-3)
 			{
 				lmid = (l1+l2)/2.0;
@@ -165,7 +165,6 @@ void robust(fea* FEASystem, const double& f,
 					xe(eleIndexI) = densityProjection(beta, etae, xTilde(eleIndexI));
 					++eleIndexI;
 				}
-
 				((volume * xn.transpose()).trace() > f * totVolume) ? l1 = lmid : l2 = lmid;
 			}
 		
