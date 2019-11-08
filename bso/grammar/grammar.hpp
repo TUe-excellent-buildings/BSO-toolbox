@@ -75,17 +75,15 @@ public:
 	~grammar();
 
 	#ifdef SD_MODEL_HPP
-	template <typename T = DEFAULT_SD_GRAMMAR>
-	structural_design::sd_model sd_grammar(const std::string& fileName,
-		const bool& b1 = false, const bool& b2 = false, const bool& b3 = false);
+	template <typename T = DEFAULT_SD_GRAMMAR, typename...ARGS>
+	bso::structural_design::sd_model sd_grammar(const ARGS&...);
 	const std::vector<structural_design::sd_model>& getIntermediateSDModels() const
 		{return mIntermediateSDModels;}
 	#endif
 
 	#ifdef BSO_BP_MODEL_HPP
-	template <typename T = DEFAULT_BP_GRAMMAR>
-	bso::building_physics::bp_model bp_grammar(const std::string& fileName,
-		const bool& b1 = false, const bool& b2 = false, const bool& b3 = false);
+	template <typename T = DEFAULT_BP_GRAMMAR, typename...ARGS>
+	bso::building_physics::bp_model bp_grammar(const ARGS&...);
 	const std::vector<building_physics::bp_model> getIntermediateBPModels() const
 		{return mIntermediateBPModels;}
 	#endif

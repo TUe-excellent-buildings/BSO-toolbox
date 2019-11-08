@@ -8,9 +8,7 @@ namespace bso { namespace grammar {
 class VOLUME_SD_GRAMMAR;
 
 template <>
-structural_design::sd_model grammar::sd_grammar<VOLUME_SD_GRAMMAR>(const std::string& fileName,
-	const bool& useSurfaceTypeInsteadOfSpaceType /*= false*/,
-	const bool& b2 /*= false*/, const bool& b3 /*= false*/)
+bso::structural_design::sd_model grammar::sd_grammar<VOLUME_SD_GRAMMAR>(const std::string& fileName)
 {
 	// initialize a new SD model
 	mSDModel = bso::structural_design::sd_model();

@@ -5,11 +5,12 @@
 #include <sstream>
 
 namespace bso { namespace grammar {
+
+
 	
 template <>
-building_physics::bp_model grammar::bp_grammar<DEFAULT_BP_GRAMMAR>(const std::string& fileName,
-	const bool& useSurfaceTypeInsteadOfSpaceType /*= false*/,	
-	const bool& b2 /*= false*/, const bool& b3 /*= false*/)
+bso::building_physics::bp_model grammar::bp_grammar<DEFAULT_BP_GRAMMAR>(const std::string& fileName,
+	const bool& useSurfaceTypeInsteadOfSpaceType)
 {
 	// initialize a new BP model
 	bso::building_physics::bp_model mBPModel;
@@ -158,7 +159,13 @@ building_physics::bp_model grammar::bp_grammar<DEFAULT_BP_GRAMMAR>(const std::st
 
 	return mBPModel;
 } // default_bp_grammar
-	
+
+template <>
+building_physics::bp_model grammar::bp_grammar<DEFAULT_BP_GRAMMAR>(const std::string& fileName)
+{
+	return this->bp_grammar<DEFAULT_BP_GRAMMAR>(fileName,false);
+}
+
 } // namespace grammar
 } // namespace bso
 

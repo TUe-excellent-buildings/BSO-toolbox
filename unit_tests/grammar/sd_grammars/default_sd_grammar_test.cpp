@@ -27,7 +27,7 @@ BOOST_AUTO_TEST_SUITE( grammar_default_sd_test )
 		bso::spatial_design::cf_building cf(ms);
 
 		bso::grammar::grammar gram(cf);
-		bso::structural_design::sd_model sd = gram.sd_grammar<>("grammar/sd_settings_1.txt",true);
+		bso::structural_design::sd_model sd = gram.sd_grammar<>(std::string("grammar/sd_settings_1.txt"),true);
 		
 		unsigned int flatShellCount = 0;
 		unsigned int trussCount = 0;

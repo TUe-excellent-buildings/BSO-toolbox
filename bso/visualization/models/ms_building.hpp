@@ -68,9 +68,10 @@ MS_Model::MS_Model(const spatial_design::ms_building& ms,
 		std::stringstream centerLabel;
 		centerLabel << i->getID();
 		
-		if (type == "spaces")
+		if (type == "spaces" || type == "" )
 		{
 			this->addPolyhedron(polygons, &spaceGeometry, &pprops, &lprops);
+			if (type == "") centerLabel.str(std::string());
 		}
 		else if (type == "surface_type")
 		{

@@ -7,9 +7,8 @@
 namespace bso { namespace grammar {
 	
 template <>
-structural_design::sd_model grammar::sd_grammar<DEFAULT_SD_GRAMMAR>(const std::string& fileName,
-	const bool& useSurfaceTypeInsteadOfSpaceType /*= false*/,
-	const bool& b2 /*= false*/, const bool& b3 /*= false*/)
+bso::structural_design::sd_model grammar::sd_grammar<DEFAULT_SD_GRAMMAR>(const std::string& fileName,
+	const bool& useSurfaceTypeInsteadOfSpaceType)
 {
 	// initialize a new SD model
 	mSDModel = bso::structural_design::sd_model();
@@ -115,7 +114,13 @@ structural_design::sd_model grammar::sd_grammar<DEFAULT_SD_GRAMMAR>(const std::s
 	
 	return mSDModel;
 } // default_sd_grammar
-	
+
+template <>
+structural_design::sd_model grammar::sd_grammar<DEFAULT_SD_GRAMMAR>(const std::string& fileName)
+{
+	return this->sd_grammar<DEFAULT_SD_GRAMMAR>(fileName,false);
+}
+
 } // namespace grammar
 } // namespace bso
 
