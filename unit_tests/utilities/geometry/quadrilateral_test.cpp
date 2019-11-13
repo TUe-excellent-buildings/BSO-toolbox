@@ -113,6 +113,15 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		BOOST_REQUIRE(!q.isInsideOrOn(p9));
 	}
 	
+	BOOST_AUTO_TEST_CASE( is_inside_or_on_2 )
+	{
+		quadrilateral q = {{6575,5150,28171},{7690,5150,28171},{7690,5150,35130},{6575,5150,35130}};
+		vertex p1 = {7087,5150,31389};
+
+		BOOST_REQUIRE( q.isInside(p1));
+		BOOST_REQUIRE( q.isInsideOrOn(p1));
+	}
+	
 	BOOST_AUTO_TEST_CASE( is_coplanar )
 	{
 		quadrilateral q = {{1,0,0},{1,1,0},{0,1,0},{0,0,0}};
