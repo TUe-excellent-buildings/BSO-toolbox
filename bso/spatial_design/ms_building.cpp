@@ -328,6 +328,62 @@ void ms_building::deleteSpace(ms_space& space)
 	this->deleteSpace(this->getSpacePtr(space));
 }
 
+void ms_building::cutOff(const bso::utilities::geometry::vertex& location,
+		const bso::utilities::geometry::vector& direction, const double& tol /*= 1e-3*/)
+{
+	// normalize the direction for convenience of later use
+	auto n = direction.normalized();
+	// check if the cutting plane is orhtogonal
+	bool isOrthogonal = false;
+	for (unsigned int i = 0; i < 3; ++i)
+	{
+		bso::utilities::geometry::vector check = {0,0,0};
+		check(i) = 1;
+		if (check.isParallel(n, tol))
+		{
+			isOrthogonal = true;
+			break;
+		}
+	}
+	if (!isOrthogonal)
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nError, could not cut-off part of the building in following location:\n"
+								 << location << ", and the following direction:\n"
+								 << direction << ". Direction is not orthogonal.\n"
+								 << "(bso/spatial_design/ms_building.cpp)" << std::endl;
+		throw std::invalid_argument(errorMessage.str());
+	}
+	
+	// remove spaces that are completely included by the cut-off plane
+	auto selection = this->selectSpacesGeometrically(location,n,false);
+	for (auto& i : selection) this->deleteSpace(i);
+	
+	// select spaces that are cut by the cut-off plane
+	selection = this->selectSpacesGeometrically(location,n,true);
+	for (auto& i : selection)
+	{// cut each space at the cutting plane
+		bso::utilities::geometry::vertex coords = i->getCoordinates();
+		bso::utilities::geometry::vector tempSum = coords + i->getDimensions();
+		bso::utilities::geometry::vector vec1 = coords - location;
+
+		if (n.dot(vec1) < 0)
+		{
+			vec1 = tempSum - location;
+			double distance = n.dot(vec1);
+			tempSum -= n* distance;
+		}
+		else
+		{
+			double distance = n.dot(vec1);
+			coords -= n * distance;
+		}
+		
+		i->setCoordinates(coords);
+		i->setDimensions(tempSum - coords);
+	}
+}
+
 void ms_building::sweep(const bso::utilities::geometry::vertex& location,
 		const std::vector<std::pair<unsigned int, double> >& distances 
 		/*= {{0,1.0},{1,0.0},{2,0.0}}*/, const double& tol /*=1e-3*/)

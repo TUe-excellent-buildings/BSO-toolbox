@@ -38,6 +38,8 @@ public:
 	void addSpace(const ms_space& space);
 	void deleteSpace(ms_space* spacePtr);
 	void deleteSpace(ms_space& space);
+	void cutOff(const bso::utilities::geometry::vertex& location,
+		const bso::utilities::geometry::vector& direction, const double& tol = 1e-3);
 	void sweep(const bso::utilities::geometry::vertex& location,
 		const std::vector<std::pair<unsigned int, double> >& distances =
 		{{0,1.0},{1,0.0},{2,0.0}}, const double& tol = 1e-3);
