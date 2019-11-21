@@ -99,11 +99,19 @@ namespace bso { namespace utilities { namespace geometry {
 
 	bool quadrilateral::isInside(const vertex& p1, const double& tol /*= 1e-3*/) const
 	{ // only holds for convex quadrilaterals
-		triangle t1 = {mVertices[0],mVertices[1],mVertices[2]};
-		triangle t2 = {mVertices[0],mVertices[3],mVertices[2]};
-
-		return (t1.isInside(p1,tol) || t2.isInside(p1,tol) || 
-						(t1.isInsideOrOn(p1,tol) && t2.isInsideOrOn(p1,tol)));
+		if (this->isInsideOrOn(p1,tol))
+		{
+			for (const auto& i : mLineSegments)
+			{
+				if (i.isOnLine(p1,tol)) return false;
+			}
+			for (const auto& i : mVertices)
+			{
+				if (i.isSameAs(p1,tol)) return false;
+			}
+			return true;
+		}
+		else return false;
 	} //  isInside()
 
 	bool quadrilateral::isInsideOrOn(const vertex& p1, const double& tol /*= 1e-3*/) const

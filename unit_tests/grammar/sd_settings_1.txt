@@ -31,6 +31,7 @@ C, 10
 # live loading on each floor
 #	load case[-],	load [N/mm²],	azimuth [],	altitude[],	type (optional)
 D,	1,		0.005,		0,		-90,		live_load
+D,	1,		0.001,		0,		-90,		roof_load
 
 # live loading on each external surface
 #		load_case[-],	load [N/mm²],	azimuth [°],	altitude[°],	type (optional)
