@@ -56,7 +56,7 @@ bso::building_physics::bp_model grammar::bp_grammar<DEFAULT_BP_GRAMMAR>(const st
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nError, in default bp grammar could not find the specified\n"
-									 << "space setting for type: \"" << usedType << "\n"
+									 << "space setting for type: \"" << usedType << "\"\n"
 									 << "Has this type set been specified in the inputfile?: \""
 									 << fileName << "\"\n(bso/grammar/bp_grammars/default_bp_grammar.cpp)" 
 									 << std::endl;

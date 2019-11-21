@@ -39,11 +39,26 @@ void sd_rectangle_rule::apply(bso::structural_design::sd_model& sd) const
 	}
 	
 	// assign possible loads
-	if (mRectangleProperty->isFloor() && mLoads != nullptr)
+	if (mRectangleProperty->isFloor() && !mRectangleProperty->isRoof() && mLoads != nullptr)
 	{ // apply a floor load
 		for (const auto& i : *mLoads)
 		{
 			if (i.first == "live_load")
+			{
+				if (quadGeometry == nullptr)
+				{
+					quadGeometry = sd.addGeometry(*(mRectangleProperty->getRectanglePtr()));
+				}
+				quadGeometry->addLoad(i.second);
+			}
+		}
+	}
+	// assign possible loads
+	if (mRectangleProperty->isFloor() && mRectangleProperty->isRoof() && mLoads != nullptr)
+	{ // apply a floor load
+		for (const auto& i : *mLoads)
+		{
+			if (i.first == "roof_load")
 			{
 				if (quadGeometry == nullptr)
 				{
