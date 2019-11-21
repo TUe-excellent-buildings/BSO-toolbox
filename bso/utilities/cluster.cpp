@@ -20,7 +20,7 @@ data_point cluster::calculateMean() const
 	{
 		if (mData.size() == 0)
 		{
-			throw std::runtime_error("Error, cluster is contains no data.");
+			throw std::runtime_error("Error, cluster contains no data.");
 		}
 		else
 		{
