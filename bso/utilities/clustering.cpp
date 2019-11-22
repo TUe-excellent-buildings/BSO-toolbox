@@ -52,11 +52,18 @@ void clustering::mMakeClustering()
 		}
 		if (!(successfulKMeansRuns > 0))
 		{
-			std::stringstream errorMessage;
-			errorMessage << "\nError, could not successfully complete any k means algorithm\n"
-									 << "for a cluster size of: " << i
-									 << "(bso/utilities/clustering.cpp)" << std::endl;
-			throw std::runtime_error(errorMessage.str());
+			unsigned int oldKMax = mKMax;
+			mKMax = i - 2;
+			if (mKMax < mKMin)
+			{
+				std::stringstream errorMessage;
+				errorMessage << "\nError, could not successfully complete any k means algorithm\n"
+										 << "for a cluster size of: " << i
+										 << "(bso/utilities/clustering.cpp)" << std::endl;
+				throw std::runtime_error(errorMessage.str());
+			}
+			std::cerr << "Warning, reduced Kmax from " << oldKMax << " to " << mKMax
+								<< " while clustering.\n(bso/utilities/clustering.cpp)" << std::endl;
 		}
 		clusterings[i] = clustering;
 		variances[i] = variance;
