@@ -245,6 +245,13 @@ double ms_building::getVolume() const
 	return volume;
 } // getVolume()
 
+double ms_building::getFloorArea() const
+{
+	double area = 0;
+	for (const auto& i : mSpaces) area += i->getFloorArea();
+	return area;
+}
+
 std::vector<ms_space*> ms_building::selectSpacesGeometrically(
 		const bso::utilities::geometry::vertex& location,
 		const bso::utilities::geometry::vector& direction,

@@ -35,6 +35,7 @@ public:
 	bool getSpaceType(std::string& spaceType) const; // returns TRUE if space type is assigned FALSE if not. Assigns the space type to the argument that is passed by reference
 	bool getSurfaceTypes(std::vector<std::string>& surfaceTypes) const; // returns TRUE is surface types are asssigned FALSE if not. Assigns the surface types to the argument that is passed by reference
 	double getVolume() const;
+	double getFloorArea() const;
 	
 	bool operator == (const ms_space& rhs) const;
 	bool operator != (const ms_space& rhs) const;

@@ -309,6 +309,11 @@ double ms_space::getVolume() const
 	return mDimensions.prod()*1e-9;
 } // getVolume()
 
+double ms_space::getFloorArea() const
+{
+	return mDimensions(0)*mDimensions(1);
+} // getFloorArea()
+
 bool ms_space::operator == (const ms_space& rhs) const
 {
 	if (mID != rhs.mID) return false;
