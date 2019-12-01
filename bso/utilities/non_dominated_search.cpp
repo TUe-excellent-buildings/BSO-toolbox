@@ -17,16 +17,19 @@ std::vector<data_point> non_dominated_search(std::vector<data_point>& data)
 	for (const auto& i : data)
 	{
 		bool nonDominated = true;
-		for (auto j = sorted.begin(); j != sorted.end(); ++j)
+		auto j = sorted.begin();
+		while (j != sorted.end())
 		{
 			try
 			{
 				if (j->dominates(i))
 				{
 					nonDominated = false;
+					++j;
 					break;
 				}
 				else if (j->isDominatedBy(i)) j = sorted.erase(j);
+				else ++j;
 			}
 			catch (std::exception& e)
 			{
