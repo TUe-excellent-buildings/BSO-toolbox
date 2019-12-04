@@ -281,15 +281,17 @@ std::string sc_building::writeToString(char separator /*= ','*/) const
 				 << separator << mHValues.size()
 				 << separator << mBValues.size();
 	
-	for (auto i : mWValues) stream << separator << i/1000;
-	for (auto i : mDValues) stream << separator << i/1000;
-	for (auto i : mHValues) stream << separator << i/1000;
+	for (const auto& i : mWValues) stream << separator << i/1000;
+	for (const auto& i : mDValues) stream << separator << i/1000;
+	for (const auto& i : mHValues) stream << separator << i/1000;
 	
-	for (auto i : mBValues)
+	for (const auto& i : mBValues)
 	{
-		for (unsigned int j = 1; j < i.size(); j++)
+		bool first = true;
+		for (const auto& j : i)
 		{
-			stream << separator << i[j];
+			if (first) first = false;
+			else stream << separator << j;
 		}
 	}
 	return stream.str();

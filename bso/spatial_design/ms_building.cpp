@@ -828,7 +828,6 @@ ms_building::operator sc_building() const
 			utilities::geometry::vertex p2 = i->getDimensions() + p1;
 			for (unsigned int j = 0; j < 3; j++)
 			{
-				if (p1[j] < minMSPoint[j]) minMSPoint[j] = p1[j];
 				coordValues[j].push_back(p1(j));
 				coordValues[j].push_back(p2(j));
 			}
@@ -867,25 +866,26 @@ ms_building::operator sc_building() const
 
 			for (unsigned int j = 1; j < sc.mBValues.back().size(); j++)
 			{
-				utilities::geometry::vertex pCheck = minMSPoint;
+				utilities::geometry::vertex pCheck;
+				pCheck[0] = coordValues[0][sc.getWIndex(j)] + coordValues[0][sc.getWIndex(j)+1];
+				pCheck[1] = coordValues[1][sc.getDIndex(j)] + coordValues[1][sc.getDIndex(j)+1];
+				pCheck[2] = coordValues[2][sc.getHIndex(j)] + coordValues[2][sc.getHIndex(j)+1];
+				pCheck /= 2;
 			
-				for (unsigned int k = 0; k < sc.getWIndex(j); ++k) pCheck[0] += sc.getWValue(k);
-				for (unsigned int k = 0; k < sc.getDIndex(j); ++k) pCheck[1] += sc.getDValue(k);
-				for (unsigned int k = 0; k < sc.getHIndex(j); ++k) pCheck[2] += sc.getHValue(k);
-
 				bool belongsToSpace = true;
 				for (unsigned int k = 0; k < 3; k++)
 				{
-					if (pCheck[k] < p1[k] || pCheck[k] >= p2[k])
+					if (!(pCheck[k] > p1[k] && pCheck[k] < p2[k]))
 					{
 						belongsToSpace = false;
 						break;
 					}
 				}
-				sc.mBValues.back()[j] = belongsToSpace;
+				sc.mBValues.back()[j] = 1;
 			}
 		}
 		sc.checkValidity();
+
 		return sc;
 	}
 	catch (std::exception& e)
