@@ -881,7 +881,7 @@ ms_building::operator sc_building() const
 						break;
 					}
 				}
-				sc.mBValues.back()[j] = 1;
+				sc.mBValues.back()[j] = belongsToSpace;
 			}
 		}
 		sc.checkValidity();
