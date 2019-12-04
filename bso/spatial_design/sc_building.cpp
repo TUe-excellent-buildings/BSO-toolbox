@@ -319,7 +319,10 @@ unsigned int sc_building::getWIndex(const unsigned int& cellIndex) const
 								 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
 		throw std::invalid_argument(errorMessage.str());
 	}
-	return ((cellIndex-1)/(mHValues.size()*mDValues.size()));
+	unsigned int nC = cellIndex - 1;
+	unsigned int nH = mHValues.size();
+	unsigned int nD = mDValues.size();
+	return nC/(nH*nD);
 } // getWIndex()
 
 unsigned int sc_building::getDIndex(const unsigned int& cellIndex) const
@@ -339,7 +342,10 @@ unsigned int sc_building::getDIndex(const unsigned int& cellIndex) const
 								 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
 		throw std::invalid_argument(errorMessage.str());
 	}
-	return (((cellIndex-1) - getWIndex(cellIndex)*(mHValues.size()*mDValues.size()))/(mHValues.size()));
+	unsigned int nC = cellIndex - 1;
+	unsigned int nD = mDValues.size();
+	unsigned int nH = mHValues.size();
+	return (nC/nH)%nD;
 } // getDIndex()
 
 unsigned int sc_building::getHIndex(const unsigned int& cellIndex) const
@@ -359,7 +365,9 @@ unsigned int sc_building::getHIndex(const unsigned int& cellIndex) const
 								 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
 		throw std::invalid_argument(errorMessage.str());
 	}
-	return (cellIndex-1) - getWIndex(cellIndex)*(mHValues.size()*mDValues.size()) - getDIndex(cellIndex)*mHValues.size();
+	unsigned int nC = cellIndex - 1;
+	unsigned int nH = mHValues.size();
+	return nC%nH;
 } // getHIndex()
 
 unsigned int sc_building::getCellIndex(const unsigned int& wIndex, const unsigned int& dIndex, const unsigned int& hIndex, const unsigned int& spaceIndex /*= 0*/) const

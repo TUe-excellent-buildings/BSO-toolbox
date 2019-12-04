@@ -36,6 +36,7 @@ public:
 		const bool includePartialSpaces = false) const;
 		
 	void setZZero();
+	void resetOrigin(const std::vector<unsigned int>& indices = {0,1,2});
 	void addSpace(const ms_space& space);
 	void deleteSpace(ms_space* spacePtr);
 	void deleteSpace(ms_space& space);

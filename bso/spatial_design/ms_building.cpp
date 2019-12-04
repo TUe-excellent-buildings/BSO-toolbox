@@ -90,64 +90,53 @@ ms_building::ms_building(const sc_building& sc)
 		std::vector<unsigned int> originIndices = {sc.getWSize(), sc.getDSize(), sc.getHSize()};
 		std::vector<std::vector<double> > globalCoords(3);
 		std::vector<std::vector<double> > dimensions(3);
+		
 		for (unsigned int i = 0; i < 3; i++)
 		{
 			globalCoords[i] = std::vector<double>(originIndices[i]+1);
 			dimensions[i] = std::vector<double>(originIndices[i]);
-		}
-		for (unsigned int i = 0; i < originIndices[0]; i++) dimensions[0][i] = sc.getWValue(i);
-		for (unsigned int i = 0; i < originIndices[1]; i++) dimensions[1][i] = sc.getDValue(i);
-		for (unsigned int i = 0; i < originIndices[2]; i++) dimensions[2][i] = sc.getHValue(i);
-
-		// find the lowest cell indices (w,d,h) that index an active cell (i.e. they will represent the origin)
-		for (unsigned int i = 1; i < sc.getBRowSize(); i++)
-		{ // for each cell
-			std::vector<unsigned int> indices = {sc.getWIndex(i), sc.getDIndex(i), sc.getHIndex(i)}; // temporarily store the indices (w,d,h)
-			for (unsigned int j = 0; j < sc.getBSize(); j++)
-			{ // for each space
-				if (sc.getBValue(j,i) == 1)
-				{ // if the cell i is active for space j
-					for (unsigned int k = 0; k < 3; k++) 
-					{ // check for each index
-						if (indices[k] < originIndices[k])
-						{ // if it is lower than the lowest found so far to index an active cell
-							originIndices[k] = indices[k]; // if it is, set the lowest found to it.
-						}
-					}
-				}
-			}
-		}
-
-		for (unsigned int i = 0; i < 3; i++)
-		{ // for each index
-			globalCoords[i][originIndices[i]] = 0.0; // set the origins coordinate value to zero
-			for (unsigned int j = originIndices[i] + 1; j < globalCoords[i].size(); j++)
-			{ // for each consequent index value increment with the width of the dimensions described by the supercube
-				globalCoords[i][j] = globalCoords[i][j-1] + dimensions[i][j-1];
-			}
-		}
-		
-		for (unsigned int i = 0; i < sc.getBSize(); i++)
-		{ // for each space
-			// find the indices of the minium and maximum cell index that is active for space i
-			unsigned int max = 0, min = 0;
-			for (unsigned int j = 1; j <= sc.getBRowSize(); j++)
+			globalCoords[i][0] = 0.0;
+			for (unsigned int j = 0; j < originIndices[i]; ++j)
 			{
-				if (min == 0 && sc.getBValue(i,j) == 1) min = j;
-				if (sc.getBValue(i,j) == 1) max = j;
+				if (i == 0) dimensions[i][j] = sc.getWValue(j);
+				if (i == 1) dimensions[i][j] = sc.getDValue(j);
+				if (i == 2) dimensions[i][j] = sc.getHValue(j);
+				globalCoords[i][j+1] = globalCoords[i][j] + dimensions[i][j];
+			}
+		}
+
+		for (unsigned int i = 0; i < sc.getBSize(); ++i)
+		{ // for each space i
+			// find the indices of the minium and maximum cell index that is active for space i
+			unsigned int maxW = 0, maxD = 0, maxH = 0, minW = originIndices[0],
+									 minD = originIndices[1], minH = originIndices[1];
+			for (unsigned int j = 1; j < sc.getBRowSize()+1; ++j)
+			{
+				if (sc.getBValue(i,j) != 1) continue;
+				unsigned int wInd = sc.getWIndex(j);
+				unsigned int dInd = sc.getDIndex(j);
+				unsigned int hInd = sc.getHIndex(j);
+				
+				if (minW > wInd) minW = wInd;
+				if (minD > dInd) minD = dInd;
+				if (minH > hInd) minH = hInd;
+				
+				if (maxW < wInd) maxW = wInd;
+				if (maxD < dInd) maxD = dInd;
+				if (maxH < hInd) maxH = hInd;
 			}
 
 			//get the locations and dimensions from these indices
 			utilities::geometry::vertex location;
-			location << globalCoords[0][sc.getWIndex(min)],
-									globalCoords[1][sc.getDIndex(min)],
-									globalCoords[2][sc.getHIndex(min)];
+			location << globalCoords[0][minW],
+									globalCoords[1][minD],
+									globalCoords[2][minH];
 			location.round(0);
 			
 			utilities::geometry::vector dimensions;
-			dimensions << globalCoords[0][sc.getWIndex(max)+1],
-										globalCoords[1][sc.getDIndex(max)+1],
-										globalCoords[2][sc.getHIndex(max)+1];
+			dimensions << globalCoords[0][maxW+1],
+										globalCoords[1][maxD+1],
+										globalCoords[2][maxH+1];
 			dimensions -= location;
 			dimensions.round(0);
 			
@@ -159,6 +148,8 @@ ms_building::ms_building(const sc_building& sc)
 				mLastSpaceID = mSpaces.back()->getID();
 			}
 		}
+		
+		this->resetOrigin();
 	}
 	catch (std::exception& e)
 	{
@@ -282,17 +273,31 @@ std::vector<ms_space*> ms_building::selectSpacesGeometrically(
 
 void ms_building::setZZero()
 {
-	double min = mSpaces[0]->getCoordinates()(2); // set an initial value to the minimum
+	this->resetOrigin({2});
+} // setZZero()
+
+void ms_building::resetOrigin(const std::vector<unsigned int>& indices /*= {0,1,2}*/)
+{
+	utilities::geometry::vector coordDifference = {0,0,0};
+	for (const auto& index : indices)
+	{
+		double min = mSpaces[0]->getCoordinates()(index); // set an initial value to the minimum
 	
-	// find the minimum value of the z-coordinates in the building
-	for (auto i : mSpaces) if (i->getCoordinates()(2) < min) min = i->getCoordinates()(2); 
-	if (min <= 0) return;
+		// find the minimum value of the z-coordinates in the building
+		for (auto i : mSpaces) 
+		{
+			double coord = i->getCoordinates()(index);
+			if (min > coord) min = coord;
+		}			
+
+		coordDifference(index) -= min;
+	}
 	
-	utilities::geometry::vector coordDifference;
-	coordDifference << 0, 0, -min;
+	if (coordDifference(2) > 0) coordDifference(2) = 0;
 	
 	for (auto i : mSpaces) i->setCoordinates(i->getCoordinates() + coordDifference);
-} // setZZero()
+	this->snapOn({{0,1},{1,1},{2,1}});
+} // resetOrigin()
 
 void ms_building::addSpace(const ms_space& space)
 {
@@ -859,12 +864,13 @@ ms_building::operator sc_building() const
 		// for each space, create an emtpy bit mask, and subsequently find out which cells in that mask belong to the space, and should be activated
 		for (auto i : mSpaces)
 		{
-			sc.mBValues.push_back(std::vector<int>(cubeSize + 1));
-			sc.mBValues.back()[0] = i->getID();
+			std::vector<int> tempBvec(cubeSize+1);
+			tempBvec[0] = i->getID();
+			
 			utilities::geometry::vertex p1 = i->getCoordinates();
 			utilities::geometry::vertex p2 = i->getDimensions() + p1;
 
-			for (unsigned int j = 1; j < sc.mBValues.back().size(); j++)
+			for (unsigned int j = 1; j < tempBvec.size(); j++)
 			{
 				utilities::geometry::vertex pCheck;
 				pCheck[0] = coordValues[0][sc.getWIndex(j)] + coordValues[0][sc.getWIndex(j)+1];
@@ -881,8 +887,9 @@ ms_building::operator sc_building() const
 						break;
 					}
 				}
-				sc.mBValues.back()[j] = belongsToSpace;
+				tempBvec[j] = belongsToSpace;
 			}
+			sc.mBValues.push_back(tempBvec);
 		}
 		sc.checkValidity();
 
