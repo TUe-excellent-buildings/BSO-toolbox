@@ -110,9 +110,11 @@ ms_building::ms_building(const sc_building& sc)
 			// find the indices of the minium and maximum cell index that is active for space i
 			unsigned int maxW = 0, maxD = 0, maxH = 0, minW = originIndices[0],
 									 minD = originIndices[1], minH = originIndices[1];
+			bool empty = true;
 			for (unsigned int j = 1; j < sc.getBRowSize()+1; ++j)
 			{
 				if (sc.getBValue(i,j) != 1) continue;
+				empty = false;
 				unsigned int wInd = sc.getWIndex(j);
 				unsigned int dInd = sc.getDIndex(j);
 				unsigned int hInd = sc.getHIndex(j);
@@ -124,6 +126,14 @@ ms_building::ms_building(const sc_building& sc)
 				if (maxW < wInd) maxW = wInd;
 				if (maxD < dInd) maxD = dInd;
 				if (maxH < hInd) maxH = hInd;
+			}
+			if (empty)
+			{
+				std::stringstream errorMessage;
+				errorMessage << "\nError, while converting SC building into MS building\n"
+										 << "encountered a space without cell assignments\n"
+										 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
+				throw std::runtime_error(errorMessage.str());
 			}
 
 			//get the locations and dimensions from these indices
@@ -864,13 +874,13 @@ ms_building::operator sc_building() const
 		// for each space, create an emtpy bit mask, and subsequently find out which cells in that mask belong to the space, and should be activated
 		for (auto i : mSpaces)
 		{
-			std::vector<int> tempBvec(cubeSize+1);
-			tempBvec[0] = i->getID();
+			sc.mBValues.push_back(std::vector<int>(cubeSize+1));
+			sc.mBValues.back()[0] = i->getID();
 			
 			utilities::geometry::vertex p1 = i->getCoordinates();
 			utilities::geometry::vertex p2 = i->getDimensions() + p1;
 
-			for (unsigned int j = 1; j < tempBvec.size(); j++)
+			for (unsigned int j = 1; j < sc.mBValues.back().size(); j++)
 			{
 				utilities::geometry::vertex pCheck;
 				pCheck[0] = coordValues[0][sc.getWIndex(j)] + coordValues[0][sc.getWIndex(j)+1];
@@ -887,9 +897,8 @@ ms_building::operator sc_building() const
 						break;
 					}
 				}
-				tempBvec[j] = belongsToSpace;
+				sc.mBValues.back()[j] = belongsToSpace;
 			}
-			sc.mBValues.push_back(tempBvec);
 		}
 		sc.checkValidity();
 

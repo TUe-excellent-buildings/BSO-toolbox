@@ -320,9 +320,9 @@ unsigned int sc_building::getWIndex(const unsigned int& cellIndex) const
 		throw std::invalid_argument(errorMessage.str());
 	}
 	unsigned int nC = cellIndex - 1;
-	unsigned int nH = mHValues.size();
 	unsigned int nD = mDValues.size();
-	return nC/(nH*nD);
+	unsigned int nH = mHValues.size();
+	return nC/(nD*nH);
 } // getWIndex()
 
 unsigned int sc_building::getDIndex(const unsigned int& cellIndex) const
@@ -388,7 +388,7 @@ unsigned int sc_building::getCellIndex(const unsigned int& wIndex, const unsigne
 								 << "(bso/spatial_design/ms_building.cpp)." << std::endl;
 		throw std::invalid_argument(errorMessage.str());
 	}
-	return (wIndex * (mHValues.size() * mDValues.size())) + (dIndex * mHValues.size()) + hIndex + 1;
+	return (wIndex * (mDValues.size() * mHValues.size())) + (dIndex * mHValues.size()) + hIndex + 1;
 } // getCellIndex
 
 unsigned int sc_building::getWSize() const
