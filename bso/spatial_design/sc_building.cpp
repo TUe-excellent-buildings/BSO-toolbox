@@ -134,22 +134,35 @@ sc_building::sc_building(std::string input, std::string separators /*= ","*/)
 			for (auto&& i : mWValues) i = 1000 * bso::utilities::trim_and_cast_double(*(++token));
 			for (auto&& i : mDValues) i = 1000 * bso::utilities::trim_and_cast_double(*(++token));
 			for (auto&& i : mHValues) i = 1000 * bso::utilities::trim_and_cast_double(*(++token));
-			unsigned int count = 0;
+			unsigned int count = 1;
 			for (auto&& i : mBValues)
 			{
 				i = std::vector<int>(w*d*h);
+				unsigned int cellIndex = 0;
 				for (auto&& j : i) 
 				{
+					++token;
+					if (token == tok.end())
+					{
+						std::stringstream errorMessage;
+						errorMessage << "Could not initialize an SC building spatial design via an input line.\n"
+												 << "Reached end of line before expectation. Reached space: " << count << std::endl
+												 << "Reached cell index: " << cellIndex << std::endl
+												 << "(bso/spatial_design/sc_building.cpp)" << std::endl;
+						throw std::invalid_argument(errorMessage.str());
+					}
 					try
 					{
-						j = bso::utilities::trim_and_cast_int(*(++token));
+						j = bso::utilities::trim_and_cast_int(*(token));
 					}
 					catch(std::exception& e)
 					{
 						j = bso::utilities::trim_and_cast_double(*(token));
 					}
+					++cellIndex;
 				}
-				i.insert(i.begin(), ++count);
+				i.insert(i.begin(), count);
+				++count;
 			}
 		}
 		catch(std::exception& e)
