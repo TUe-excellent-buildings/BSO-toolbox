@@ -33,7 +33,7 @@ private:
 	random_bsp     *pbsp;
 public:
 	MS_Model(const spatial_design::ms_building& ms, const std::string& type = "spaces",
-					 const std::string& title = "ms_building");
+					 const std::string& title = "ms_building", const double& linewidth = 1.0);
 	~MS_Model();
 	
 	void render(const camera &cam) const;
@@ -41,8 +41,10 @@ public:
 }; // MS_Model
 
 MS_Model::MS_Model(const spatial_design::ms_building& ms,
-						const std::string& type /*= "spaces"*/, const std::string& title /*= "ms_building"*/)
+						const std::string& type /*= "spaces"*/, const std::string& title /*= "ms_building"*/,
+						const double& linewidth /*= 1.0*/)
 {
+	lprops.width = linewidth;
 	mTitle = title;
 	pprops.ambient = rgba(0.1f, 0.5f, 0.1f, 0.3f);
 	pprops.diffuse = rgba(0.2f, 1.0f, 0.2f, 0.3f);

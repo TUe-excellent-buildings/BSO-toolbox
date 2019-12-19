@@ -157,9 +157,9 @@ void endVisualization()
 	glutMainLoop();
 } // end_visualization()
 
-void visualize(const spatial_design::ms_building& ms, const std::string& type = "spaces", const std::string& title = "ms_building")
+void visualize(const spatial_design::ms_building& ms, const std::string& type = "spaces", const std::string& title = "ms_building", const double& lineWidth = 1.0)
 {
-	vpmanager.addviewport(new viewport(new MS_Model(ms, type, title)));
+	vpmanager.addviewport(new viewport(new MS_Model(ms, type, title,lineWidth)));
 }
 
 void visualize(const spatial_design::sc_building& sc_building, const std::string& title = "sc_building")

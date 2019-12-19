@@ -124,8 +124,8 @@ void data_point::normalize(const data_point& pStart, const data_point& pEnd,
 			if (std::find(logScales.begin(),logScales.end(),i) != logScales.end())
 			{
 				a = ((a>0)? 1 : -1)*log(1+abs(a)/10e-150); // 10e-500 shifts the function so it can handle negative numbers, but this means double looses about half of its exponential precision (11 bits)
-				b = ((a>0)? 1 : -1)*log(1+abs(b)/10e-150);
-				x = ((a>0)? 1 : -1)*log(1+abs(x)/10e-150);
+				b = ((b>0)? 1 : -1)*log(1+abs(b)/10e-150);
+				x = ((x>0)? 1 : -1)*log(1+abs(x)/10e-150);
 			}
 			totalDifference = b-a;
 			relativeDifference = x-a;
