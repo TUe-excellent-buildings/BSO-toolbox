@@ -288,6 +288,10 @@ namespace bso { namespace spatial_design { namespace conformal {
 					j->addSpace(i);
 				}
 			}
+			for (auto& i : mCFLines)
+			{
+				i->removeCuboid(this);
+			}
 			for (const auto& i : newVertices) this->checkAssociated(i);
 			mCFSpaces.clear();
 		}
