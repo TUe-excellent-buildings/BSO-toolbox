@@ -1,48 +1,44 @@
-###### README for the Toolbox of the TU/e-, LIACS-, STW- project:																						######
-###### Excellent Buildings via Forefront MDO, Lowest Energy Use, Optimal Spatial and Structural Performance ######
+# README BSO toolbox
 
-### What is this repository for? ###
+## What is this repository for?
 
-** Quick summary
-*
-*
-* 
-* 
+Quick summary
 
-### How do I get it set up? ###
 
-** Summary of set up
-*
-*
-* 
-** Configuration
-*
-*
-* 
-** Dependencies
-*
-*
-* 
-** Database configuration
-*
-*
-* 
-** How to run tests
-*
-*
-* 
-** Deployment instructions
-*
-*
-* 
+## How do I get it set up? ###
 
-### Contribution guidelines ###
+### Dependencies
+The toolbox is written in C++ and makes use of elements defined in the C++14 standard.
+Furthermore, for linear algebra the [Eigen](http://eigen.tuxfamily.org) C++ library is used.
+For various utilities the [Boost](https://www.boost.org/) C++ library is used.
+To solve systems of ODE's for building thermal simulation, the [Odeint](https://www.odeint.com) (also contained in the Boost library) library is employed.
+Finally, for visualization ... 
 
-** Writing tests
-** Code review
-** Other guidelines
+### Short version
+1. Install and compile the Boost library.
+2. Install the Eigen library.
+3. 
+4. Install GIT
+5. Clone the repository to your local machine
+6. txt
 
-### Who do I talk to? ###
+### Detailed version
+
+Step by step configuration
+
+
+### How to run unit tests
+
+
+## Contribution guidelines
+
+### Write tests
+
+### Review code
+
+### Other guidelines
+
+## Who do I talk to? ###
 
 ** Repo owner or admin
 * Admin: S. Boonstra ([e-mail](TU/e: s.boonstra@tue.nl))
