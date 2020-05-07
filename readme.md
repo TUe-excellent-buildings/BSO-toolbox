@@ -2,8 +2,26 @@
 
 ## What is this repository for?
 
-Quick summary
+This repository contains a C++ library named the Building Spatial design Optimization toolbox (BSO toolbox).
+The toolbox has been developed to support building spatial design optimization by providing tools to:
+(i) represent and modify building spatial designs,
+(ii) generate discipline specific designs from a building spatial design,
+(iii) analyze structural designs,
+(iv) analyze building physics of a building (thermal simulation),
+(v) analyze data obtained from evaluations, e.g. clustering and sorting algorithms.
+The toolbox itself does not contain any optimization methods.
+The toolbox is developed to support the research carried out in a joint project by the Department of the Built Environment of Eindhoven University of Technology and the Leiden Institute of Advanced Computer Science (LIACS) of Leiden University.
+Key publications within this research project are given below:
+* Boonstra, S, van der Blom, K, Hofmeyer, H, Emmerich, MTM, van Schijndel, AWM & de Wilde, P 2018, 'Toolbox for super-structured and super-structure free multi-disciplinary building spatial design optimisation', Advanced Engineering Informatics, vol. 36, pp. 86-100. https://doi.org/10.1016/j.aei.2018.01.003
+* van der Blom, K, Boonstra, S, Hofmeyer, H & Emmerich, MTM 2019, Analysing optimisation data for multicriteria building spatial design. in CA Coello Coello, P Reed, K Deb, E Goodman, K Klamroth, K Miettinen & S Mostaghim (eds), Evolutionary Multi-Criterion Optimization - 10th International Conference, EMO 2019, Proceedings. Lecture Notes in Computer Science , vol. 11411, Springer, pp. 671-682, Evolutionary Multi-Criterion Optimization, 10th International Conference, (EMO2019), East Lansing, United States, 10/03/19. https://doi.org/10.1007/978-3-030-12598-1_53
+* Boonstra, S, van der Blom, K, Hofmeyer, H, van den Buijs, J & Emmerich, MTM 2018, Coupling between a building spatial design optimisation toolbox and BouwConnect BIM. in I Mutis & T Hartman (eds), Advances in Informatics and Computing in Civil and Construction Engineering: Proceedings of the 35th CIB W78 2018 Conference: IT in Design, Construction, and Management. Springer, Cham, pp. 95-102, 35th CIB W78 2018 Conference, Chicago, United States, 1/10/18. https://doi.org/10.1007/978-3-030-00220-6_12
+* van der Blom, K, Boonstra, S, Hofmeyer, H, Bäck, T & Emmerich, MTM 2017, Configuring advanced evolutionary algorithms for multicriteria building spatial design optimisation. in 2017 IEEE Congress on Evolutionary Computation (CEC) Proceedings, June 5-8, 2017, Donostia - San Sebastián, Spain., 7969520, Institute of Electrical and Electronics Engineers, pp. 1803-1810, 2017 IEEE Congress on Evolutionary Computation (CEC2017) June 5-8, 2017, Donostia - San Sebastián, Spain, San Sebastian, Spain, 5/06/17. https://doi.org/10.1109/CEC.2017.7969520
+* Boonstra, S, van der Blom, K, Hofmeyer, H & Emmerich, MTM 2019, Co-evolutionary design processes applied to building spatial design optimization. in X Guo & H Huang (eds), Advances in Structural and Multidisciplinary Optimization: Proceedings of the 13th World Congress of Structural and Multidisciplinary Optimization (WCSMO13). ISSMO, Beijing, pp. 110-115, World Congress of Structural and Multidisciplinary Optimization, Beijing, China, 20/05/19.
 
+Moreover, three PhD theses that are related to the research have been published:
+* Boonstra, S 2020, 'Multi-disciplinary optimization of building spatial designs: co-evolutionary design process simulations, evolutionary algorithms, hybrid approaches', Doctor of Philosophy, Department of the Built Environment, Eindhoven.
+* van der Blom, K 2019, 'Multi-objective mixed-integer evolutionary algorithms for building spatial design', Doctor of Philosophy, Leiden Institute of Advanced Computer Science, Leiden.
+* Davila Delgado, JM 2014, 'Building structural design generation and optimisation including spatial modification', Doctor of Philosophy, Department of the Built Environment, Eindhoven.
 
 ## How do I get it set up? ###
 
