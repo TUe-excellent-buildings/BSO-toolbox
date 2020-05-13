@@ -8,5 +8,15 @@ authors:
     given-names: Hèrm
 title: "BSO Toolbox"
 version: 1.0
-doi: xxx
+doi: 10.5281/zenodo.3823893
 date-released: 2020-05-xx
+
+bibtex:
+@MISC{bso_toolbox,
+	title={BSO toolbox v1.0},
+	author={Boonstra, Sjonnie and Hofmeyer, H\`{e}rm},
+	doi={10.123456789},
+	year={2020},
+	month={5},
+	doi={10.5281/zenodo.3823893}
+}
