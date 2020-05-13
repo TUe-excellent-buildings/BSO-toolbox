@@ -140,7 +140,7 @@ $ git clone <link>
 The command line on the terminal should then look similar to the line below.
 
 ```bash
-$ git clone https://gitlab.tue.nl/sboonstra/bso-toolbox.git
+$ git clone https://github.com/sjonnie-boonstra/BSO-toolbox.git
 ```
 
 If the clone was successful, the BSO toolbox is now cloned onto your local machine, e.g. in the directory: `/usr/include/bso-toolbox`.
