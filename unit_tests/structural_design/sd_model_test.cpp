@@ -230,7 +230,7 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 		quad3->addConstraint(c2); quad3->addConstraint(c3); quad3->addConstraint(c4);
 		
 		sd1.mesh(20);
-		sd1.topologyOptimization("SIMP",0.5,1.5,3,0.2,1e-2);
+		sd1.topologyOptimization<topology_optimization::SIMP>(0.5,1.5,3.0,0.2,1e-2);
 		
 		double compliance = 0;
 		

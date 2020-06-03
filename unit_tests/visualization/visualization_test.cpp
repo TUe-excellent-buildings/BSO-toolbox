@@ -172,9 +172,9 @@ BOOST_AUTO_TEST_SUITE( visualize_ms_building )
 		sd.mesh(20);
 		sd.analyze();
 		visualize(sd,"strain_energy","Visualization of strain energy in analyzed sd model");
-		sd.topologyOptimization("SIMP",0.5,1.5,3,0.2,1e-2);
+		sd.topologyOptimization<bso::structural_design::topology_optimization::SIMP>(0.5,1.5,3.0,0.2,1e-2);
 		visualize(sd,"density","Visualization of densities in topology optimized sd model using SIMP algorithm");
-		sd.topologyOptimization("robust",0.5,1.5,3,0.2,1e-2);
+		sd.topologyOptimization<bso::structural_design::topology_optimization::ROBUST>(0.5,1.5,3.0,0.2,1e-2);
 		visualize(sd,"density","Visualization of densities in topology optimized sd model using robust algorithm");
 	}
 	
