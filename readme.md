@@ -143,11 +143,11 @@ The command line on the terminal should then look similar to the line below.
 $ git clone https://github.com/TUe-excellent-buildings/BSO-toolbox.git
 ```
 
-If the clone was successful, the BSO toolbox is now cloned onto your local machine, e.g. in the directory: `/usr/include/bso-toolbox`.
+If the clone was successful, the BSO toolbox is now cloned onto your local machine, e.g. in the directory: `/usr/include/BSO-toolbox`.
 
 ##### 7. Compile and run the example.
 
-An example of how the toolbox can be used has been added to the repository as well (`../bso-toolbox/example`).
+An example of how the toolbox can be used has been added to the repository as well (`../BSO-toolbox/example`).
 The source code of the example is as follows:
 
 ```cpp
@@ -241,7 +241,7 @@ The unit tests are also included in the repository, and in case of developing/co
 Depending on the location of the repository on your local machine, moving to the unit test directory may be achieved as follows.
 
 ```bash
-$ cd /usr/include/bso-toolbox/unit_tests
+$ cd /usr/include/BSO-toolbox/unit_tests
 ```
 
 The unit test directory contains a makefile with which the unit tests can be compiled.
