@@ -18,9 +18,9 @@ namespace bso { namespace structural_design {
 		}
 	} // clearMesh()
 
-	sd_model::sd_model()
+	sd_model::sd_model() 
 	{
-		
+		mTopOptStreamBuffer = nullptr;
 	} // ctor()
 	
 	sd_model::sd_model(const sd_model& rhs)
@@ -62,6 +62,7 @@ namespace bso { namespace structural_design {
 			for (const auto& j : i->getConstraints()) newSDGeom->addConstraint(j);
 		}
 		mMeshSize = rhs.mMeshSize;
+		mTopOptStreamBuffer = rhs.mTopOptStreamBuffer;
 	}
 
 	sd_model::~sd_model()
@@ -330,46 +331,11 @@ namespace bso { namespace structural_design {
 		}
 	} // analyze()
 	
-	void sd_model::topologyOptimization(
-				const std::string& algorithm, const double& f, 
-				const double& rMin, const double& penal, const double& xMove,
-				const double& tolerance, std::ostream& out)
+	void sd_model::setTopOptOutputStream(std::ostream& out)
 	{
-		if (algorithm == "SIMP")
-		{
-			topology_optimization::SIMP(mFEA,f,rMin,penal,xMove,tolerance,out);
-		}
-		else if (algorithm == "robust")
-		{
-			topology_optimization::robust(mFEA,f,rMin,penal,xMove,tolerance,out);
-		}
-		else if (algorithm == "elementTypeSIMP")
-		{
-			topology_optimization::elementTypeSIMP(mFEA,f,rMin,penal,xMove,tolerance,out);
-		}
-		else if (algorithm == "componentWiseSIMP")
-		{
-			topology_optimization::componentWiseSIMP(mFEA,f,rMin,penal,xMove,tolerance,out);
-		}
-		else 
-		{
-			std::stringstream errorMessage;
-			errorMessage << "\nRequesting invalid topology optimization algorithm:\n"
-									 << algorithm << "\nWhich could not be identified as an algorithm\n"
-									 << "(bso/structural_design/sd_model.cpp)" << std::endl;
-			throw std::invalid_argument(errorMessage.str());
-		}
+		mTopOptStreamBuffer = out.rdbuf();
 	}
 	
-	void sd_model::topologyOptimization(
-				const std::string& algorithm, const double& f, 
-				const double& rMin, const double& penal, const double& xMove,
-				const double& tolerance)
-	{
-		std::ostream dummyStream(0);
-		this->topologyOptimization(algorithm,f,rMin,penal,xMove,tolerance,dummyStream);
-	}
-
 	sd_results sd_model::getTotalResults()
 	{
 		sd_results results;

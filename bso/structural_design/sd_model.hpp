@@ -1,6 +1,8 @@
 #ifndef SD_MODEL_HPP
 #define SD_MODEL_HPP
 
+#include <ostream>
+#include <sstream>
 #include <bso/structural_design/fea.hpp>
 #include <bso/structural_design/component/point.hpp>
 #include <bso/structural_design/component/line_segment.hpp>
@@ -19,6 +21,7 @@ namespace bso { namespace structural_design {
 		std::vector<component::point*> mMeshedPoints;
 		
 		fea* mFEA;
+		std::streambuf* mTopOptStreamBuffer;
 		
 		unsigned int mMeshSize = 1;
 		bool mIsMeshed = false;
@@ -38,12 +41,9 @@ namespace bso { namespace structural_design {
 		void mesh(const unsigned int& n);
 		void analyze(std::string solver = "SimplicialLDLT");
 		
-		void topologyOptimization(const std::string& algorithm, const double& f, 
-															const double& rMin, const double& penal, const double& xMove,
-															const double& tolerance, std::ostream& out);
-		void topologyOptimization(const std::string& algorithm, const double& f, 
-															const double& rMin, const double& penal, const double& xMove,
-															const double& tolerance);
+		template <typename T, typename...ARGS>
+		void topologyOptimization(const ARGS&...);
+		void setTopOptOutputStream(std::ostream& out);
 		
 		sd_results getTotalResults();
 		sd_results getPartialResults(bso::utilities::geometry::polygon* geom);

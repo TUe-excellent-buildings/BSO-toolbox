@@ -13,17 +13,23 @@
 
 namespace bso { namespace structural_design { namespace topology_optimization {
 
+class ROBUST;
+
+} // namespace topology_optimization
+
 double densityProjection(double beta, double eta, double x)
 {
 	return (tanh(beta * eta) + tanh(beta * (x - eta))) /
 				 (tanh(beta * eta) + tanh(beta * (1 - eta)));
 }
 
-void robust(fea* FEASystem, const double& f, 
+template <>
+void sd_model::topologyOptimization<topology_optimization::ROBUST>(const double& f, 
 						const double& rMin, const double& penal, const double& xMove,
-						const double& tolerance, std::ostream& out)
+						const double& tolerance)
 {
-	unsigned int numEle = FEASystem->getElements().size();
+	std::ostream out(mTopOptStreamBuffer);
+	unsigned int numEle = mFEA->getElements().size();
 	double Mnd;
 	double beta = 1.0;
 	double etae = 0.8;
@@ -42,14 +48,14 @@ void robust(fea* FEASystem, const double& f,
 	std::vector<T> tripletList;
 
 	unsigned int eleIndexI = 0;
-	for (auto& i : FEASystem->getElements())
+	for (auto& i : mFEA->getElements())
 	{ // for each element i
 		volume(eleIndexI) = i->getVolume();
 		x(eleIndexI) = f;
 		i->updateDensity(f,penal);
 		
 		unsigned int eleIndexJ = 0;
-		for (auto& j : FEASystem->getElements())
+		for (auto& j : mFEA->getElements())
 		{ // and for each element j
 			// calculate distance center to center distance r_ij between element i and j
 			bso::utilities::geometry::line_segment lij = 
@@ -71,7 +77,7 @@ void robust(fea* FEASystem, const double& f,
 	xTilde = x;
 	
 	eleIndexI = 0;
-	for (auto& i : FEASystem->getElements())
+	for (auto& i : mFEA->getElements())
 	{ // for each element i
 		xn(eleIndexI) = densityProjection(beta,etan,xTilde(eleIndexI));
 		xe(eleIndexI) = densityProjection(beta,etae,xTilde(eleIndexI));
@@ -106,12 +112,12 @@ void robust(fea* FEASystem, const double& f,
 			c = 0;
 
 			// FEA
-			FEASystem->generateGSM();
-			FEASystem->solve("SimplicialLDLT");
+			mFEA->generateGSM();
+			mFEA->solve("SimplicialLDLT");
 
 			// objective function and sensitivity analysis (retrieve data from FEA)
 			eleIndexI = 0;
-			for (auto& i : FEASystem->getElements())
+			for (auto& i : mFEA->getElements())
 			{
 				c 						+= i->getTotalEnergy();
 				dc(eleIndexI) =  i->getEnergySensitivity(penal); 
@@ -120,7 +126,7 @@ void robust(fea* FEASystem, const double& f,
 			}
 			
 			eleIndexI = 0;
-			for (auto& i : FEASystem->getElements())
+			for (auto& i : mFEA->getElements())
 			{
 				dc(eleIndexI) *= ((beta*pow(1/cosh(beta*(xTilde(eleIndexI)-etae)),2))/(tanh(beta*etae)+tanh(beta*(1-etae)))) / Hs(eleIndexI);
         dv(eleIndexI) *= ((beta*pow(1/cosh(beta*(xTilde(eleIndexI)-etan)),2))/(tanh(beta*etan)+tanh(beta*(1-etan)))) / Hs(eleIndexI);
@@ -156,7 +162,7 @@ void robust(fea* FEASystem, const double& f,
 				xTilde = H * xNew;
 
 				eleIndexI = 0;
-				for (auto& i : FEASystem->getElements())
+				for (auto& i : mFEA->getElements())
 				{// for each element
 					// finish filtering
 					xTilde(eleIndexI) /= Hs(eleIndexI);
@@ -169,7 +175,7 @@ void robust(fea* FEASystem, const double& f,
 			}
 		
 			eleIndexI = 0;
-			for (auto& i : FEASystem->getElements())
+			for (auto& i : mFEA->getElements())
 			{
 				i->updateDensity(xe(eleIndexI), penal);
 				++eleIndexI;
@@ -183,7 +189,7 @@ void robust(fea* FEASystem, const double& f,
 
 			Mnd = 0.0;
 			eleIndexI = 0;
-			for (auto& i : FEASystem->getElements())
+			for (auto& i : mFEA->getElements())
 			{
 				Mnd += xn(eleIndexI)*(1.0-xn(eleIndexI));
 				++eleIndexI;
@@ -220,14 +226,13 @@ void robust(fea* FEASystem, const double& f,
 			<< std::endl << std::endl;
 	
 	eleIndexI = 0;
-	for (auto& i : FEASystem->getElements())
+	for (auto& i : mFEA->getElements())
 	{
 		i->updateDensity(xn(eleIndexI), penal);
 		++eleIndexI;
 	}
 }
 	
-} // namespace topology_optimization
 } // namespace structural_design
 } // bso
 

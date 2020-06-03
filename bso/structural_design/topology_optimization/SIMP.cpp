@@ -11,12 +11,18 @@
 #include <ctime>
 
 namespace bso { namespace structural_design { namespace topology_optimization {
-	
-void SIMP(fea* FEASystem, const double& f, 
+
+class SIMP;
+
+} // namespace topology_optimization
+
+template <>
+void sd_model::topologyOptimization<topology_optimization::SIMP>(const double& f, 
 					const double& rMin, const double& penal, const double& xMove,
-					const double& tolerance, std::ostream& out)
+					const double& tolerance)
 {
-	unsigned int numEle = FEASystem->getElements().size();
+	std::ostream out(mTopOptStreamBuffer);
+	unsigned int numEle = mFEA->getElements().size();
 	double totVolume = 0; // initialised at 0, before each element volumes are added
 	double c; // sum of all the elements compliances (objective value)
 
@@ -31,14 +37,14 @@ void SIMP(fea* FEASystem, const double& f,
 	std::vector<T> tripletList;
 
 	unsigned int eleIndexI = 0;
-	for (auto& i : FEASystem->getElements())
+	for (auto& i : mFEA->getElements())
 	{ // for each element i
 		volume(eleIndexI) = i->getVolume();
 		x(eleIndexI) = f;
 		i->updateDensity(f,penal);
 		
 		unsigned int eleIndexJ = 0;
-		for (auto& j : FEASystem->getElements())
+		for (auto& j : mFEA->getElements())
 		{ // and for each element j
 			// calculate distance center to center distance r_ij between element i and j
 			bso::utilities::geometry::line_segment lij = 
@@ -83,12 +89,12 @@ void SIMP(fea* FEASystem, const double& f,
 			c = 0;
 
 			// FEA
-			FEASystem->generateGSM();
-			FEASystem->solve("SimplicialLDLT");
+			mFEA->generateGSM();
+			mFEA->solve("SimplicialLDLT");
 
 			// objective function and sensitivity analysis (retrieve data from FEA)
 			eleIndexI = 0;
-			for (auto& i : FEASystem->getElements())
+			for (auto& i : mFEA->getElements())
 			{
 				c 						+= i->getTotalEnergy();
 				dc(eleIndexI) =  i->getEnergySensitivity(penal); 
@@ -130,7 +136,7 @@ void SIMP(fea* FEASystem, const double& f,
 			}
 		
 			eleIndexI = 0;
-			for (auto& i : FEASystem->getElements())
+			for (auto& i : mFEA->getElements())
 			{
 				i->updateDensity(xNew(eleIndexI), penal);
 				++eleIndexI;
@@ -154,7 +160,6 @@ void SIMP(fea* FEASystem, const double& f,
 			<< std::endl << std::endl;
 }
 	
-} // namespace topology_optimization
 } // namespace structural_design
 } // bso
 
