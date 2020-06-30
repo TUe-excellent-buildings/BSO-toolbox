@@ -55,7 +55,7 @@ namespace bso { namespace structural_design { namespace element {
 		virtual void computeResponse(load_case lc);
 		virtual void clearResponse();
 		
-		virtual void updateDensity(const double& x, const double& penal = 1);
+		virtual void updateDensity(const double& x, const double& penal = 1, std::string type = "modifiedSIMP");
 		
 		virtual double getProperty(std::string) const = 0;
 		virtual double getVolume() const = 0;
