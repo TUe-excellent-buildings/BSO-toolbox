@@ -97,12 +97,29 @@ namespace bso { namespace structural_design { namespace element {
 		mTotalEnergy = 0;
 	} // clearResponse()
 	
-	void element::updateDensity(const double& x, const double& penal /*= 1*/)
+	void element::updateDensity(const double& x, const double& penal /*= 1*/, std::string type /*= "modifiedSIMP"*/)
 	{
-		mDensity = x;
-		mE = mEmin + std::pow(mDensity,penal)*(mE0 - mEmin);
-		mSM = (mE/mE0) * mOriginalSM;
-	}
+		if (type == "modifiedSIMP")
+		{
+			mDensity = x;
+			mE = mEmin + std::pow(mDensity,penal)*(mE0 - mEmin);
+			mSM = (mE/mE0) * mOriginalSM;
+		}
+		else if (type == "regularSIMP")
+		{
+			mDensity = x;
+			mE = std::pow(mDensity,penal)*mE0;
+			mSM = (mE/mE0) * mOriginalSM;
+		}
+		else
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nTrying to update density with unknown update type:\n"
+									 << type << "\n"
+									 << "(bso/structural_design/element/element.cpp)" << std::endl;
+			throw std::invalid_argument(errorMessage.str());
+		}
+	} // updateDensity()
 	
 	double element::getTotalEnergy() const
 	{
