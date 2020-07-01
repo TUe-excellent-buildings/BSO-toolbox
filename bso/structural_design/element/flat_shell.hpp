@@ -10,6 +10,10 @@ namespace bso { namespace structural_design { namespace element {
 		double mThickness;
 		double mPoisson;
 		
+		double mShearEnergy;
+		double mAxialEnergy;
+		double mBendEnergy;
+		
 		Eigen::MatrixXd mSMNormal;
 		Eigen::MatrixXd mSMShear;
 		Eigen::MatrixXd mSMBending;
@@ -32,6 +36,7 @@ namespace bso { namespace structural_design { namespace element {
 		void clearResponse();
 		
 		const double& getEnergy(load_case lc, const std::string& type = "") const;
+		double getTotalEnergy(const std::string& type = "") const;
 		
 		double getProperty(std::string var) const;
 		double getVolume() const;

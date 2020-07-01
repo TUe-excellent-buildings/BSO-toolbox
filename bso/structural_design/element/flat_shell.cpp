@@ -287,8 +287,11 @@ namespace bso { namespace structural_design { namespace element {
 		mEnergies[lc] = 0.5 * elementDisplacements.transpose() * mSM * elementDisplacements;
 		mTotalEnergy += mEnergies[lc];
 		mSeparatedEnergies[lc]["normal"]  = 0.5 * elementDisplacements.transpose() * mSMNormal  * elementDisplacements;
+		mAxialEnergy += mSeparatedEnergies[lc]["normal"];
 		mSeparatedEnergies[lc]["shear"]   = 0.5 * elementDisplacements.transpose() * mSMShear   * elementDisplacements;
+		mShearEnergy += mSeparatedEnergies[lc]["shear"];
 		mSeparatedEnergies[lc]["bending"] = 0.5 * elementDisplacements.transpose() * mSMBending * elementDisplacements;
+		mBendEnergy += mSeparatedEnergies[lc]["bending"];
 	} // computeResponse()
 	
 	void flat_shell::clearResponse()
@@ -296,6 +299,9 @@ namespace bso { namespace structural_design { namespace element {
 		element::clearResponse();
 		mSeparatedEnergies.clear();
 		mTotalEnergy = 0;
+		mShearEnergy = 0;
+		mAxialEnergy = 0;
+		mBendEnergy = 0;
 	} // clearResponse()
 	
 	const double& flat_shell::getEnergy(load_case lc, const std::string& type /*= ""*/) const
@@ -336,6 +342,34 @@ namespace bso { namespace structural_design { namespace element {
 		
 		return mSeparatedEnergies.find(lc)->second.find(type)->second;
 	} // getEnergy
+	
+	double flat_shell::getTotalEnergy(const std::string& type /*= ""*/) const
+	{
+		if (type == "")
+		{
+			return element::getTotalEnergy(type);
+		}
+		else if (type == "shear")
+		{
+			return mShearEnergy;
+		}
+		else if (type == "axial")
+		{
+			return mAxialEnergy;
+		}
+		else if (type == "bending")
+		{
+			return mBendEnergy;
+		}
+		else
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nError, when retrieving total energy from a flat shell element.\n"
+									 << "Could not retrieve separated strain energy of type: " << type << "\n"
+									 << "(bso/structural_design/element/flat_shell.cpp)" << std::endl;
+			throw std::invalid_argument(errorMessage.str());
+		}
+	}
 	
 	double flat_shell::getProperty(std::string var) const
 	{ //

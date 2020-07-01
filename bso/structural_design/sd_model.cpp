@@ -344,6 +344,12 @@ namespace bso { namespace structural_design {
 			if (i->isActiveInCompliance())
 			{
 				results.mTotalStrainEnergy += i->getTotalEnergy();
+				if (i->isFlatShell())
+				{
+					results.mShearStrainEnergy += i->getTotalEnergy("shear");
+					results.mAxialStrainEnergy += i->getTotalEnergy("axial");
+					results.mBendStrainEnergy  += i->getTotalEnergy("bending");
+				}
 				results.mTotalStructuralVolume += i->getVolume();
 			}
 			else
@@ -376,6 +382,12 @@ namespace bso { namespace structural_design {
 			if (i->isActiveInCompliance())
 			{
 				results.mTotalStrainEnergy += i->getTotalEnergy();
+				if (i->isFlatShell())
+				{
+					results.mShearStrainEnergy += i->getTotalEnergy("shear");
+					results.mAxialStrainEnergy += i->getTotalEnergy("axial");
+					results.mBendStrainEnergy  += i->getTotalEnergy("bending");
+				}
 				results.mTotalStructuralVolume += i->getVolume();
 			}
 			else
@@ -384,7 +396,6 @@ namespace bso { namespace structural_design {
 				results.mGhostStructuralVolume += i->getVolume();
 			}
 		}
-
 		return results;
 	} // getPartialResults()
 	

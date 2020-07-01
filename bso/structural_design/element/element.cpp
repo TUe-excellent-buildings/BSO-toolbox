@@ -104,9 +104,10 @@ namespace bso { namespace structural_design { namespace element {
 		mSM = (mE/mE0) * mOriginalSM;
 	}
 	
-	double element::getTotalEnergy() const
+	double element::getTotalEnergy(const std::string& type /*= ""*/) const
 	{
-		return mTotalEnergy;
+		if (type == "") return mTotalEnergy;
+		else return 0.0;
 	} // getTotalEnergy()
 	
 	double element::getEnergySensitivity(const double& penal /* 1*/) const

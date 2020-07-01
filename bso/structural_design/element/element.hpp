@@ -59,7 +59,7 @@ namespace bso { namespace structural_design { namespace element {
 		
 		virtual double getProperty(std::string) const = 0;
 		virtual double getVolume() const = 0;
-		virtual double getTotalEnergy() const;
+		virtual double getTotalEnergy(const std::string& type = "") const;
 		virtual double getEnergySensitivity(const double& penal = 1) const;
 		virtual double getVolumeSensitivity() const;
 		virtual bso::utilities::geometry::vertex getCenter() const = 0;

@@ -58,6 +58,9 @@ namespace bso { namespace structural_design {
 	struct sd_results
 	{
 		double mTotalStrainEnergy = 0.0;
+		double mAxialStrainEnergy = 0.0;
+		double mShearStrainEnergy = 0.0;
+		double mBendStrainEnergy = 0.0;
 		double mTotalStructuralVolume = 0.0;
 		double mGhostStrainEnergy = 0.0;
 		double mGhostStructuralVolume = 0.0;
