@@ -33,12 +33,12 @@ BOOST_AUTO_TEST_SUITE( cluster_tests )
 	{
 		data_point p1 = {0.0,0.0,0.0};
 		cluster c1(p1);
-		data_point p2 = {5.4,93,-4.2};
-		c1.addDataPoint(&p2);
-		data_point p3 = {8.3,50,-1.2};
-		c1.addDataPoint(&p3);
-		data_point p4 = {0.1,75,2};
-		c1.addDataPoint(&p4);
+		auto p2 = std::make_shared<data_point>(data_point({5.4,93,-4.2}));
+		c1.addDataPoint(p2);
+		auto p3 = std::make_shared<data_point>(data_point({8.3,50,-1.2}));
+		c1.addDataPoint(p3);
+		auto p4 = std::make_shared<data_point>(data_point({0.1,75,2}));
+		c1.addDataPoint(p4);
 		
 		BOOST_REQUIRE(c1.getData().size() == 3);
 		BOOST_REQUIRE(abs(c1.calculateMean()(0)/4.6-1) < 1e-9);
@@ -50,12 +50,12 @@ BOOST_AUTO_TEST_SUITE( cluster_tests )
 	{
 		data_point p1 = {0.0,0.0,0.0};
 		cluster c1(p1);
-		data_point p2 = {5.4,93,-4.2};
-		c1.addDataPoint(&p2);
-		data_point p3 = {8.3,50,-1.2};
-		c1.addDataPoint(&p3);
-		data_point p4 = {0.1,75,2};
-		c1.addDataPoint(&p4);
+		auto p2 = std::make_shared<data_point>(data_point({5.4,93,-4.2}));
+		c1.addDataPoint(p2);
+		auto p3 = std::make_shared<data_point>(data_point({8.3,50,-1.2}));
+		c1.addDataPoint(p3);
+		auto p4 = std::make_shared<data_point>(data_point({0.1,75,2}));
+		c1.addDataPoint(p4);
 		
 		BOOST_REQUIRE(c1.getData().size() == 3);
 		BOOST_REQUIRE(abs(c1.calculateVariance()/ 328.82444444-1) < 1e-9);

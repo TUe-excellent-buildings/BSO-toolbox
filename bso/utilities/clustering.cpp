@@ -1,6 +1,7 @@
 #ifndef BSO_CLUSTERING_CPP
 #define BSO_CLUSTERING_CPP
 
+#include <memory>
 #include <chrono>
 #include <sstream>
 #include <stdexcept>
@@ -122,7 +123,6 @@ std::vector<cluster> clustering::mKMeans(const unsigned int& kSize)
 {
 	std::vector<cluster> clustering;
 	std::vector<data_point> centroids;
-	std::vector<data_point> rawData;
 
 	std::vector<unsigned int> dataIndices(mData.size());
 	for (unsigned int i = 0; i < mData.size(); ++i) dataIndices[i] = i;
@@ -223,7 +223,7 @@ void clustering::mInitialize(const std::vector<data_point>& data)
 	mRNGEngine.seed(mRNGSeed);
 	for (const auto& i : data)
 	{
-		mData.push_back(new data_point(i));
+		mData.push_back(std::make_shared<data_point>(i));
 	}
 
 	this->mMakeClustering();
@@ -248,7 +248,7 @@ clustering::clustering( const unsigned long& RNGSeed,
 
 clustering::~clustering()
 {
-	for (const auto& i : mData) delete i;
+	
 } // dtor()
 
 

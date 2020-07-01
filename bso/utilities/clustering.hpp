@@ -11,7 +11,7 @@ namespace bso { namespace utilities {
 class clustering
 {
 private:
-	std::vector<data_point*> mData;
+	std::vector<std::shared_ptr<data_point> > mData;
 	std::vector<cluster> mClusters;
 	mutable std::mt19937 mRNGEngine;
 	unsigned long mRNGSeed;

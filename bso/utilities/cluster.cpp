@@ -3,7 +3,7 @@
 
 namespace bso { namespace utilities {
 
-cluster::cluster(data_point centroid) : mCentroid(centroid), mData(std::vector<data_point*>())
+cluster::cluster(data_point centroid) : mCentroid(centroid), mData(std::vector<std::shared_ptr<data_point> >())
 {
 	
 } // ctor
@@ -71,7 +71,7 @@ double cluster::calculateDistanceToCentroid(const data_point& p) const
 	return p.calcDistanceTo(mCentroid);
 } // calculateDistanceToCentroid
 
-void cluster::addDataPoint(data_point* dp)
+void cluster::addDataPoint(std::shared_ptr<data_point> dp)
 {
 	mData.push_back(dp);
 } // addDataPoint
