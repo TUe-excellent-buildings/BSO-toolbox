@@ -1,6 +1,8 @@
 #ifndef SD_TOPOLOGY_OPTIMIZATION_HPP
 #define SD_TOPOLOGY_OPTIMIZATION_HPP
 
+#include <iomanip>
+
 #include <bso/structural_design/topology_optimization/SIMP.cpp>
 #include <bso/structural_design/topology_optimization/robust.cpp>
 #include <bso/structural_design/topology_optimization/elementTypeSIMP.cpp>
