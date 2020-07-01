@@ -136,6 +136,11 @@ namespace bso { namespace structural_design { namespace element {
 		return this->getVolume();
 	} // getVolumeSensitivity()
 
+	double element::getStressCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	{
+		throw std::runtime_error("cannot call getStressCenter() for this element type");
+	} // getStressCenter() gives error (standard) except for elements in which the function is overridden
+
 	const double& element::getEnergy(load_case lc, const std::string& type/*= ""*/) const
 	{ //
 		if (mEnergies.find(lc) != mEnergies.end())

@@ -116,6 +116,28 @@ namespace bso { namespace structural_design { namespace element {
 				Eigen::MatrixXd B;
 				B.setZero(3,8);
 				B = A * G;
+
+				// save strain-displacement matrix for in-plane behaviour per integration point
+				if (m == 0 && l == 0)
+				{
+					mB1.setZero(3,8);
+					mB1 = B;
+				}
+				else if (m == 0 && l == 1)
+				{
+					mB2.setZero(3,8);
+					mB2 = B;
+				}
+				else if (m == 1 && l == 1)
+				{
+					mB3.setZero(3,8);
+					mB3 = B;
+				}
+				else
+				{
+					mB4.setZero(3,8);
+					mB4 = B;
+				}
 	
 				// Matrix elasticity term, separated for normal and shear action
 				Eigen::MatrixXd ETermNormal, ETermShear;
@@ -129,6 +151,10 @@ namespace bso { namespace structural_design { namespace element {
 
 				kNormal += mThickness * wKsi * wEta * B.transpose() * ETermNormal * B * J.determinant();
 				kShear	+= mThickness * wKsi * wEta * B.transpose() * ETermShear  * B * J.determinant();
+
+				// save elasticity matrix (for a solid element) for in-plane behaviour (for stress_based topology optimization)
+				mETermSolid.setZero(3,3);
+				mETermSolid = ETermNormal * (mE0 / mE) + ETermShear * (mE0 / mE);
 
 				// Performing integration of the out-of-plane behaviour
 				// according to Batoz & Tahar: Evaluation of a new quadrilateral thin plate bending element (1982)
@@ -289,6 +315,27 @@ namespace bso { namespace structural_design { namespace element {
 		mSeparatedEnergies[lc]["normal"]  = 0.5 * elementDisplacements.transpose() * mSMNormal  * elementDisplacements;
 		mSeparatedEnergies[lc]["shear"]   = 0.5 * elementDisplacements.transpose() * mSMShear   * elementDisplacements;
 		mSeparatedEnergies[lc]["bending"] = 0.5 * elementDisplacements.transpose() * mSMBending * elementDisplacements;
+
+		// stress calculation - NOTE: only in-plane stresses are considered (dKQ stresses are ignored) because of the application in topology optimization, in which stress gradients over the thickness of the element cannot be considered in a 2D case
+		Eigen::VectorXd elementDisp24DOF;
+		elementDisp24DOF.setZero(24);
+		elementDisp24DOF = mT * elementDisplacements;
+		melementDisp8DOF.setZero(8);
+		int counterDisp = 0;
+		for (int i = 0; i < 4; ++i) // for all nodes of this element
+		{
+			for (int j = 0; j < 2; ++j) // for the first two DOF's in local system (disp x & y)
+			{
+				melementDisp8DOF(counterDisp) = elementDisp24DOF(i*6 + j);
+				++counterDisp;
+			}
+		}
+		mBAv.setZero(3,8);
+		mBAv = (1.0/4) * (mB1 + mB2 + mB3 + mB4); // average B-matrix
+		Eigen::VectorXd StrainAv;
+		StrainAv.setZero(3);
+		StrainAv = mBAv * melementDisp8DOF; // average strain
+		mStress = mETermSolid * StrainAv; // average stress per element (averaged over 4 integration points)
 	} // computeResponse()
 	
 	void flat_shell::clearResponse()
@@ -359,6 +406,18 @@ namespace bso { namespace structural_design { namespace element {
 		return bso::utilities::geometry::quadrilateral::getArea() * mThickness;
 	} // getVolume()
 	
+	double flat_shell::getStressCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const // NOTE: only in-plane stresses are considered (dKQ stresses are ignored) because of the application in topology optimization
+	{
+		double sx, sy, sxy, I1, J2D, DPStress;
+		sx = mStress(0);
+		sy = mStress(1);
+		sxy = mStress(2);
+		I1 = sx + sy;
+		J2D = (1.0/3) * (pow(sx, 2) + pow(sy, 2) - sx * sy + 3 * pow(sxy, 2));
+		DPStress = (1.0 / beta) * (sqrt(J2D) + alpha * I1); // this value should not exceed 1
+		return DPStress;
+	} // getStressCenter() - NOTE: if alpha & beta are not inserted in the function call, the Von Mises stress is obtained
+
 	bso::utilities::geometry::vertex flat_shell::getCenter() const
 	{
 		return bso::utilities::geometry::quadrilateral::getCenter();
