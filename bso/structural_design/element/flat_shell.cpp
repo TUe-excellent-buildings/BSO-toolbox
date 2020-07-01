@@ -336,6 +336,9 @@ namespace bso { namespace structural_design { namespace element {
 		StrainAv.setZero(3);
 		StrainAv = mBAv * melementDisp8DOF; // average strain
 		mStress = mETermSolid * StrainAv; // average stress per element (averaged over 4 integration points)
+
+		mE0K0U.setZero(24);
+		mE0K0U = (mE0 / mE) * mSM * elementDisplacements; // for stress sensitivity
 	} // computeResponse()
 	
 	void flat_shell::clearResponse()
@@ -417,6 +420,76 @@ namespace bso { namespace structural_design { namespace element {
 		DPStress = (1.0 / beta) * (sqrt(J2D) + alpha * I1); // this value should not exceed 1
 		return DPStress;
 	} // getStressCenter() - NOTE: if alpha & beta are not inserted in the function call, the Von Mises stress is obtained
+
+	Eigen::VectorXd flat_shell::getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha /* 0*/) const
+	{
+		Eigen::Vector3d w;
+		w << 1, 1, 0;
+		Eigen::VectorXd W0;
+		W0.setZero(8);
+		W0 = mBAv.transpose() * mETermSolid.transpose() * w;
+		Eigen::Matrix3d V;
+		V << 1, -0.5, 0,
+			 -0.5, 1, 0,
+			 0, 0, 3;
+		Eigen::MatrixXd M0;
+		M0.setZero(8,8);
+		M0 = mBAv.transpose() * mETermSolid.transpose() * V * mETermSolid * mBAv;
+
+		Eigen::VectorXd aeloc;
+		aeloc.setZero(8);
+		aeloc = (M0.transpose() * melementDisp8DOF) / sqrt(3.0 * melementDisp8DOF.transpose() * M0 * melementDisp8DOF) + alpha * W0;
+
+		Eigen::VectorXd ae24DOF, ae24DOFt;
+		ae24DOF.setZero(24); ae24DOFt.setZero(24);
+		int counterAeloc = 0;
+		for (int i = 0; i < 4; ++i) // for all nodes of this element
+		{
+			for (int j = 0; j < 2; ++j) // for the first two DOF's (disp x & y)
+			{
+				ae24DOF(i*6 + j) = aeloc(counterAeloc); // put in 24 DOF local form
+				++counterAeloc;
+			}
+		}
+		ae24DOFt = mT.transpose() * ae24DOF;
+
+		Eigen::VectorXd ae;
+		ae.setZero(freeDOFs);
+		int counterAE = -1;
+		for(auto& i : mNodes) // for all nodes of this element
+		{
+			for (unsigned int j = 0; j < 6; ++j) // for all local DOF's
+			{
+				++counterAE;
+				if (i->getNFS(j) == 0 || i->getConstraint(j) == 1) continue;
+				unsigned int GDOF = i->getGlobalDOF(j);
+				ae(GDOF) = ae24DOFt(counterAE);
+			}
+		}
+		return ae;
+	} // getStressSensitivityTermAE()
+
+	Eigen::VectorXd flat_shell::getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal /* 1*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	{
+		Eigen::VectorXd dKdxU = (-penal / beta) * pow(mDensity,penal - 1) * mE0K0U;
+		Eigen::MatrixXd lamdaloc;
+		lamdaloc.setZero(24,Lamda.cols());
+		Eigen::VectorXd dsx(Lamda.cols()); // dsx = vector with sensitivities for varying constraints, but to same x
+		dsx.setZero();
+		int counterLamda = -1;
+		for (auto& j : mNodes) // for all nodes of this element
+		{
+			for (unsigned int k = 0; k < 6; ++k) // for all local DOF's
+			{
+				++counterLamda;
+				if (j->getNFS(k) == 0 || j->getConstraint(k) == 1) continue;
+				unsigned int GDOF = j->getGlobalDOF(k);
+				lamdaloc.row(counterLamda) = Lamda.row(GDOF);
+			}
+		}
+		dsx = lamdaloc.transpose() * dKdxU;
+		return dsx;
+	} // getStressSensitivity()
 
 	bso::utilities::geometry::vertex flat_shell::getCenter() const
 	{
