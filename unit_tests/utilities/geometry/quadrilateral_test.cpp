@@ -94,6 +94,10 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		vertex p7 = {1,1,0};
 		vertex p8 = {1.0001,0,0};
 		vertex p9 = {1.01,0,0};
+		vertex p10= {-1,-1,0};
+		vertex p11= { 1,-1,0};
+		vertex p12= {-1, 1,0};
+		vertex p13= { 1, 1,0};
 		
 		BOOST_REQUIRE( q.isInside(p1));
 		BOOST_REQUIRE(!q.isInside(p2));
@@ -111,6 +115,10 @@ BOOST_AUTO_TEST_SUITE( quadrilateral_tests )
 		BOOST_REQUIRE( q.isInsideOrOn(p7));
 		BOOST_REQUIRE( q.isInsideOrOn(p8));
 		BOOST_REQUIRE(!q.isInsideOrOn(p9));
+		BOOST_REQUIRE( q.isInsideOrOn(p10));
+		BOOST_REQUIRE( q.isInsideOrOn(p11));
+		BOOST_REQUIRE( q.isInsideOrOn(p12));
+		BOOST_REQUIRE( q.isInsideOrOn(p13));
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_inside_or_on_2 )

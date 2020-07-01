@@ -86,6 +86,9 @@ BOOST_AUTO_TEST_SUITE( triangle_tests )
 		vertex p5 = {0.51,0.51,0};
 		vertex p6 = {0.75,0.75,0.1};
 		vertex p7 = {0.49,0.49,0.0};
+		vertex p8 = {1,0,0};
+		vertex p9 = {1,1,0};
+		vertex p10= {0,1,0};
 		
 		BOOST_REQUIRE(!t.isInside(p1));
 		BOOST_REQUIRE( t.isInside(p2));
@@ -101,6 +104,9 @@ BOOST_AUTO_TEST_SUITE( triangle_tests )
 		BOOST_REQUIRE( t.isInsideOrOn(p5));
 		BOOST_REQUIRE(!t.isInsideOrOn(p6));
 		BOOST_REQUIRE(!t.isInsideOrOn(p7));
+		BOOST_REQUIRE( t.isInsideOrOn(p8));
+		BOOST_REQUIRE( t.isInsideOrOn(p9));
+		BOOST_REQUIRE( t.isInsideOrOn(p10));
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_same_as )

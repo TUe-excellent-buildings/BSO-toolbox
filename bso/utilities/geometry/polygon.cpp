@@ -240,7 +240,9 @@ namespace bso { namespace utilities {  namespace geometry {
 
 	bool polygon::isCoplanar(const vertex& p1, const double& tol /*= 1e-3*/) const
 	{
-		vector v1 = {p1-mVertices[0]};
+		vector v1;
+		if (p1.isSameAs(mVertices[0])) v1 = {p1-mVertices[1]};
+		else v1 = {p1-mVertices[0]};
 		return mNormal.isPerpendicular(v1, tol);
 	}
 	

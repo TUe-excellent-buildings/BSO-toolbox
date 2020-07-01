@@ -90,6 +90,9 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		vertex p6 = {1,2,1};
 		vertex p7 = {0.9999,1,1};
 		vertex p8 = {0.99,1,1};
+		vertex p9 = {1,1,1};
+		vertex p10= {3,1,1};
+		vertex p11= {1.5,1.5,3};
 		
 		BOOST_REQUIRE( tet.isInside(p1));
 		BOOST_REQUIRE(!tet.isInside(p2));
@@ -107,6 +110,9 @@ BOOST_AUTO_TEST_SUITE( tetrahedron_tests )
 		BOOST_REQUIRE( tet.isInsideOrOn(p6));
 		BOOST_REQUIRE( tet.isInsideOrOn(p7));
 		BOOST_REQUIRE(!tet.isInsideOrOn(p8));
+		BOOST_REQUIRE( tet.isInsideOrOn(p9));
+		BOOST_REQUIRE( tet.isInsideOrOn(p10));
+		BOOST_REQUIRE( tet.isInsideOrOn(p11));
 	}
 	
 	BOOST_AUTO_TEST_CASE( is_same_as )
