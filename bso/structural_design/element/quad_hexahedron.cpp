@@ -280,6 +280,66 @@ namespace bso { namespace structural_design { namespace element {
 		return DPStress;
 	} // getStressCenter() - NOTE: if alpha & beta are not inserted in the function call, the Von Mises stress is obtained
 
+	Eigen::VectorXd quad_hexahedron::getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha /* 0*/) const
+	{
+		Eigen::Vector6d w;
+		w << 1, 1, 1, 0, 0, 0;
+		Eigen::VectorXd W0;
+		W0.setZero(24);
+		W0 = mBAv.transpose() * mETermSolid.transpose() * w;
+		Eigen::MatrixXd V;
+		V.setZero(6,6);
+		V(0,0) = 1.0;	V(0,1) = -0.5;	V(0,2) = -0.5;
+		V(1,0) = -0.5;	V(1,1) = 1.0;	V(1,2) = -0.5;
+		V(2,0) = -0.5;	V(2,1) = -0.5;	V(2,2) = 1.0;
+		V(3,3) = 3.0;	V(4,4) = 3.0;	V(5,5) = 3.0;
+		Eigen::MatrixXd M0;
+		M0.setZero(24,24);
+		M0 = mBAv.transpose() * mETermSolid.transpose() * V * mETermSolid * mBAv;
+
+		Eigen::VectorXd aeloc, aeglob;
+		aeloc.setZero(24); aeglob.setZero(24);
+		aeloc = (M0.transpose() * mDispLoc) / sqrt(3.0 * mDispLoc.transpose() * M0 * mDispLoc) + alpha * W0;
+		aeglob = mT.transpose() * aeloc;
+
+		Eigen::VectorXd ae;
+		ae.setZero(freeDOFs);
+		int counterAE = -1;
+		for(auto& i : mNodes) // for all nodes of this element
+		{
+			for (unsigned int j = 0; j < 3; ++j) // for all local DOF's
+			{
+				++counterAE;
+				if (i->getNFS(j) == 0 || i->getConstraint(j) == 1) continue;
+				unsigned int GDOF = i->getGlobalDOF(j);
+				ae(GDOF) = aeglob(counterAE);
+			}
+		}
+		return ae;
+	} // getStressSensitivityTermAE()
+
+	Eigen::VectorXd quad_hexahedron::getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal /* 1*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	{
+		Eigen::VectorXd dKdxU = (-penal / beta) * pow(mDensity,penal - 1) * (mE0 / mE) * mSM * mDispLoc;
+		Eigen::MatrixXd lamdaloc;
+		lamdaloc.setZero(24,Lamda.cols());
+		Eigen::VectorXd dsx(Lamda.cols()); // dsx = vector with sensitivities for varying constraints, but to same x
+		dsx.setZero();
+		int counterLamda = -1;
+		for (auto& i : mNodes) // for all nodes of this element
+		{
+			for (unsigned int j = 0; j < 3; ++j) // for all local DOF's
+			{
+				++counterLamda;
+				if (i->getNFS(j) == 0 || i->getConstraint(j) == 1) continue;
+				unsigned int GDOF = i->getGlobalDOF(j);
+				lamdaloc.row(counterLamda) = Lamda.row(GDOF);
+			}
+		}
+		dsx = lamdaloc.transpose() * dKdxU;
+		return dsx;
+	} // getStressSensitivity()
+
 } // namespace element
 } // namespace structural_design
 } // namespace bso
