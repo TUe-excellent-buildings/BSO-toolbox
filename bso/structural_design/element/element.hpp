@@ -63,6 +63,8 @@ namespace bso { namespace structural_design { namespace element {
 		virtual double getEnergySensitivity(const double& penal = 1) const;
 		virtual double getVolumeSensitivity() const;
 		virtual double getStressCenter(const double& alpha = 0, const double& beta = 1.0 / sqrt(3)) const;
+		virtual Eigen::VectorXd getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha = 0) const;
+		virtual Eigen::VectorXd getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal = 1, const double& beta = 1.0 / sqrt(3)) const;
 		virtual bso::utilities::geometry::vertex getCenter() const = 0;
 		
 		const unsigned long& ID() const {return mID;}
