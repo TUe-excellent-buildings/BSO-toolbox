@@ -41,6 +41,9 @@ namespace bso { namespace structural_design {
 		void mesh(const unsigned int& n);
 		void analyze(std::string solver = "SimplicialLDLT");
 		
+		void rescaleStructuralVolume(const double& scaleFactor);
+		void setElementDensities(const double& volumeFraction, const double& penalty);
+		
 		template <typename T, typename...ARGS>
 		void topologyOptimization(const ARGS&...);
 		void setTopOptOutputStream(std::ostream& out);

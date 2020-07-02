@@ -41,6 +41,8 @@ namespace bso { namespace structural_design { namespace component {
 		virtual void mesh(const unsigned int& n, std::vector<point*>& point_store) = 0;
 		virtual void clearMesh();
 		
+		void rescaleStructuralVolume(const double& scaleFactor);
+		
 		virtual void addElement(element::element* elePtr) {mElements.push_back(elePtr);}
 		
 		virtual const bool& hasTruss() const {return mHasTruss;}

@@ -50,6 +50,8 @@ namespace bso { namespace structural_design { namespace component {
 		const double& height() const;
 		const double& thickness() const;
 		
+		void rescaleStructuralVolume(const double& scaleFactor);
+		
 		const bool& hasERelativeLowerBoundAssigned() const {return mERelativeLowerBoundAssigned;}
 		
 		bool& isGhostComponent() {return mIsGhostComponent;}

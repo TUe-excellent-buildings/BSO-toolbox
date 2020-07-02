@@ -331,6 +331,30 @@ namespace bso { namespace structural_design {
 		}
 	} // analyze()
 	
+	void sd_model::rescaleStructuralVolume(const double& scaleFactor)
+	{
+		for (auto& i : mGeometries)
+		{
+			i->rescaleStructuralVolume(scaleFactor);
+		}
+	} // rescaleStructuralVolume()
+	
+	void sd_model::setElementDensities(const double& volumeFraction, const double& penalty)
+	{
+		if (!mIsMeshed)
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nError, called setElementDensities() on an unmeshed\n"
+									 << "structural design model,\n"
+									 << "(bso/structural_design/sd_model.cpp)" << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+		for (auto& i : mFEA->getElements())
+		{
+			i->updateDensity(volumeFraction,penalty);
+		}
+	} // setElementDensities()
+	
 	void sd_model::setTopOptOutputStream(std::ostream& out)
 	{
 		mTopOptStreamBuffer = out.rdbuf();

@@ -39,6 +39,14 @@ namespace bso { namespace structural_design { namespace component {
 		mElementPoints.clear();
 		mElements.clear();
 	} // clearMesh()
+	
+	void geometry::rescaleStructuralVolume(const double& scaleFactor)
+	{
+		for (auto& i : mStructures)
+		{
+			i.rescaleStructuralVolume(scaleFactor);
+		}
+	} // rescaleStructuralVolume()
 
 } // namespace component
 } // namespace structural_design
