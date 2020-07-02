@@ -37,6 +37,7 @@ namespace bso { namespace structural_design {
 		void clearResponse();
 		
 		void solve(std::string solver = "SimplicialLDLT");
+		bool isSingular();
 		
 		Eigen::VectorXd getDisplacements(element::load_case lc) const;
 		const std::vector<element::node*>& getNodes() const {return mNodes;}

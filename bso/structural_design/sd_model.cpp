@@ -146,7 +146,7 @@ namespace bso { namespace structural_design {
 		this->mesh(mMeshSize);
 	} // mesh
 
-	void sd_model::mesh(const unsigned int& n)
+	void sd_model::mesh(const unsigned int& n, bool meshLoadPanels /* = true */)
 	{
 		// intiialize a new FEA system
 		this->clearMesh();
@@ -204,6 +204,7 @@ namespace bso { namespace structural_design {
 			{
 				for (const auto& j : i->getStructures())
 				{
+					if (!meshLoadPanels && j.isGhostComponent()) continue;
 					double ERelativeLowerBound = 1e-6;
 					if (j.hasERelativeLowerBoundAssigned()) ERelativeLowerBound = j.ERelativeLowerBound();
 					
@@ -256,6 +257,7 @@ namespace bso { namespace structural_design {
 				}
 				for (const auto& k : i->getStructures())
 				{
+					if (!meshLoadPanels && k.isGhostComponent()) continue;
 					double ERelativeLowerBound = 1e-6;
 					if (k.hasERelativeLowerBoundAssigned()) ERelativeLowerBound = k.ERelativeLowerBound();
 					if (k.type() == "truss"){ continue; }// do nothing, these are meshed by one element already
@@ -331,6 +333,16 @@ namespace bso { namespace structural_design {
 			throw std::runtime_error(errorMessage.str());
 		}
 	} // analyze()
+	
+	bool sd_model::isStable()
+	{
+		bool preMeshed = mIsMeshed;
+		mesh(1,false);
+		mIsMeshed = false;
+		bool isStable = !mFEA->isSingular();
+		if (preMeshed) this->mesh(); // mesh it back to original mesh size
+		return isStable;
+	}
 	
 	void sd_model::rescaleStructuralVolume(const double& scaleFactor)
 	{

@@ -295,6 +295,14 @@ namespace bso { namespace structural_design {
 		}		
 	} // solve()
 	
+	bool fea::isSingular()
+	{
+		if (mGSM.nonZeros() == 0) return true;
+		Eigen::JacobiSVD<Eigen::MatrixXd> SVD(mGSM);
+		double cond = SVD.singularValues()(0) / SVD.singularValues()(SVD.singularValues().size()-1);
+		return cond > 1e10;
+	}
+	
 	Eigen::VectorXd fea::getDisplacements(element::load_case lc) const
 	{
 		auto dispSearch = mDisplacements.find(lc);

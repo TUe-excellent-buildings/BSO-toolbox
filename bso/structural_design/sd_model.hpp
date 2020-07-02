@@ -38,8 +38,9 @@ namespace bso { namespace structural_design {
 		
 		void setMeshSize(const unsigned int& n);
 		void mesh();
-		void mesh(const unsigned int& n);
+		void mesh(const unsigned int& n, bool meshLoadPanels = true);
 		void analyze(std::string solver = "SimplicialLDLT");
+		bool isStable();
 		
 		void rescaleStructuralVolume(const double& scaleFactor);
 		void setElementDensities(const double& volumeFraction, const double& penalty);
