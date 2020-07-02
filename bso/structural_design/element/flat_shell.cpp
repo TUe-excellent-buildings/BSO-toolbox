@@ -409,7 +409,7 @@ namespace bso { namespace structural_design { namespace element {
 		return bso::utilities::geometry::quadrilateral::getArea() * mThickness;
 	} // getVolume()
 	
-	double flat_shell::getStressCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const // NOTE: only in-plane stresses are considered (dKQ stresses are ignored) because of the application in topology optimization
+	double flat_shell::getStressAtCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const // NOTE: only in-plane stresses are considered (dKQ stresses are ignored) because of the application in topology optimization
 	{
 		double sx, sy, sxy, I1, J2D, DPStress;
 		sx = mStress(0);

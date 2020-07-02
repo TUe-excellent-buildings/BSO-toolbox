@@ -32,7 +32,7 @@ namespace bso { namespace structural_design { namespace element {
 		double getProperty(std::string var) const;
 		double getVolume() const;
 		bso::utilities::geometry::vertex getCenter() const;
-		double getStressCenter (const double& alpha = 0, const double& beta = 1.0 / sqrt(3)) const;
+		double getStressAtCenter (const double& alpha = 0, const double& beta = 1.0 / sqrt(3)) const;
 		Eigen::VectorXd getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha = 0) const;
 		Eigen::VectorXd getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal = 1, const double& beta = 1.0 / sqrt(3)) const;
 		Eigen::Vector6d getStress() {return mStress;} // for unit test

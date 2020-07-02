@@ -347,7 +347,7 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		Eigen::VectorXd Stress = qh1.getStress();
 		Eigen::VectorXd checkStress(6);
 		checkStress << 0,0,-1e5,0,0,0; // results from ansys (see graduation work Irma Bouw)
-		double VMStress = qh1.getStressCenter();
+		double VMStress = qh1.getStressAtCenter();
 		double checkVMStress = VMStress / 1e5 - 1;
 
 		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
@@ -442,7 +442,7 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		Eigen::VectorXd Stress = qh1.getStress();
 		Eigen::VectorXd checkStress(6);
 		checkStress << 0,0,0,-27.4627,0,400; // results from ansys (see graduation work Irma Bouw)
-		double VMStress = qh1.getStressCenter();
+		double VMStress = qh1.getStressAtCenter();
 		double checkVMStress = VMStress / 694.4513 - 1; // result from ansys
 
 		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
@@ -537,7 +537,7 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		Eigen::VectorXd Stress = qh1.getStress();
 		Eigen::VectorXd checkStress(6);
 		checkStress << 0,0,0,27.4627,0,0; // results from ansys (see graduation work Irma Bouw)
-		double VMStress = qh1.getStressCenter();
+		double VMStress = qh1.getStressAtCenter();
 		double checkVMStress = VMStress / 47.5668 - 1; // result from ansys
 
 		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
@@ -632,7 +632,7 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		Eigen::VectorXd Stress = qh1.getStress();
 		Eigen::VectorXd checkStress(6);
 		checkStress << -130.0,-130.0,0,0,0,0; // results from ansys (see graduation work Irma Bouw)
-		double VMStress = qh1.getStressCenter();
+		double VMStress = qh1.getStressAtCenter();
 		double checkVMStress = VMStress / 130.0000 - 1; // result from ansys
 
 		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));

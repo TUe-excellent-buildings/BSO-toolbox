@@ -265,7 +265,7 @@ namespace bso { namespace structural_design { namespace element {
 		return bso::utilities::geometry::quad_hexahedron::getCenter();
 	} // getCenter()
 	
-	double quad_hexahedron::getStressCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	double quad_hexahedron::getStressAtCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const
 	{
 		Eigen::MatrixXd V;
 		V.setZero(6,6);

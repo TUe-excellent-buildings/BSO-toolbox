@@ -281,7 +281,7 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		Eigen::VectorXd Stress = fs1.getStress();
 		Eigen::VectorXd checkStress(3);
 		checkStress << 1e6,0,0; // sx = F/A, sy = sxy = 0
-		double VMStress = fs1.getStressCenter();
+		double VMStress = fs1.getStressAtCenter();
 		double checkVMStress = VMStress / 1e6 - 1;
 
 		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		Eigen::VectorXd Stress = fs1.getStress();
 		Eigen::VectorXd checkStress(3);
 		checkStress << 1.33333e6,0,0; // results from abaqus
-		double VMStress = fs1.getStressCenter();
+		double VMStress = fs1.getStressAtCenter();
 		double checkVMStress = VMStress / 1.33333e6 - 1;
 
 		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
@@ -549,7 +549,7 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		Eigen::VectorXd checkStress1(3), checkStress2(3);
 		checkStress1 << 5.0e5,5.0e5,5.0e5; // results from abaqus
 		checkStress2 << 5.0e5,5.0e5,-5.0e5; // results from abaqus (negative shear)
-		double VMStress = fs1.getStressCenter();
+		double VMStress = fs1.getStressAtCenter();
 		double checkVMStress = VMStress / 1e6 - 1; // results from abaqus
 
 		BOOST_REQUIRE((Stress.isApprox(checkStress1, 1e-3) || Stress.isApprox(checkStress2,1e-3)));
