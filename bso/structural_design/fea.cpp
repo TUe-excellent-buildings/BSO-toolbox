@@ -8,9 +8,8 @@ namespace bso { namespace structural_design {
 	
 	void fea::simplicialLLT()
 	{
-		Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > solver;
-		solver.compute(mGSM);
-		if (solver.info() != Eigen::Success)
+		mLLTSolver.compute(mGSM);
+		if (mLLTSolver.info() != Eigen::Success)
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nWhen solving an FEA system with SimplicialLLT,\n"
@@ -23,8 +22,8 @@ namespace bso { namespace structural_design {
 		{
 			try
 			{
-				mDisplacements[lc] = solver.solve(mLoads[lc]);
-				if (solver.info() != Eigen::Success)
+				mDisplacements[lc] = mLLTSolver.solve(mLoads[lc]);
+				if (mLLTSolver.info() != Eigen::Success)
 				{
 					throw std::runtime_error("Solver failed");
 				}
@@ -42,9 +41,8 @@ namespace bso { namespace structural_design {
 	
 	void fea::simplicialLDLT()
 	{
-		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double> > solver;
-		solver.compute(mGSM);
-		if (solver.info() != Eigen::Success)
+		mLDLTSolver.compute(mGSM);
+		if (mLDLTSolver.info() != Eigen::Success)
 		{
 			std::stringstream errorMessage;
 			errorMessage << "\nWhen solving an FEA system with SimplicialLDLT,\n"
@@ -57,8 +55,8 @@ namespace bso { namespace structural_design {
 		{
 			try
 			{
-				mDisplacements[lc] = solver.solve(mLoads[lc]);
-				if (solver.info() != Eigen::Success)
+				mDisplacements[lc] = mLDLTSolver.solve(mLoads[lc]);
+				if (mLDLTSolver.info() != Eigen::Success)
 				{
 					throw std::runtime_error("Solver failed");
 				}
@@ -267,6 +265,7 @@ namespace bso { namespace structural_design {
 	
 	void fea::solve(std::string solver /*= "SimplicialLLT"*/)
 	{
+		msolver = solver;
 		// solve the system with the specified solver
 		this->clearResponse();
 		if (solver == "SimplicialLLT") this->simplicialLLT();
@@ -295,6 +294,57 @@ namespace bso { namespace structural_design {
 		}		
 	} // solve()
 	
+	Eigen::MatrixXd fea::solveAdjoint(Eigen::MatrixXd& ae) // for stress_based topopt
+	{
+		Eigen::MatrixXd Lambda;
+		if (msolver == "SimplicialLLT")
+		{
+			try
+			{
+				Lambda = mLLTSolver.solve(ae);
+				if (mLLTSolver.info() != Eigen::Success)
+				{
+					throw std::runtime_error("Solver failed");
+				}
+			}
+			catch (std::exception& e)
+			{
+				std::stringstream errorMessage;
+				errorMessage << "\nWhen solving an Adjoint system with SimplicialLLT \n"
+										<< "received the following error:\n" << e.what() << "\n"
+										<< "(bso/structural_design/fea.cpp)" << std::endl;
+				throw std::runtime_error(errorMessage.str());
+			}
+		}
+		else if (msolver == "SimplicialLDLT")
+		{
+			try
+			{
+				Lambda = mLDLTSolver.solve(ae);
+				if (mLDLTSolver.info() != Eigen::Success)
+				{
+					throw std::runtime_error("Solver failed");
+				}
+			}
+			catch (std::exception& e)
+			{
+				std::stringstream errorMessage;
+				errorMessage << "\nWhen solving an Adjoint system with SimplicialLDLT \n"
+										<< "received the following error:\n" << e.what() << "\n"
+										<< "(bso/structural_design/fea.cpp)" << std::endl;
+				throw std::runtime_error(errorMessage.str());
+			}
+		}
+		else
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nCould not solve Adjoint system with solver type: "
+										<< msolver << std::endl;
+			throw std::runtime_error(errorMessage.str());
+		}
+		return Lambda;
+	} // solveAdjoint()
+
 	Eigen::VectorXd fea::getDisplacements(element::load_case lc) const
 	{
 		auto dispSearch = mDisplacements.find(lc);

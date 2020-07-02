@@ -116,6 +116,28 @@ namespace bso { namespace structural_design { namespace element {
 				Eigen::MatrixXd B;
 				B.setZero(3,8);
 				B = A * G;
+
+				// save strain-displacement matrix for in-plane behaviour per integration point
+				if (m == 0 && l == 0)
+				{
+					mB1.setZero(3,8);
+					mB1 = B;
+				}
+				else if (m == 0 && l == 1)
+				{
+					mB2.setZero(3,8);
+					mB2 = B;
+				}
+				else if (m == 1 && l == 1)
+				{
+					mB3.setZero(3,8);
+					mB3 = B;
+				}
+				else
+				{
+					mB4.setZero(3,8);
+					mB4 = B;
+				}
 	
 				// Matrix elasticity term, separated for normal and shear action
 				Eigen::MatrixXd ETermNormal, ETermShear;
@@ -129,6 +151,10 @@ namespace bso { namespace structural_design { namespace element {
 
 				kNormal += mThickness * wKsi * wEta * B.transpose() * ETermNormal * B * J.determinant();
 				kShear	+= mThickness * wKsi * wEta * B.transpose() * ETermShear  * B * J.determinant();
+
+				// save elasticity matrix (for a solid element) for in-plane behaviour (for stress_based topology optimization)
+				mETermSolid.setZero(3,3);
+				mETermSolid = ETermNormal * (mE0 / mE) + ETermShear * (mE0 / mE);
 
 				// Performing integration of the out-of-plane behaviour
 				// according to Batoz & Tahar: Evaluation of a new quadrilateral thin plate bending element (1982)
@@ -289,6 +315,28 @@ namespace bso { namespace structural_design { namespace element {
 		mSeparatedEnergies[lc]["normal"]  = 0.5 * elementDisplacements.transpose() * mSMNormal  * elementDisplacements;
 		mSeparatedEnergies[lc]["shear"]   = 0.5 * elementDisplacements.transpose() * mSMShear   * elementDisplacements;
 		mSeparatedEnergies[lc]["bending"] = 0.5 * elementDisplacements.transpose() * mSMBending * elementDisplacements;
+
+		// stress calculation - NOTE: only in-plane stresses are considered (dKQ stresses are ignored) because of the application in topology optimization, in which stress gradients over the thickness of the element cannot be considered in a 2D case
+		Eigen::VectorXd elementDisp24DOF;
+		elementDisp24DOF.setZero(24);
+		elementDisp24DOF = mT * elementDisplacements;
+		melementDisp8DOF.setZero(8);
+		for (int i = 0; i < 4; ++i) // for all nodes of this element
+		{
+			for (int j = 0; j < 2; ++j) // for the first two DOF's in local system (disp x & y)
+			{
+				melementDisp8DOF(i*2 + j) = elementDisp24DOF(i*6 + j);
+			}
+		}
+		mBAv.setZero(3,8);
+		mBAv = (1.0/4) * (mB1 + mB2 + mB3 + mB4); // average B-matrix
+		Eigen::VectorXd StrainAv;
+		StrainAv.setZero(3);
+		StrainAv = mBAv * melementDisp8DOF; // average strain
+		mStress = mETermSolid * StrainAv; // average stress per element (averaged over 4 integration points)
+
+		mE0K0U.setZero(24);
+		mE0K0U = (mE0 / mE) * mSM * elementDisplacements; // for stress sensitivity
 	} // computeResponse()
 	
 	void flat_shell::clearResponse()
@@ -359,6 +407,92 @@ namespace bso { namespace structural_design { namespace element {
 		return bso::utilities::geometry::quadrilateral::getArea() * mThickness;
 	} // getVolume()
 	
+	double flat_shell::getStressAtCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const // NOTE: only in-plane stresses are considered (dKQ stresses are ignored) because of the application in topology optimization
+	{
+		double sx, sy, sxy, I1, J2D, DPStress;
+		sx = mStress(0);
+		sy = mStress(1);
+		sxy = mStress(2);
+		I1 = sx + sy;
+		J2D = (1.0/3) * (pow(sx, 2) + pow(sy, 2) - sx * sy + 3 * pow(sxy, 2));
+		DPStress = (1.0 / beta) * (sqrt(J2D) + alpha * I1); // this value should not exceed 1
+		return DPStress;
+	} // getStressCenter() - NOTE: if alpha & beta are not inserted in the function call, the Von Mises stress is obtained
+
+	Eigen::VectorXd flat_shell::getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha /* 0*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
+	{
+		Eigen::Vector3d w;
+		w << 1, 1, 0;
+		Eigen::VectorXd W0;
+		W0.setZero(8);
+		W0 = mBAv.transpose() * mETermSolid.transpose() * w;
+		Eigen::Matrix3d V;
+		V << 1, -0.5, 0,
+			 -0.5, 1, 0,
+			 0, 0, 3;
+		Eigen::MatrixXd M0;
+		M0.setZero(8,8);
+		M0 = mBAv.transpose() * mETermSolid.transpose() * V * mETermSolid * mBAv;
+
+		Eigen::VectorXd aeloc;
+		aeloc.setZero(8);
+		aeloc = (M0.transpose() * melementDisp8DOF) / sqrt(3.0 * melementDisp8DOF.transpose() * M0 * melementDisp8DOF) + alpha * W0;
+
+		Eigen::VectorXd ae24DOF, ae24DOFt;
+		ae24DOF.setZero(24); ae24DOFt.setZero(24);
+		int counterAeloc = 0;
+		for (int i = 0; i < 4; ++i) // for all nodes of this element
+		{
+			for (int j = 0; j < 2; ++j) // for the first two DOF's (disp x & y)
+			{
+				ae24DOF(i*6 + j) = aeloc(counterAeloc); // put in 24 DOF local form
+				++counterAeloc;
+			}
+		}
+		ae24DOFt = mT.transpose() * ae24DOF;
+
+		Eigen::VectorXd ae;
+		ae.setZero(freeDOFs);
+		int counterAE = -1;
+		for(auto& i : mNodes) // for all nodes of this element
+		{
+			for (unsigned int j = 0; j < 6; ++j) // for all local DOF's
+			{
+				++counterAE;
+				if (i->getNFS(j) == 0 || i->getConstraint(j) == 1) continue;
+				unsigned int GDOF = i->getGlobalDOF(j);
+				ae(GDOF) = ae24DOFt(counterAE);
+			}
+		}
+		return ae;
+	} // getStressSensitivityTermAE()
+
+	Eigen::VectorXd flat_shell::getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal /* 1*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
+	{
+		Eigen::VectorXd dKdxU = (-penal / beta) * pow(mDensity,penal - 1) * mE0K0U;
+		Eigen::MatrixXd lamdaloc;
+		lamdaloc.setZero(24,Lamda.cols());
+		Eigen::VectorXd dsx(Lamda.cols()); // dsx = vector with sensitivities for varying constraints, but to same x
+		dsx.setZero();
+		int counterLamda = -1;
+		for (auto& j : mNodes) // for all nodes of this element
+		{
+			for (unsigned int k = 0; k < 6; ++k) // for all local DOF's
+			{
+				++counterLamda;
+				if (j->getNFS(k) == 0 || j->getConstraint(k) == 1) continue;
+				unsigned int GDOF = j->getGlobalDOF(k);
+				lamdaloc.row(counterLamda) = Lamda.row(GDOF);
+			}
+		}
+		dsx = lamdaloc.transpose() * dKdxU;
+		return dsx;
+	} // getStressSensitivity()
+
 	bso::utilities::geometry::vertex flat_shell::getCenter() const
 	{
 		return bso::utilities::geometry::quadrilateral::getCenter();

@@ -305,10 +305,10 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 
 		Eigen::VectorXd loads;
 		loads.setZero(DOFCount);
-		loads(7)  = -10; // node 5, force in z-direction
-		loads(10) = -10; // node 6, force in z-direction
-		loads(13) = -10; // node 7, force in z-direction
-		loads(16) = -10; // node 8, force in z-direction
+		loads(7)  = -1e5; // node 5, force in z-direction
+		loads(10) = -1e5; // node 6, force in z-direction
+		loads(13) = -1e5; // node 7, force in z-direction
+		loads(16) = -1e5; // node 8, force in z-direction
 		Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > solver;
 		solver.compute(GSM);
 		BOOST_REQUIRE(solver.info() == Eigen::Success);
@@ -316,20 +316,42 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 
 		Eigen::VectorXd checkDisplacements;
 		checkDisplacements.setZero(DOFCount);
-		checkDisplacements(0)  = -3e-4; // results from abaqus and ansys
-		checkDisplacements(1)  = -3e-4; // see graduation work Diane Schoenmaker
-		checkDisplacements(2)  = -3e-4;
-		checkDisplacements(3)  = -3e-4;
-		checkDisplacements(5)  = -3e-4;
-		checkDisplacements(6)  = -3e-4;
-		checkDisplacements(7)  = -1e-3;
-		checkDisplacements(9)  = -3e-4;
-		checkDisplacements(10) = -1e-3;
-		checkDisplacements(13) = -1e-3;
-		checkDisplacements(14) = -3e-4;
-		checkDisplacements(16) = -1e-3;
+		checkDisplacements(0)  = -3; // results from abaqus and ansys
+		checkDisplacements(1)  = -3; // see graduation work Diane Schoenmaker
+		checkDisplacements(2)  = -3;
+		checkDisplacements(3)  = -3;
+		checkDisplacements(5)  = -3;
+		checkDisplacements(6)  = -3;
+		checkDisplacements(7)  = -10;
+		checkDisplacements(9)  = -3;
+		checkDisplacements(10) = -10;
+		checkDisplacements(13) = -10;
+		checkDisplacements(14) = -3;
+		checkDisplacements(16) = -10;
 
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+		n5.addDisplacements(displacementsnew);
+		n6.addDisplacements(displacementsnew);
+		n7.addDisplacements(displacementsnew);
+		n8.addDisplacements(displacementsnew);
+
+		qh1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = qh1.getStress();
+		Eigen::VectorXd checkStress(6);
+		checkStress << 0,0,-1e5,0,0,0; // results from ansys (see graduation work Irma Bouw)
+		double VMStress = qh1.getStressAtCenter();
+		double checkVMStress = VMStress / 1e5 - 1;
+
+		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
+		BOOST_REQUIRE(checkVMStress < 1e-3);
 	}
 
 	BOOST_AUTO_TEST_CASE( benchmark_2 )  //shear test
@@ -403,6 +425,28 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		checkDisplacements(11) =  3.76233e-3;
 
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+		n5.addDisplacements(displacementsnew);
+		n6.addDisplacements(displacementsnew);
+		n7.addDisplacements(displacementsnew);
+		n8.addDisplacements(displacementsnew);
+
+		qh1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = qh1.getStress();
+		Eigen::VectorXd checkStress(6);
+		checkStress << 0,0,0,-27.4627,0,400; // results from ansys (see graduation work Irma Bouw)
+		double VMStress = qh1.getStressAtCenter();
+		double checkVMStress = VMStress / 694.4513 - 1; // result from ansys
+
+		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
+		BOOST_REQUIRE(checkVMStress < 1e-3);
 	}
 
 	BOOST_AUTO_TEST_CASE( benchmark_3 )    //Bending test
@@ -476,6 +520,28 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		checkDisplacements(11) = -3.76233e-3;
 
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+		n5.addDisplacements(displacementsnew);
+		n6.addDisplacements(displacementsnew);
+		n7.addDisplacements(displacementsnew);
+		n8.addDisplacements(displacementsnew);
+
+		qh1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = qh1.getStress();
+		Eigen::VectorXd checkStress(6);
+		checkStress << 0,0,0,27.4627,0,0; // results from ansys (see graduation work Irma Bouw)
+		double VMStress = qh1.getStressAtCenter();
+		double checkVMStress = VMStress / 47.5668 - 1; // result from ansys
+
+		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
+		BOOST_REQUIRE(checkVMStress < 1e-3);
 	}
 
 	BOOST_AUTO_TEST_CASE( benchmark_4 )   // Torsion test
@@ -525,9 +591,9 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		Eigen::VectorXd loads;
 		loads.setZero(DOFCount);
 		loads(0)  = 100;  // node 5, force in x-direction
-		loads(4)  = 100;  // node 6, force in x-direction
+		loads(4)  = 100;  // node 6, force in y-direction
 		loads(6)  = -100; // node 7, force in x-direction
-		loads(10) = -100; // node 8, force in x-direction
+		loads(10) = -100; // node 8, force in y-direction
 		Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > solver;
 		solver.compute(GSM);
 		BOOST_REQUIRE(solver.info() == Eigen::Success);
@@ -549,6 +615,28 @@ BOOST_AUTO_TEST_SUITE( sd_quad_hexahedron_test )
 		checkDisplacements(11) =  3.700e-4;
 
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+		n5.addDisplacements(displacementsnew);
+		n6.addDisplacements(displacementsnew);
+		n7.addDisplacements(displacementsnew);
+		n8.addDisplacements(displacementsnew);
+
+		qh1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = qh1.getStress();
+		Eigen::VectorXd checkStress(6);
+		checkStress << -130.0,-130.0,0,0,0,0; // results from ansys (see graduation work Irma Bouw)
+		double VMStress = qh1.getStressAtCenter();
+		double checkVMStress = VMStress / 130.0000 - 1; // result from ansys
+
+		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
+		BOOST_REQUIRE(checkVMStress < 1e-3);
 
 	}
 

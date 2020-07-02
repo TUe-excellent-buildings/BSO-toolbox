@@ -21,6 +21,10 @@ namespace bso { namespace structural_design {
 		Eigen::SparseMatrix<double> mGSM;
 		bool mSystemInitialized = false;
 		
+		std::string msolver;
+		Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > mLLTSolver;
+		Eigen::SimplicialLDLT<Eigen::SparseMatrix<double> > mLDLTSolver;
+
 		// solvers
 		void simplicialLLT();
 		void simplicialLDLT();
@@ -37,12 +41,14 @@ namespace bso { namespace structural_design {
 		void clearResponse();
 		
 		void solve(std::string solver = "SimplicialLDLT");
+		Eigen::MatrixXd solveAdjoint(Eigen::MatrixXd& ae);
 		
 		Eigen::VectorXd getDisplacements(element::load_case lc) const;
 		const std::vector<element::node*>& getNodes() const {return mNodes;}
 		std::vector<element::node*>& getNodes() {return mNodes;}
 		const std::vector<element::element*>& getElements() const {return mElements;}
 		std::vector<element::element*>& getElements() {return mElements;}
+		const unsigned long& getDOFCount() const {return mDOFCount;}
 	};
 	
 } // namespace structural_design
