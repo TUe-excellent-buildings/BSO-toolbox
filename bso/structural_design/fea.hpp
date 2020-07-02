@@ -48,7 +48,7 @@ namespace bso { namespace structural_design {
 		std::vector<element::node*>& getNodes() {return mNodes;}
 		const std::vector<element::element*>& getElements() const {return mElements;}
 		std::vector<element::element*>& getElements() {return mElements;}
-		const unsigned long getDOFCount() {return mDOFCount;}
+		const unsigned long& getDOFCount() const {return mDOFCount;}
 	};
 	
 } // namespace structural_design

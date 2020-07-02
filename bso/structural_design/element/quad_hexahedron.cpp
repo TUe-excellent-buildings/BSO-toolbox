@@ -211,28 +211,11 @@ namespace bso { namespace structural_design { namespace element {
 
 	void quad_hexahedron::computeResponse(load_case lc)
 	{ //
-		Eigen::VectorXd elementDisplacements(mSM.rows());
-		elementDisplacements.setZero();
-		auto dispIte = elementDisplacements.data();
-
-		for (const auto& i : mNodes)
-		{
-			for (unsigned int j = 0; j < 6; ++j)
-			{
-				if (mEFS(j) == 1)
-				{
-					*dispIte = i->getDisplacements(lc)(j);
-					++dispIte;
-				}
-			}
-		}
-		mDisplacements[lc] = elementDisplacements;
-		mEnergies[lc] = 0.5 * elementDisplacements.transpose() * mSM * elementDisplacements;
-		mTotalEnergy += mEnergies[lc];
+		element::computeResponse(lc);
 		// calculate stress of solid element at centroid
 		mBAv = (1.0/8) * mBSum; // average B-matrix
 		mDispLoc.setZero(24);
-		mDispLoc = mT * elementDisplacements;
+		mDispLoc = mT * mDisplacements[lc];
 		Eigen::VectorXd StrainAv;
 		StrainAv.setZero(6);
 		StrainAv = mBAv * mDispLoc; // average strain
@@ -281,6 +264,8 @@ namespace bso { namespace structural_design { namespace element {
 	} // getStressCenter() - NOTE: if alpha & beta are not inserted in the function call, the Von Mises stress is obtained
 
 	Eigen::VectorXd quad_hexahedron::getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha /* 0*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
 	{
 		Eigen::Vector6d w;
 		w << 1, 1, 1, 0, 0, 0;
@@ -319,6 +304,8 @@ namespace bso { namespace structural_design { namespace element {
 	} // getStressSensitivityTermAE()
 
 	Eigen::VectorXd quad_hexahedron::getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal /* 1*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
 	{
 		Eigen::VectorXd dKdxU = (-penal / beta) * pow(mDensity,penal - 1) * (mE0 / mE) * mSM * mDispLoc;
 		Eigen::MatrixXd lamdaloc;

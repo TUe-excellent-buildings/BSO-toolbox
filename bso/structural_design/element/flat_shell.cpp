@@ -321,13 +321,11 @@ namespace bso { namespace structural_design { namespace element {
 		elementDisp24DOF.setZero(24);
 		elementDisp24DOF = mT * elementDisplacements;
 		melementDisp8DOF.setZero(8);
-		int counterDisp = 0;
 		for (int i = 0; i < 4; ++i) // for all nodes of this element
 		{
 			for (int j = 0; j < 2; ++j) // for the first two DOF's in local system (disp x & y)
 			{
-				melementDisp8DOF(counterDisp) = elementDisp24DOF(i*6 + j);
-				++counterDisp;
+				melementDisp8DOF(i*2 + j) = elementDisp24DOF(i*6 + j);
 			}
 		}
 		mBAv.setZero(3,8);
@@ -422,6 +420,8 @@ namespace bso { namespace structural_design { namespace element {
 	} // getStressCenter() - NOTE: if alpha & beta are not inserted in the function call, the Von Mises stress is obtained
 
 	Eigen::VectorXd flat_shell::getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha /* 0*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
 	{
 		Eigen::Vector3d w;
 		w << 1, 1, 0;
@@ -470,6 +470,8 @@ namespace bso { namespace structural_design { namespace element {
 	} // getStressSensitivityTermAE()
 
 	Eigen::VectorXd flat_shell::getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal /* 1*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
 	{
 		Eigen::VectorXd dKdxU = (-penal / beta) * pow(mDensity,penal - 1) * mE0K0U;
 		Eigen::MatrixXd lamdaloc;

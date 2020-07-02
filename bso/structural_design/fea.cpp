@@ -296,12 +296,12 @@ namespace bso { namespace structural_design {
 	
 	Eigen::MatrixXd fea::solveAdjoint(Eigen::MatrixXd& ae) // for stress_based topopt
 	{
-		Eigen::MatrixXd Lamda;
+		Eigen::MatrixXd Lambda;
 		if (msolver == "SimplicialLLT")
 		{
 			try
 			{
-				Lamda = mLLTSolver.solve(ae);
+				Lambda = mLLTSolver.solve(ae);
 				if (mLLTSolver.info() != Eigen::Success)
 				{
 					throw std::runtime_error("Solver failed");
@@ -320,7 +320,7 @@ namespace bso { namespace structural_design {
 		{
 			try
 			{
-				Lamda = mLDLTSolver.solve(ae);
+				Lambda = mLDLTSolver.solve(ae);
 				if (mLDLTSolver.info() != Eigen::Success)
 				{
 					throw std::runtime_error("Solver failed");
@@ -342,7 +342,7 @@ namespace bso { namespace structural_design {
 										<< msolver << std::endl;
 			throw std::runtime_error(errorMessage.str());
 		}
-		return Lamda;
+		return Lambda;
 	} // solveAdjoint()
 
 	Eigen::VectorXd fea::getDisplacements(element::load_case lc) const
