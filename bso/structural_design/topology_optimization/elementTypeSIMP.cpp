@@ -5,6 +5,8 @@ namespace bso { namespace structural_design { namespace topology_optimization {
 
 class ELE_SIMP;
 
+namespace ele_simp {
+	
 void HInit(Eigen::SparseMatrix<double>& H, Eigen::VectorXd& Hs,
 		 const std::vector<element::element*>& elements, Eigen::VectorXd& volume,
 		 Eigen::VectorXd& x, const double& f, const double& penal, 
@@ -18,6 +20,7 @@ void OptimalityCritUpdate(double l1, double l2, const double& xMove,
 		 Eigen::VectorXd& x, Eigen::VectorXd& xNew, const Eigen::VectorXd& dv,
 		 const Eigen::VectorXd& dc);
 
+} // namespace ele_simp
 } // namespace topology_optimization
 
 template <>
@@ -25,6 +28,7 @@ void sd_model::topologyOptimization<topology_optimization::ELE_SIMP>(const doubl
 						const double& rMin, const double& penal, const double& xMove,
 						const double& tolerance)
 {
+	using namespace topology_optimization::ele_simp;
 	std::ostream out(mTopOptStreamBuffer);
 	unsigned int numEle = mFEA->getElements().size();
 	std::vector<element::element*> fEle, bEle, tEle;
@@ -34,6 +38,7 @@ void sd_model::topologyOptimization<topology_optimization::ELE_SIMP>(const doubl
 	for (auto& i : mFEA->getElements())
 	{
 		if (!i->isActiveInCompliance()) continue;
+		i->updateDensity(f,penal);
 		if (i->isFlatShell())
 		{
 			fEle.push_back(i);
@@ -66,9 +71,9 @@ void sd_model::topologyOptimization<topology_optimization::ELE_SIMP>(const doubl
 	Eigen::VectorXd HsF(numFEle), HsB(numBEle), HsT(numTEle);
 	HsF.setZero(); HsB.setZero(); HsT.setZero();
 	
-	topology_optimization::HInit(HF,HsF,fEle,volumeF,xF,f,penal,rMin);
-	topology_optimization::HInit(HB,HsB,bEle,volumeB,xB,f,penal,rMin);
-	topology_optimization::HInit(HT,HsT,tEle,volumeT,xT,f,penal,rMin);
+	HInit(HF,HsF,fEle,volumeF,xF,f,penal,rMin);
+	HInit(HB,HsB,bEle,volumeB,xB,f,penal,rMin);
+	HInit(HT,HsT,tEle,volumeT,xT,f,penal,rMin);
 	
 	totVolume = fVolume+bVolume+tVolume;
 	out << "Total Volume: " << totVolume << std::endl;
@@ -103,9 +108,9 @@ void sd_model::topologyOptimization<topology_optimization::ELE_SIMP>(const doubl
 			double volume = 0;
 			if (fEle.size() > 0)
 			{
-				topology_optimization::ObjectiveAndSensitivity(
+				ObjectiveAndSensitivity(
 					fEle,cF,xF,dcF,dvF,HF,HsF,penal);
-				topology_optimization::OptimalityCritUpdate(
+				OptimalityCritUpdate(
 					0,1e9,xMove,fVolume,f,volumeF,xF,xNewF,dvF,dcF);
 				
 				unsigned int eleIndexI = 0;
@@ -119,9 +124,9 @@ void sd_model::topologyOptimization<topology_optimization::ELE_SIMP>(const doubl
 			}
 			if (bEle.size() > 0)
 			{
-				topology_optimization::ObjectiveAndSensitivity(
+				ObjectiveAndSensitivity(
 					bEle,cB,xB,dcB,dvB,HB,HsB,penal);
-				topology_optimization::OptimalityCritUpdate(
+				OptimalityCritUpdate(
 					0,1e9,xMove,bVolume,f,volumeB,xB,xNewB,dvB,dcB);
 				
 				unsigned int eleIndexI = 0;
@@ -135,9 +140,9 @@ void sd_model::topologyOptimization<topology_optimization::ELE_SIMP>(const doubl
 			}
 			if (tEle.size() > 0)
 			{
-				topology_optimization::ObjectiveAndSensitivity(
+				ObjectiveAndSensitivity(
 					tEle,cT,xT,dcT,dvT,HT,HsT,penal);
-				topology_optimization::OptimalityCritUpdate(
+				OptimalityCritUpdate(
 					0,1e9,xMove,tVolume,f,volumeT,xT,xNewT,dvT,dcT);
 				
 				unsigned int eleIndexI = 0;
@@ -181,7 +186,7 @@ void sd_model::topologyOptimization<topology_optimization::ELE_SIMP>(const doubl
 			<< std::endl << std::endl;
 }
 
-namespace topology_optimization {
+namespace topology_optimization { namespace ele_simp {
 	
 	
 void HInit(Eigen::SparseMatrix<double>& H, Eigen::VectorXd& Hs,
@@ -276,7 +281,7 @@ void OptimalityCritUpdate(double l1, double l2, const double& xMove,
 	}
 }
 
-	
+} // namespace ele_simp
 } // namespace topology_optimization
 } // namespace structural_design
 } // bso

@@ -230,6 +230,7 @@ namespace bso { namespace structural_design {
 													{firstNodeSearch->second,secondNodeSearch->second},
 													ERelativeLowerBound);
 						mFEA->addElement(elePtr);
+						i->addElement(elePtr);
 						if (j.isGhostComponent()) elePtr->isActiveInCompliance() = false;
 						if (!j.isVisible()) elePtr->visualize() = false;
 					}
@@ -353,6 +354,7 @@ namespace bso { namespace structural_design {
 		{
 			i->updateDensity(volumeFraction,penalty);
 		}
+		mFEA->generateGSM();
 	} // setElementDensities()
 	
 	void sd_model::setTopOptOutputStream(std::ostream& out)
