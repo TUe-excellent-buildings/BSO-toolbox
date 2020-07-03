@@ -19,8 +19,13 @@ namespace bso { namespace structural_design { namespace element {
 		Eigen::MatrixXd mSMBending;
 		
 		Eigen::MatrixXd mT;
+		Eigen::MatrixXd mETermSolid; // 3x3 matrix with normal- and shear terms
+		Eigen::MatrixXd mB1, mB2, mB3, mB4, mBAv; // 3x8 (strain-displacement) matrices for in-plane behaviour
 		
 		std::map<load_case, std::map<std::string, double>> mSeparatedEnergies;
+		Eigen::VectorXd melementDisp8DOF;
+		Eigen::Vector3d mStress;
+		Eigen::VectorXd mE0K0U;
 		
 		template<class CONTAINER>
 		void deriveStiffnessMatrix(CONTAINER& l);
@@ -40,7 +45,11 @@ namespace bso { namespace structural_design { namespace element {
 		
 		double getProperty(std::string var) const;
 		double getVolume() const;
+		double getStressAtCenter(const double& alpha = 0, const double& beta = 1.0 / sqrt(3)) const;
+		Eigen::VectorXd getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha = 0) const;
+		Eigen::VectorXd getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal = 1, const double& beta = 1.0 / sqrt(3)) const;
 		bso::utilities::geometry::vertex getCenter() const;
+		Eigen::VectorXd getStress() {return mStress;} // for unit test
 	};
 	
 } // namespace element

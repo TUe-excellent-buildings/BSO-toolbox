@@ -268,6 +268,24 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		checkDisplacements(9) = 20;
 		
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+
+		fs1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = fs1.getStress();
+		Eigen::VectorXd checkStress(3);
+		checkStress << 1e6,0,0; // sx = F/A, sy = sxy = 0
+		double VMStress = fs1.getStressAtCenter();
+		double checkVMStress = VMStress / 1e6 - 1;
+
+		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
+		BOOST_REQUIRE(checkVMStress < 1e-3);
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_2 )
@@ -320,7 +338,23 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		checkDisplacements(12) = 36;
 		checkDisplacements(13) = -240;
 		checkDisplacements(15) = 36;	
+
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+
+		fs1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = fs1.getStress();
+		Eigen::VectorXd checkStress(3);
+		checkStress << 0,0,0; // out-of-plane loads do not cause in-plane stresses at the center plane of this element type (NOTE: stresses do occur at the top- and bottom of the flat shell element, but these are not considered (not calculated) in this toolbox) // Abaqus: sxx = +/- 6e6 (top and bottom)
+
+		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_3 )
@@ -372,6 +406,24 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		checkDisplacements(13) = -8;
 				
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-3));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+
+		fs1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = fs1.getStress();
+		Eigen::VectorXd checkStress(3);
+		checkStress << 1.33333e6,0,0; // results from abaqus
+		double VMStress = fs1.getStressAtCenter();
+		double checkVMStress = VMStress / 1.33333e6 - 1;
+
+		BOOST_REQUIRE(Stress.isApprox(checkStress, 1e-3));
+		BOOST_REQUIRE(checkVMStress < 1e-3);
 	}
 	
 	BOOST_AUTO_TEST_CASE( benchmark_4 )
@@ -431,6 +483,77 @@ BOOST_AUTO_TEST_SUITE( sd_flat_shell_test )
 		// che.block<17,1>(0,1) << checkDisplacements;
 		// std::cout << che << std::endl;
 		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-1));
+	}
+
+	BOOST_AUTO_TEST_CASE( benchmark_5 ) // Mixed loads
+	{
+		node n1({-1, 1,0},1);
+		node n2({ 1, 1,0},2);
+		node n3({ 1,-1,0},3);
+		node n4({-1,-1,0},4);
+		double E = 1e5;
+		double t = 1;
+		double v = 0.3;
+
+		n1.addConstraint(0);
+		n1.addConstraint(2);
+		n2.addConstraint(2);
+		n3.addConstraint(2);
+		n4.addConstraint(0);
+		n4.addConstraint(1);
+		n4.addConstraint(2);
+
+		flat_shell fs1(1,E,t,v,{&n1,&n2,&n3,&n4});
+
+		unsigned long DOFCount = 0;
+		n1.generateNFT(DOFCount);
+		n2.generateNFT(DOFCount);
+		n3.generateNFT(DOFCount);
+		n4.generateNFT(DOFCount);
+		fs1.generateEFT();
+
+		std::vector<triplet> triplets = fs1.getSMTriplets();
+		Eigen::SparseMatrix<double> GSM;
+		GSM.resize(DOFCount,DOFCount);
+		GSM.setFromTriplets(triplets.begin(), triplets.end());
+
+		Eigen::VectorXd loads;
+		loads.setZero(DOFCount);
+		loads(5) = 1e6;
+		loads(9) = 1e6;
+		Eigen::SimplicialLLT<Eigen::SparseMatrix<double> > solver;
+		solver.compute(GSM);
+		BOOST_REQUIRE(solver.info() == Eigen::Success);
+		Eigen::VectorXd displacements = solver.solve(loads);
+
+		Eigen::VectorXd checkDisplacements(DOFCount);
+		checkDisplacements.setZero(17);
+		checkDisplacements(0) = 7; // results from abaqus
+		checkDisplacements(4) = -33.4444;
+		checkDisplacements(5) = 73.4444;
+		checkDisplacements(9) = 47.4444;
+		checkDisplacements(10) = 66.4444;
+
+		BOOST_REQUIRE(displacements.isApprox(checkDisplacements, 1e-2));
+
+		bso::structural_design::component::load_case lc_test("test_case");
+		std::map<bso::structural_design::component::load_case, Eigen::VectorXd> displacementsnew;
+		displacementsnew[lc_test] = displacements;
+		n1.addDisplacements(displacementsnew);
+		n2.addDisplacements(displacementsnew);
+		n3.addDisplacements(displacementsnew);
+		n4.addDisplacements(displacementsnew);
+
+		fs1.computeResponse(lc_test);
+		Eigen::VectorXd Stress = fs1.getStress();
+		Eigen::VectorXd checkStress1(3), checkStress2(3);
+		checkStress1 << 5.0e5,5.0e5,5.0e5; // results from abaqus
+		checkStress2 << 5.0e5,5.0e5,-5.0e5; // results from abaqus (negative shear)
+		double VMStress = fs1.getStressAtCenter();
+		double checkVMStress = VMStress / 1e6 - 1; // results from abaqus
+
+		BOOST_REQUIRE((Stress.isApprox(checkStress1, 1e-3) || Stress.isApprox(checkStress2,1e-3)));
+		BOOST_REQUIRE(checkVMStress < 1e-3);
 	}
 
 BOOST_AUTO_TEST_SUITE_END()

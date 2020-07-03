@@ -55,13 +55,16 @@ namespace bso { namespace structural_design { namespace element {
 		virtual void computeResponse(load_case lc);
 		virtual void clearResponse();
 		
-		virtual void updateDensity(const double& x, const double& penal = 1);
+		virtual void updateDensity(const double& x, const double& penal = 1, std::string type = "modifiedSIMP");
 		
 		virtual double getProperty(std::string) const = 0;
 		virtual double getVolume() const = 0;
 		virtual double getTotalEnergy(const std::string& type = "") const;
 		virtual double getEnergySensitivity(const double& penal = 1) const;
 		virtual double getVolumeSensitivity() const;
+		virtual double getStressAtCenter(const double& alpha = 0, const double& beta = 1.0 / sqrt(3)) const;
+		virtual Eigen::VectorXd getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha = 0) const;
+		virtual Eigen::VectorXd getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal = 1, const double& beta = 1.0 / sqrt(3)) const;
 		virtual bso::utilities::geometry::vertex getCenter() const = 0;
 		
 		const unsigned long& ID() const {return mID;}

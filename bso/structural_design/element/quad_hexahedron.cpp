@@ -57,6 +57,10 @@ namespace bso { namespace structural_design { namespace element {
 
 		ETerm = ETerm * (mE / (2 * pow(mPoisson,2) + mPoisson - 1));
 
+		// save elasticity matrix (for a solid element, for stress_based topology optimization)
+		mETermSolid.setZero(6,6);
+		mETermSolid = ETerm * (mE0 / mE);
+
 		// initialise the element stiffness matrices and start numerical integration of the contribution of every node to the element's stiffness
 		mSM.setZero(24,24);
 		double ksi, eta, zeta;
@@ -153,6 +157,13 @@ namespace bso { namespace structural_design { namespace element {
 					Eigen::MatrixXd B;
 					B = A*G; // 6 by 24 matrix
 
+					// save sum of strain-displacement matrices of each integration points
+					if (l == 0 && m == 0 && n == 0)
+					{
+						mBSum.setZero(6,24);
+					}
+					mBSum += B;
+
 					mSM += wKsi*wEta*wZeta*B.transpose()*ETerm*B*J.determinant(); // sum for all integration points (Gauss Quadrature)
 
 				} // end for n (zeta)
@@ -198,6 +209,19 @@ namespace bso { namespace structural_design { namespace element {
 		
 	} // dtor
 
+	void quad_hexahedron::computeResponse(load_case lc)
+	{ //
+		element::computeResponse(lc);
+		// calculate stress of solid element at centroid
+		mBAv = (1.0/8) * mBSum; // average B-matrix
+		mDispLoc.setZero(24);
+		mDispLoc = mT * mDisplacements[lc];
+		Eigen::VectorXd StrainAv;
+		StrainAv.setZero(6);
+		StrainAv = mBAv * mDispLoc; // average strain
+		mStress = mETermSolid * StrainAv; // average stress per element (averaged over 2x2x2 integration points)
+	} // computeResponse()
+
 	double quad_hexahedron::getProperty(std::string var) const
 	{ //
 		if (var == "v") return mPoisson;
@@ -224,6 +248,85 @@ namespace bso { namespace structural_design { namespace element {
 		return bso::utilities::geometry::quad_hexahedron::getCenter();
 	} // getCenter()
 	
+	double quad_hexahedron::getStressAtCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	{
+		Eigen::MatrixXd V;
+		V.setZero(6,6);
+		V(0,0) = 1.0;	V(0,1) = -0.5;	V(0,2) = -0.5;
+		V(1,0) = -0.5;	V(1,1) = 1.0;	V(1,2) = -0.5;
+		V(2,0) = -0.5;	V(2,1) = -0.5;	V(2,2) = 1.0;
+		V(3,3) = 3.0;	V(4,4) = 3.0;	V(5,5) = 3.0;
+		double I1, J2D, DPStress;
+		I1 = mStress(0) + mStress(1) + mStress(2);
+		J2D = (1.0/3) * mStress.transpose() * V * mStress;
+		DPStress = (1.0 / beta) * (sqrt(J2D) + alpha * I1); // this value should not exceed 1
+		return DPStress;
+	} // getStressCenter() - NOTE: if alpha & beta are not inserted in the function call, the Von Mises stress is obtained
+
+	Eigen::VectorXd quad_hexahedron::getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha /* 0*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
+	{
+		Eigen::Vector6d w;
+		w << 1, 1, 1, 0, 0, 0;
+		Eigen::VectorXd W0;
+		W0.setZero(24);
+		W0 = mBAv.transpose() * mETermSolid.transpose() * w;
+		Eigen::MatrixXd V;
+		V.setZero(6,6);
+		V(0,0) = 1.0;	V(0,1) = -0.5;	V(0,2) = -0.5;
+		V(1,0) = -0.5;	V(1,1) = 1.0;	V(1,2) = -0.5;
+		V(2,0) = -0.5;	V(2,1) = -0.5;	V(2,2) = 1.0;
+		V(3,3) = 3.0;	V(4,4) = 3.0;	V(5,5) = 3.0;
+		Eigen::MatrixXd M0;
+		M0.setZero(24,24);
+		M0 = mBAv.transpose() * mETermSolid.transpose() * V * mETermSolid * mBAv;
+
+		Eigen::VectorXd aeloc, aeglob;
+		aeloc.setZero(24); aeglob.setZero(24);
+		aeloc = (M0.transpose() * mDispLoc) / sqrt(3.0 * mDispLoc.transpose() * M0 * mDispLoc) + alpha * W0;
+		aeglob = mT.transpose() * aeloc;
+
+		Eigen::VectorXd ae;
+		ae.setZero(freeDOFs);
+		int counterAE = -1;
+		for(auto& i : mNodes) // for all nodes of this element
+		{
+			for (unsigned int j = 0; j < 3; ++j) // for all local DOF's
+			{
+				++counterAE;
+				if (i->getNFS(j) == 0 || i->getConstraint(j) == 1) continue;
+				unsigned int GDOF = i->getGlobalDOF(j);
+				ae(GDOF) = aeglob(counterAE);
+			}
+		}
+		return ae;
+	} // getStressSensitivityTermAE()
+
+	Eigen::VectorXd quad_hexahedron::getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal /* 1*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	// Sensitivity calculation is based on the theory in:
+	// Luo, Y., & Kang, Z. (2012). Topology optimization of continuum structures with Drucker-Prager yield stress constraints. Computers & Structures, 90-91, pp. 65-75. https://doi.org/10.1016/j.compstruc.2011.10.008
+	{
+		Eigen::VectorXd dKdxU = (-penal / beta) * pow(mDensity,penal - 1) * (mE0 / mE) * mSM * mDispLoc;
+		Eigen::MatrixXd lamdaloc;
+		lamdaloc.setZero(24,Lamda.cols());
+		Eigen::VectorXd dsx(Lamda.cols()); // dsx = vector with sensitivities for varying constraints, but to same x
+		dsx.setZero();
+		int counterLamda = -1;
+		for (auto& i : mNodes) // for all nodes of this element
+		{
+			for (unsigned int j = 0; j < 3; ++j) // for all local DOF's
+			{
+				++counterLamda;
+				if (i->getNFS(j) == 0 || i->getConstraint(j) == 1) continue;
+				unsigned int GDOF = i->getGlobalDOF(j);
+				lamdaloc.row(counterLamda) = Lamda.row(GDOF);
+			}
+		}
+		dsx = lamdaloc.transpose() * dKdxU;
+		return dsx;
+	} // getStressSensitivity()
+
 } // namespace element
 } // namespace structural_design
 } // namespace bso

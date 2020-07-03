@@ -97,12 +97,29 @@ namespace bso { namespace structural_design { namespace element {
 		mTotalEnergy = 0;
 	} // clearResponse()
 	
-	void element::updateDensity(const double& x, const double& penal /*= 1*/)
+	void element::updateDensity(const double& x, const double& penal /*= 1*/, std::string type /*= "modifiedSIMP"*/)
 	{
-		mDensity = x;
-		mE = mEmin + std::pow(mDensity,penal)*(mE0 - mEmin);
-		mSM = (mE/mE0) * mOriginalSM;
-	}
+		if (type == "modifiedSIMP")
+		{
+			mDensity = x;
+			mE = mEmin + std::pow(mDensity,penal)*(mE0 - mEmin);
+			mSM = (mE/mE0) * mOriginalSM;
+		}
+		else if (type == "regularSIMP")
+		{
+			mDensity = x;
+			mE = std::pow(mDensity,penal)*mE0;
+			mSM = (mE/mE0) * mOriginalSM;
+		}
+		else
+		{
+			std::stringstream errorMessage;
+			errorMessage << "\nTrying to update density with unknown update type:\n"
+									 << type << "\n"
+									 << "(bso/structural_design/element/element.cpp)" << std::endl;
+			throw std::invalid_argument(errorMessage.str());
+		}
+	} // updateDensity()
 	
 	double element::getTotalEnergy(const std::string& type /*= ""*/) const
 	{
@@ -119,6 +136,30 @@ namespace bso { namespace structural_design { namespace element {
 	{
 		return this->getVolume();
 	} // getVolumeSensitivity()
+
+	double element::getStressAtCenter(const double& alpha /* 0*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nCannot call getStressAtCenter() for this element type\n"
+							<< "(bso/structural_design/element/element.cpp)" << std::endl;
+		throw std::runtime_error(errorMessage.str());
+	} // getStressCenter() gives error (standard) except for elements in which the function is overridden
+
+	Eigen::VectorXd element::getStressSensitivityTermAE(const unsigned long freeDOFs, const double& alpha /* 0*/) const
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nCannot call getStressSensitivityTermAE() for this element type\n"
+							<< "(bso/structural_design/element/element.cpp)" << std::endl;
+		throw std::runtime_error(errorMessage.str());
+	} // getStressSensitivityTermAE() gives error (standard) except for elements in which the function is over-written
+
+	Eigen::VectorXd element::getStressSensitivity(Eigen::MatrixXd& Lamda, const double& penal /* 1*/, const double& beta /* 1.0 / sqrt(3)*/) const
+	{
+		std::stringstream errorMessage;
+		errorMessage << "\nCannot call getStressSensitivity() for this element type\n"
+							<< "(bso/structural_design/element/element.cpp)" << std::endl;
+		throw std::runtime_error(errorMessage.str());
+	} // getStressSensitivity() gives error (standard) except for elements in which the function is over-written
 
 	const double& element::getEnergy(load_case lc, const std::string& type/*= ""*/) const
 	{ //
