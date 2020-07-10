@@ -131,6 +131,9 @@ namespace bso { namespace spatial_design { namespace conformal {
 					j->addSurface(i);
 				}
 			}
+			for (auto& i : mCFVertices) i->removeRectangle(this);
+			for (auto& i : mCFLines) i->removeRectangle(this);
+			
 			for (const auto& i : newVertices) this->checkAssociated(i);	
 			mCFSurfaces.clear();
 		}

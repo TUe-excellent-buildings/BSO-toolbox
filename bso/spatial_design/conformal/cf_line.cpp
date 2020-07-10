@@ -40,6 +40,7 @@ namespace bso { namespace spatial_design { namespace conformal {
 				i->addLine(l2);
 				i->removeLine(this);
 			}
+			for (auto& i : mCFVertices) i->removeLine(this);
 			
 			this->checkAssociated(pPtr);
 			mCFEdges.clear();
