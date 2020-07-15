@@ -1,0 +1,41 @@
+# Settings assignment of space settings
+#	type_ID		Space_Set_ID (see BP_Settings)
+A,	 ,	1
+
+# Settings assignment of rectangle settings
+#	type_ID_1,	type_ID_2,	Assigned type wall, 	Assigned type_ID wall, assigned_type_floor, assigned type_ID floor
+B,	 ,		 ,		construction,		2,		construction,		2
+B,	 ,		E,		construction,		1,		construction,		1
+B,	 ,		G,		construction,		1,		construction,		1
+
+#Warm up time, hours, minutes, seconds
+C, 	96, 	0, 	0
+
+#Time stepsize, hours, minutes, seconds
+D, 	0, 		15, 	0
+
+#Space sett,	Space_Set_ID,	Heating [W/m³],	Cooling [W/m³],	Heat set point,	Cool set point,	Air changes/hour
+E,		1,		100,		100,		18,		20,		1.0
+
+#Sim times,	data_file_location,	Start year,	Start month,	Start day,	Start hour,	Finish year,	Finish month,	Finish day,	Finish hour,
+F,		settings/wheather_data_period_1.txt,	1976,		7,		2,		0,		1976,		7,		4,		24,	
+F,		settings/wheather_data_period_2.txt,	1978,		12,		30,		0,		1979,		1,		1,		24,	
+
+#Ground profile,Temperature
+G,		10
+
+#Materials,	Material_ID,	Name,		Spec_Weight,	Spec_Heat,	Thermal_Conduc
+H,		1,		Concrete,	2400.0,		850.0,		1.8
+H,		2,		Isolatie,	60.0,		850.0,		0.04
+
+#Constructions,	Construct_ID,	Vis_ID,		mat_ID_1,	thickness_1,	...........	mat_ID_n,	thickness_n,
+I,		1,		1,		1,		150.0,				2,		150.0,
+I,		2,		1,		1,		150.0
+
+#Glazing,	Glazing_ID, 	Vis_ID,	U-value,	Cap/Area
+J,				1, 						2,			1.2,			30000, 	
+
+#Vis_Settings	Vis_ID,		Red,		Green,		Blue,		Alpha
+K,		1,		0.72,		0.35,		0.06,		1.0
+K,		2,		0.1,		0.5,		0.71,		0.35
+K,		3,		0.5,		0.5,		0.5,		0.3

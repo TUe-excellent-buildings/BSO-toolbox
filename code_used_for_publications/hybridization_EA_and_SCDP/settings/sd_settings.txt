@@ -1,0 +1,47 @@
+# Settings assignment of space settings
+#	type_ID		Space_Set_ID (see BP_Settings)
+A,	 ,	quad_hexahedron, 1
+
+#	type_ID_1,	type_ID_2,	Assigned type wall, 	Assigned type_ID wall, assigned_type_floor, assigned type_ID floor
+B,	 ,		 ,		flat_shell,		1,		flat_shell,		1
+B,	 ,		E,		flat_shell,		1,		flat_shell,		1
+B,	 ,		G,		flat_shell,		1,		flat_shell,		1
+
+
+#mesh settings, number of element divisions to be made:
+C, 3
+
+# live loading on each floor
+#	load case[-],	load [N/mm²],	azimuth [],	altitude[],	type (optional)
+D,	floor,		0.005,		0,		-90,		live_load
+D,	floor,		0.001,		0,		-90,		roof_load
+
+# live loading on each external surface
+#		load_case[-],	load [N/mm²],	azimuth [°],	altitude[°],	type (optional)
+E,	2,		0.001,		0,			0,		wind_pressure
+E,	2,		0.0004,		0,			0,		wind_shear
+E,	2,		0.0008,		0,			0,		wind_suction
+E,	3,		0.001,		90,			0,		wind_pressure
+E,	3,		0.0004,		90,			0,		wind_shear
+E,	3,		0.0008,		90,			0,		wind_suction
+E,	4,		0.001,		180,		0,		wind_pressure
+E,	4,		0.0004,		180,		0,		wind_shear
+E,	4,		0.0008,		180,		0,		wind_suction
+E,	5,		0.001,		270,		0,		wind_pressure
+E,	5,		0.0004,		270,		0,		wind_shear
+E,	5,		0.0008,		270,		0,		wind_suction
+
+#truss_properties,	ID,		A [mm²],	E [N/mm²],	
+F, 		1,		2250,		30000
+
+#beam_properties,	ID,		b [mm],		h [mm],		E [N/mm²],	v [-]
+G,		1,		150,		150,		30000,		0.3
+
+#flat_shell_properties,	ID,		t [mm],		E [N/mm²],	v [-]
+H,		1,		150,		30000,		0.3
+
+#quad_hexahedron_properties, 	ID,	E [N/mm²],	v [-],
+I,		1,		6000,		0.3	
+
+#load_panel_flat_shell, 	t,		E, 		v
+J, 		150,		0.03,		0
