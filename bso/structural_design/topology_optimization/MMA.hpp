@@ -7,8 +7,11 @@ MMA OPTIMIZATION ALGORITHM (header file)
 I. Bouw
 version 07-07-2020
 
-Original work written by Krister Svanberg in Matlab.
-For a description of the original work see: Svanberg, K. (1987). The method of moving asymptotes - A new method for structural optimization. International Journal for Numerical Methods in Engineering, 24(2), 359-373. doi:10.1002/nme.1620240207.
+C++ code of the Method of Moving Asymptotes, translated from the MMA-code written in MATLAB by Krister Svanberg (Svanberg, 1987).
+The original work can be downloaded from http://www.smoptit.se/ under de GNU General Public License.
+The user should refer to the academic work of Krister Svanberg when work will be published in which this code is used.
+For a description of the original work see:
+Svanberg, K. (1987). The method of moving asymptotes - A new method for structural optimization. International Journal for Numerical Methods in Engineering, 24(2), 359-373. doi:10.1002/nme.1620240207.
 
 This is the C++ version (header file) of the MMA code of Krister Svanberg, written by Irma Bouw, for use in the BSO Toolbox (github.com/TUe-excellent-buildings/BSO-toolbox).
 */

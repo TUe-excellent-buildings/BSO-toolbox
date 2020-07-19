@@ -308,6 +308,18 @@ If the proposed contribution is considered to be a meaningful addition to the to
 Would you like to propose a change, or are you not sure that your potential contribution will be considered to be meaningfull by the admin?
 In this case, you can create an issue, or contact an admin or the project manage (see information below).
 
+## Code accreditation
+
+Parts of the code that are used in the BSO toolbox are based on codes that are originally developed by other authors.
+This section is used to clarify which parts of code in the BSO toolbox are based on other codes, and refers to the original work.
+For any contributions to the BSO toolbox that use code that is originally written by other authors, add the accreditation to this section.
+
+#### Method of Moving Asymptotes
+The MMA.hpp and MMA.cpp files in the directiory `../BSO-toolbox/bso/structural_design/topology_optimization` are the translation of the MMA-code written in MATLAB by Krister Svanberg.
+The original work can be downloaded from http://www.smoptit.se/ under de GNU General Public License.
+The user should refer to the academic work of Krister Svanberg when work will be published in which this code is used.
+For a description of the original work see this [paper] (https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.1620240207).
+
 ## Who do I talk to? ###
 
 ###### For technical issues and/or questions, contact the repository admin:
