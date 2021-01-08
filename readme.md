@@ -323,7 +323,7 @@ For a description of the original work see this [paper] (https://onlinelibrary.w
 ## Who do I talk to? ###
 
 ###### For technical issues and/or questions, contact the repository admin:
-  ir. S. (Sjonnie) Boonstra  
+  dr.ir. S. (Sjonnie) Boonstra  
   s.boonstra[at]abt.eu
 
 ###### For questions and other interests concerning the project, contact the project manager:
