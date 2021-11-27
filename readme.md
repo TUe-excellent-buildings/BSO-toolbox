@@ -82,7 +82,7 @@ $ sudo mv eigen-[version_number] eigen
 ##### 3. Install and compile the Boost library.
 In this step, the [Boost]() library is installed and parts of it are pre-compiled.
 
-Go to the website of the Eigen library (http://eigen.tuxfamily.org) and download the tar.gz of the desired version (e.g. latest stable release).
+Go to the website of the Boost library (https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/) and download the tar.gz of the desired version (e.g. latest stable release).
 
 Extract the package (the downloaded tar.gz) to /usr/include, by typing in the terminal:
 ```bash
