@@ -210,7 +210,8 @@ void ms_space::reset()
 
 bool ms_space::checkValidity() const
 {
-	if (mDimensions.minCoeff() < 0)
+	bool check=(mDimensions.minCoeff() < 0);
+	if (check)
 	{
 		std::stringstream errorMessage;
 		errorMessage << std::endl
@@ -219,6 +220,7 @@ bool ms_space::checkValidity() const
 								 << "(bso/spatial_design/ms_space.hpp)" << std::endl;
 		throw std::invalid_argument(errorMessage.str());
 	}
+	return (check);
 }
 
 void ms_space::setCoordinates(const utilities::geometry::vertex& coords)
