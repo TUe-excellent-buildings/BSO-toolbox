@@ -245,7 +245,15 @@ namespace bso { namespace structural_design { namespace component {
 		return mThickness;
 	} // thickness()
 	
-	
+	void structure::rescaleStructuralVolume(const double& scaleFactor)
+	{
+		double sqrtFactor = std::pow(scaleFactor,0.5);
+		mA 					*= scaleFactor; 
+		mWidth 			*= sqrtFactor; 
+		mHeight 		*= sqrtFactor;
+		mThickness 	*= scaleFactor; 
+	}
+		
 } // namespace component
 } // namespace structural_design
 } // namespace bso
