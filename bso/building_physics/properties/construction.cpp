@@ -67,6 +67,7 @@ construction& construction::operator = (const construction& rhs)
 	mResistanceSide1 = rhs.mResistanceSide1;
 	mResistanceSide2 = rhs.mResistanceSide2;
 	mRelativeMeasurePoint = rhs.mRelativeMeasurePoint;
+	return *this;
 }
 
 } // namespace properties 
