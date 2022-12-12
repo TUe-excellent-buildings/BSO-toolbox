@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE( sd_analysis_test )
 	
 	BOOST_AUTO_TEST_CASE( initialize_empty )
 	{
-		BOOST_REQUIRE_NO_THROW(sd_model test_sd());
+		BOOST_REQUIRE_NO_THROW(sd_model (test_sd()));
 	}
 	
 	BOOST_AUTO_TEST_CASE( add_point )

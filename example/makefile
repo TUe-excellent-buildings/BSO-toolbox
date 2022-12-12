@@ -5,7 +5,7 @@ BSO = /usr/include/BSO-toolbox
 ALL_LIB = -I$(BOOST) -I$(EIGEN) -I$(BSO)
 
 # compiler settings
-CPP = g++ -std=c++14
+CPP = g++ -std=c++17
 FLAGS = -O3 -march=native -lglut -lGL -lGLU -lpthread
 
 # specify file(s) to be compiled
