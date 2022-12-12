@@ -5,7 +5,7 @@ BSO     = ..
 ALL_LIB = -I$(BOOST) -I$(EIGEN) -I$(BSO)
 
 #compiler settings
-CPP   = g++ -std=c++14
+CPP   = g++ -std=c++17
 FLAGS  = -O3 -march=native -lboost_unit_test_framework -lglut -lGL -lGLU -lpthread
 
 #test suites
