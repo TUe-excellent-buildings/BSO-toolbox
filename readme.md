@@ -3,48 +3,50 @@
 ## What is this repository for?
 
 This repository contains a C++ library named the Building Spatial design Optimization toolbox (BSO toolbox).
-In the first place, the toolbox has been developed to support building spatial design optimization by providing tools to:
+In the first place, the toolbox has been developed to support building spatial design simulation and optimization by providing tools to:
 (i) represent and modify building spatial designs,
 (ii) generate discipline specific designs from a building spatial design,
 (iii) analyze structural designs,
 (iv) analyze the building physics of a building (i.e. thermal performance),
 (v) analyze data obtained from the evaluations, e.g. clustering and sorting algorithms.
-The toolbox itself does not contain any optimization methods, however, this repository will be extended with toolbox applications soon, and these applications will be related to optimization as well.
-The current version toolbox has been developed to support research in a joint project by the Department of the Built Environment of Eindhoven University of Technology, and the Leiden Institute of Advanced Computer Science (LIACS) of Leiden University, both in The Netherlands.
-Key publications within this research project are given below. These publications provide a lot of background information on the purpose and setup of the code in this repository:
-* Boonstra, S, van der Blom, K, Hofmeyer, H, Emmerich, MTM, van Schijndel, AWM & de Wilde, P 2018, 'Toolbox for super-structured and super-structure free multi-disciplinary building spatial design optimisation', Advanced Engineering Informatics, vol. 36, pp. 86-100. https://doi.org/10.1016/j.aei.2018.01.003
-* van der Blom, K, Boonstra, S, Hofmeyer, H & Emmerich, MTM 2019, Analysing optimisation data for multicriteria building spatial design. in CA Coello Coello, P Reed, K Deb, E Goodman, K Klamroth, K Miettinen & S Mostaghim (eds), Evolutionary Multi-Criterion Optimization - 10th International Conference, EMO 2019, Proceedings. Lecture Notes in Computer Science , vol. 11411, Springer, pp. 671-682, Evolutionary Multi-Criterion Optimization, 10th International Conference, (EMO2019), East Lansing, United States, 10/03/19. https://doi.org/10.1007/978-3-030-12598-1_53
-* Boonstra, S, van der Blom, K, Hofmeyer, H, van den Buijs, J & Emmerich, MTM 2018, Coupling between a building spatial design optimisation toolbox and BouwConnect BIM. in I Mutis & T Hartman (eds), Advances in Informatics and Computing in Civil and Construction Engineering: Proceedings of the 35th CIB W78 2018 Conference: IT in Design, Construction, and Management. Springer, Cham, pp. 95-102, 35th CIB W78 2018 Conference, Chicago, United States, 1/10/18. https://doi.org/10.1007/978-3-030-00220-6_12
-* van der Blom, K, Boonstra, S, Hofmeyer, H, Bäck, T & Emmerich, MTM 2017, Configuring advanced evolutionary algorithms for multicriteria building spatial design optimisation. in 2017 IEEE Congress on Evolutionary Computation (CEC) Proceedings, June 5-8, 2017, Donostia - San Sebastián, Spain., 7969520, Institute of Electrical and Electronics Engineers, pp. 1803-1810, 2017 IEEE Congress on Evolutionary Computation (CEC2017) June 5-8, 2017, Donostia - San Sebastián, Spain, San Sebastian, Spain, 5/06/17. https://doi.org/10.1109/CEC.2017.7969520
-* Boonstra, S, van der Blom, K, Hofmeyer, H & Emmerich, MTM 2019, Co-evolutionary design processes applied to building spatial design optimization. in X Guo & H Huang (eds), Advances in Structural and Multidisciplinary Optimization: Proceedings of the 13th World Congress of Structural and Multidisciplinary Optimization (WCSMO13). ISSMO, Beijing, pp. 110-115, World Congress of Structural and Multidisciplinary Optimization, Beijing, China, 20/05/19.
+The toolbox itself does not contain any optimization methods, however, this repository will be extended with applications, and these will be related to optimization as well.
+The toolbox relates to research in two joint projects by the Department of the Built Environment of Eindhoven University of Technology, and the Leiden Institute of Advanced Computer Science (LIACS), both in The Netherlands.
+Key publications within these research projects are given below. These publications provide a lot of background information on the purpose and setup of the code in this repository:
+* Boonstra, S.; Van der Blom, K.; Hofmeyer, H.; Emmerich, M.T.M.: Hybridization of an evolutionary algorithm and simulations of co-evolutionary design processes for early-stage building spatial design optimization, Automation in Construction, Volume 124, Article 103522, pages 1-18, 2021
+* Claessens, D.P.H.; Boonstra, S.; Hofmeyer, H.: Spatial Zoning for Better Structural Topology Design and Performance, Advanced Engineering Informatics, Volume 46, 101162, pages 1-16, 2020
+* Boonstra, S.; Van der Blom, K.; Hofmeyer, H.; Emmerich, M.T.M.: Conceptual structural system layouts via design response grammars and evolutionary algorithms, Automation in Construction, Volume 116, Article 103009, pages 1-20, 2020
+* Van der Blom K.; Boonstra S.; Wang H.; Hofmeyer H.; Emmerich M.T.M. Evaluating Memetic Building Spatial Design Optimisation Using Hypervolume Indicator Gradient Ascent. In: Trujillo L.; Schütze O.; Maldonado Y.; Valle P. (Eds): Numerical and Evolutionary Optimization – NEO 2017, Studies in Computational Intelligence 785, page 62-82, Springer Nature, Cham, Switzerland, 2019
+* Boonstra, S.; Van der Blom, K.; Hofmeyer, H.; Emmerich, M.T.M.; Van Schijndel, A.W.M.; De Wilde, P.: Toolbox for super-structured and super-structure free multi-disciplinary building spatial design optimisation, Advanced Engineering Informatics, Volume 36, pages 86-100, 2018
+* Hofmeyer, H.; Davila Delgado, J.M.: Coevolutionary and Genetic Algorithm Based Building Spatial and Structural Design, AIEDAM - Artificial Intelligence for Engineering Design, Analysis and Manufacturing, Volume 29, pages 351-370, 2015
+* Davila Delgado, J.M.; Hofmeyer, H.: Automated Generation of Structural Solutions based on Spatial Designs, Automation in Construction, Volume 35 (November), pages 528-541, 2013
 
 Moreover, three PhD theses related to the research are:
 * Boonstra, S 2020, 'Multi-disciplinary optimization of building spatial designs: co-evolutionary design process simulations, evolutionary algorithms, hybrid approaches', PhD-thesis, Department of the Built Environment, Eindhoven University of Technology, The Netherlands.
 * van der Blom, K 2019, 'Multi-objective mixed-integer evolutionary algorithms for building spatial design', PhD-thesis, Leiden Institute of Advanced Computer Science, The Netherlands.
 * Davila Delgado, JM 2014, 'Building structural design generation and optimisation including spatial modification', PhD-thesis, Department of the Built Environment, Eindhoven University of Technology, The Netherlands.
 
-Although the first aim of the toolbox was related to research carried out at Eindhoven University of Technology, the contributors now invite all interested researchers to download and use the toolbox; to apply it for innovative design support and optimisation, possibly also in other domains; and to explore and extend its possiblities. This is all possible thanks to the GNU Affero General Public License v3.0. If publications result from using this repository, the contributers would appreciate it if you cite this repository and esspecially the related journal papers above, and not the PhD-theses, although the latter of course provide an excellent source of background information in practice.
-
+Although the first aim of the toolbox was related to research carried out at Eindhoven University of Technology, the contributors now invite all interested researchers to download and use the toolbox; to apply it for innovative design support and optimisation, possibly also in other domains; and to explore and extend its possiblities. This is all possible thanks to the GNU Affero General Public License v3.0. If publications result from using this repository, the contributers would appreciate it if you cite this repository (via the Zenodo DOI) and esspecially the related journal papers above, and not the PhD-theses, although the latter of course provide an excellent source of background information in practice.
 
 ## How do I get it set up? ###
 
 ### Dependencies
 The toolbox is written in C++ and makes use of elements defined in the C++14 standard.
-Although the toolbox is developed to be cross-platform, it has only been compiled and tested for Linux (Ubuntu 18.04).
-Compilation on a Windows machine has been successfull in the past, but is not explained in this readme.
+The toolbox is developed to be cross-platform, and has been compiled and tested for Linux (Ubuntu 22.04 LTS) and Windows 10 (22H2,19045.2486).
 
 Furthermore, the toolbox depends on the following external software:
-* For linear algebra (Geometry and FEM) the [Eigen](http://eigen.tuxfamily.org) C++ library is used (last tested for v3.2.3).
-* Various utilities from the [Boost](https://www.boost.org/) C++ library (last tested for v1.70.0)
-* For solving systems of ODE's (thermal simulation) the [Odeint](https://www.odeint.com) library is used (also contained in the Boost library; last tested for v1.70.0).
-* Visualization is written in the openGL standard and makes use of GSL (last tested for v2.4+dfsg-6 amd64) and freeglut3 (last tested for v2.8.1-3 amd64)   
+* For linear algebra (Geometry and FEM) the [Eigen](http://eigen.tuxfamily.org) C++ library is used (Linux: last tested is v3.4.0).
+* Various utilities from the [Boost](https://www.boost.org/) C++ library (Linux: last tested is v1.80.0)
+* For solving systems of ODE's (thermal simulation) the [Odeint](https://www.odeint.com) library is used (also contained in the Boost library; Linux, last tested is v1.80.0).
+* Visualization is written in the openGL standard and makes use of freeglut3 (Linux: last tested is v2.8.1-6)   
 
-### Installation
-A tutuorial for the installation of the dependencies and the toolbox is given in the following steps.
+First, an elaborate Linux installation tutorial is given. It may be usefull to read this first, even if a Windows 10 installation is desired. Hereafter, the Windows 10 installation is explained.
+
+### Linux installation
+For Linux, a tutuorial for the installation of the dependencies and the toolbox is given in the following steps.
 1. Install C++ compiler (GCC) and make
 2. Install the Eigen library.
-3. Install and compile the Boost library.
-4. Install visualization dependencies (GSL and GLUT)
+3. Install (and compile) the Boost library.
+4. Install visualization dependencies (GLUT)
 5. Install GIT
 6. Clone the repository to your local machine
 7. Compile and run the example code.
@@ -79,7 +81,7 @@ $ sudo mv eigen-[version_number] eigen
 
 **NOTE.** You may change the directory in which you place Eigen, however, this may have consequences for later steps.
 
-##### 3. Install and compile the Boost library.
+##### 3. Install (and compile) the Boost library.
 In this step, the [Boost]() library is installed and parts of it are pre-compiled.
 
 Go to the website of the Boost library (https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/) and download the tar.gz of the desired version (e.g. latest stable release).
@@ -104,15 +106,15 @@ $ sudo ./b2
 $ sudo ./b2 install
 ```
 
-**NOTE.** Enter the above commands one by one.
+**NOTE.** Enter the above commands one by one. During Windows 10 installations, it appeared that the compiled parts of Boost are not needed in the toolbox so far, and so also for the Linux installation, precompilation may possibly be treated as an optional step.
 
-##### 4. Install visualization dependencies (GSL and GLUT)
+##### 4. Install visualization dependencies (GLUT)
 In this step the dependencies for the visualization in the toolbox are installed.
-THe visualization makes use of OpenGL which is enabled by GL Utility Toolkit (GLUT) and GL Shading Language (GSL)
+THe visualization makes use of OpenGL which is enabled by the GL Utility Toolkit (GLUT)
 
 Install the dependencies by typing in the terminal:
 ```bash
-$ sudo apt install libgsl-dev freeglut3-dev
+$ sudo apt install freeglut3-dev
 ```
 
 ##### 5. Install GIT
@@ -238,7 +240,7 @@ The output should then look as follows.
 Note that the directory also includes settings files to define building spatial designs, structural design settings, and building physics settings.
 For more information about these the reader is referred to the [paper](https://doi.org/10.1016/j.aei.2018.01.003) in which the toolbox is presented.
 
-### How to run unit tests
+### How to run unit tests (general and Linux version, see further below for Windows 10)
 To ensure the functionality of the BSO toolbox before and after developing new tools, unit testing is employed.
 The unit tests are also included in the repository, and in case of developing/contributing to the BSO toolbox it is adviced to add and test the unit tests regularly.
 Depending on the location of the repository on your local machine, moving to the unit test directory may be achieved as follows.
@@ -284,6 +286,128 @@ For example to test the geometry package of the toolbox type the following in th
 $ make clean cls geometry
 $ ./geometry_test
 ```
+### Windows 10 installation
+
+For this installation Code::Blocks has been used, but other strategies are possible as well.
+
+##### 1. Installing Code::Blocks and starting the project
+
+* Install codeblocks-20.03mingw-setup.exe, found via www.codeblocks.org
+
+All in Code::Blocks:
+
+* At Settings>Compiler>GNU GCC Compiler>Toolchain executables, check whether all "Programs Files" are indeed from C:\Program Files\CodeBlocks\MinGW. For instance, a previously installed Strawberry Perl may lead to other files and locations. The "Reset defaults" button may help in this case.
+
+* Create a new project by File>New>Project>Console application, select a "Folder to create project in:" you prefer, here "D:\" has been chosen, and if options arise, use default options throughout. Note that here project title BSO111 was taken, for which Code:Blocks then creates directory D:\BSO111 for the project.
+
+##### 2. External libraries: eigen, boost, glut
+
+All in Windows 10:
+
+* Unzip eigen-3.4.0.zip, found via eigen.tuxfamily.org. In this example the resulting directory has been put in D:\BSO111, but it normally would make more sense to put it more closely to Code::Blocks or the compiler, e.g. in the conventional C:\Program Files\CodeBlocks\MinGW\lib.
+
+* Unzip boost_1_81_0.zip found via www.boost.org. Further, the same applies as above for eigen. 
+
+**NOTE** Windows 10 extraction can be quite slow, and using e.g. 7-Zip may be faster. Also, precompiling certain parts of boost is needed for certain functionalities, see www.boost.org, but not here.
+
+* Unzip freeglut-MinGW-3.0.0-1.mp.zip found via www.transmissionzero.co.uk. Further, the same applies as above for eigen.
+
+**NOTE** Different from claimed elsewhere, the BSO toolbox (both for Linux and Windows 10) needs neither the OpenGL Shading Language (GLSL) nor the GNU Scientific (GSL) libraries.
+
+All in Code::Blocks:
+
+* In Settings>Compiler>Search directions>Compiler, add the above directories to enable the compiler to find header files, here these directories are:
+D:\BSO111\eigen-3.4.0, 
+D:\BSO111\boost_1_81_0, 
+D:\BSO111\freeglut\include\GL
+
+* In Settings>Compiler>Search directories>Linker, add the below directory to enable the linker to find libraries, in this example:
+D:\toolbox\freeglut\lib\x64
+
+* In Settings>Compiler>Linker settings, add at "Other linker options" the following line to link the libraries below:
+-lfreeglut_static -lopengl32 -lwinmm -lgdi32 -Wl,--subsystem,console
+
+**NOTE** "--subsystem,console" is used so the terminal reponses correctly to cout.
+
+* In Settings>Compiler>Compiler settings>#defines, add
+FREEGLUT_STATIC. This is to statically link freeglut. Alternatively dynamical linking can be used, by leaving this define out, and linking -lfreeglut instead of -lfreeglut_static 
+
+* To save the above settings, save the project (File>Save Project), workspace (File>Save Workspace), and perspective (View>Perspectives>Save current). Probably one will do, but not sure which one.
+
+##### 3. Preparing the BSO-toolbox
+
+In Windows 10:
+
+* Unzip BSO-toolbox-v.1.1.1.zip found at github.com, and put the resulting directories bso, example, and unit_tests in the project folder, so here:
+D:\BSO111\bso, 
+D:\BSO111\example, 
+D:\BSO111\unit_tests
+
+All in Code::Blocks:
+
+* Within the project (at the Projects tab in the left "Management" column), remove the initial main.cpp. Right (or left for a left-handed mouse) click on the project within the Projects tab in the left "Management" column, Add files ..., and select D:\BSO111\example\main.cpp. Select Debug and Release options. 
+
+**NOTE** For editing and searching in the other hpp and cpp files, all other files in the folders bso, example, and unit_tests can be included (using Add files recursively). But then these files should be untagged "Compile file" and "Link file": If all directories are unfold, all files can be selected in one step, and Compile file and Link file can be switched off.
+
+* In Settings>Compiler>Search directions>Compiler, add the directory of the BSO-toolbox to enable the compiler to find the toolbox cpp and hpp files, in the particular example here, this is:
+D:\BSO111
+
+In Code::Blocks or any text-editor: 
+
+* As a temporarily bugfix, add the following three pre-compiler lines (here seperated by commas) to D:\toolbox\BSO-toolbox-v.1.1.1/bso/utilities/geometry/vector.hpp: #ifndef M_PI, #define M_PI 3.141592653589793238463, #endif // M_PI. Here these three lines have been put after the first two lines (#ifndef VECTOR_HPP, #define VECTOR_HPP)
+
+**NOTE** This bug will be fixed in future versions.
+
+All in Code::Blocks
+
+* In Settings>Compiler>Compiler settings>Compiler Flags, switch on:
+-std=c++17 (c++17 version), 
+-m64 (64-bits executable), 
+-Og (otherwise Debug executable too large), 
+-O3 (optimised code)
+
+* Right (or left) click the project (in the left Management column), choose Properties. At tab "Build targets" select for the "Execution working dir:" the location of the main.cpp file, so for this example:
+D:\BSO111\example.  
+Use the absolute path, so not the relative option. And note that this is to be done for both the Debug and Release options (left column).
+
+##### 4. Build and run
+
+In Code::Blocks:
+
+* Build>Build and run
+
+##### 5. Unit tests
+
+All in Code::Blocks:
+
+* Delete the main.cpp file in the project, and add instead:
+D:\BSO\unit_tests\all_test.cpp. 
+Select Debug and Release options.
+
+* Use for the "Execution working dir:" the following (see also above):
+D:\BSO\BSO-toolbox-v.1.1.1\unit_tests
+
+* Build>Clean workspace
+
+* Build>Build and run
+
+##### 6. Running the executables outside Code::Blocks, i.e. in a console
+
+All in Windows 10:
+
+* Include the folder with neccessary dll's in the windows PATH:
+C:\Program Files\CodeBlocks\MinGW\bin. 
+This can be done by:
+Win-X, search, type “env”, and choose “Edit the system environment variables”; 
+Click the “Environment Variables…” button; 
+Under the “System Variables” section (the lower half), find the row with “Path” in the first column, and click edit, and add the location.
+
+* Move the executable file, now in
+D:\BSO111\bin\Debug, 
+to the appropiate execution working directory as indicated above, i.e. for the unit tests in:
+D:\toolbox\BSO-toolbox-v.1.1.1\unit_tests.
+
+* Run the executable in a console.
 
 ## Contribution guidelines
 
@@ -334,8 +458,3 @@ For a description of the original work see this [paper] (https://onlinelibrary.w
 Project manager at Leiden Institute of Advanced Computer Science (LIACS):  
   dr.ir. M.T.M. (Michael) Emmerich  
   m.t.m.emmerich[at]liacs.leidenuniv.nl
-
-
-PhD graduate at LIACS:  
-  dr.ir. K. (Koen) van der Blom  
-  k.van.der.blom[at]liacs.leidenuniv.nl
