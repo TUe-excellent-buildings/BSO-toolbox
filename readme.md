@@ -1,7 +1,7 @@
 # README BSO toolbox
 
 ## What is this repository for?
-
+   
 This repository contains a C++ library named the Building Spatial design Optimization toolbox (BSO toolbox).
 In the first place, the toolbox has been developed to support building spatial design simulation and optimization by providing tools to:
 (i) represent and modify building spatial designs,
@@ -33,11 +33,10 @@ Although the first aim of the toolbox was related to research carried out at Ein
 The toolbox is written in C++ and makes use of elements defined in the C++14 standard.
 The toolbox is developed to be cross-platform, and has been compiled and tested for Linux (Ubuntu 22.04 LTS) and Windows 10 (22H2,19045.2486).
 
-Furthermore, the toolbox depends on the following external software:
-* For linear algebra (Geometry and FEM) the [Eigen](http://eigen.tuxfamily.org) C++ library is used (Linux: last tested is v3.4.0).
-* Various utilities from the [Boost](https://www.boost.org/) C++ library (Linux: last tested is v1.80.0)
-* For solving systems of ODE's (thermal simulation) the [Odeint](https://www.odeint.com) library is used (also contained in the Boost library; Linux, last tested is v1.80.0).
-* Visualization is written in the openGL standard and makes use of freeglut3 (Linux: last tested is v2.8.1-6)   
+Furthermore, the toolbox depends on the following external source and static/dynamic libraries:
+* For linear algebra, the [Eigen](http://eigen.tuxfamily.org) C++ library is used (Linux: last tested is v3.4.0).
+* Various utilities (e.g. [Odeint](https://www.odeint.com)) from the [Boost](https://www.boost.org/) C++ library (Linux: last tested is v1.80.0). Precompiling is not needed.
+* Visualization is written in the OpenGL standard and makes use of freeglut (Linux: last tested is v2.8.1-6).   
 
 First, an elaborate Linux installation tutorial is given. It may be usefull to read this first, even if a Windows 10 installation is desired. Hereafter, the Windows 10 installation is explained.
 
@@ -298,7 +297,7 @@ All in Code::Blocks:
 
 * At Settings>Compiler>GNU GCC Compiler>Toolchain executables, check whether all "Programs Files" are indeed from C:\Program Files\CodeBlocks\MinGW. For instance, a previously installed Strawberry Perl may lead to other files and locations. The "Reset defaults" button may help in this case.
 
-* Create a new project by File>New>Project>Console application, select a "Folder to create project in:" you prefer, here "D:\" has been chosen, and if options arise, use default options throughout. Note that here project title BSO111 was taken, for which Code:Blocks then creates directory D:\BSO111 for the project.
+* Create a new project by File>New>Project>Console application, select a "Folder to create project in:" you prefer, here "D:\" has been chosen, and if options arise, use default options throughout. Note that here project title BSO111 was used, for which Code:Blocks then creates directory D:\BSO111 for the project.
 
 ##### 2. External libraries: eigen, boost, glut
 
@@ -312,25 +311,26 @@ All in Windows 10:
 
 * Unzip freeglut-MinGW-3.0.0-1.mp.zip found via www.transmissionzero.co.uk. Further, the same applies as above for eigen.
 
-**NOTE** Different from claimed elsewhere, the BSO toolbox (both for Linux and Windows 10) needs neither the OpenGL Shading Language (GLSL) nor the GNU Scientific (GSL) libraries.
+**NOTE** Different from possibly claimed elsewhere, the BSO toolbox (both for Linux and Windows 10) needs neither the OpenGL Shading Language (GLSL) nor the GNU Scientific (GSL) libraries.
 
 All in Code::Blocks:
 
-* In Settings>Compiler>Search directions>Compiler, add the above directories to enable the compiler to find header files, here these directories are:
-D:\BSO111\eigen-3.4.0, 
-D:\BSO111\boost_1_81_0, 
-D:\BSO111\freeglut\include\GL
+* In Settings>Compiler>Search directions>Compiler, add the above directories to enable the compiler to find header files, here these directories are:  
+D:\BSO111\eigen-3.4.0   
+D:\BSO111\boost_1_81_0   
+D:\BSO111\freeglut\include\GL  
 
-* In Settings>Compiler>Search directories>Linker, add the below directory to enable the linker to find libraries, in this example:
+* In Settings>Compiler>Search directories>Linker, add the below directory to enable the linker to find libraries, in this example:  
 D:\toolbox\freeglut\lib\x64
 
-* In Settings>Compiler>Linker settings, add at "Other linker options" the following line to link the libraries below:
+* In Settings>Compiler>Linker settings, add at "Other linker options" the following line to link the libraries below:  
 -lfreeglut_static -lopengl32 -lwinmm -lgdi32 -Wl,--subsystem,console
 
 **NOTE** "--subsystem,console" is used so the terminal reponses correctly to cout.
 
-* In Settings>Compiler>Compiler settings>#defines, add
-FREEGLUT_STATIC. This is to statically link freeglut. Alternatively dynamical linking can be used, by leaving this define out, and linking -lfreeglut instead of -lfreeglut_static 
+* In Settings>Compiler>Compiler settings>#defines, add:  
+FREEGLUT_STATIC  
+This is to statically link freeglut. Alternatively dynamical linking can be used, by leaving this define out, and linking -lfreeglut instead of -lfreeglut_static 
 
 * To save the above settings, save the project (File>Save Project), workspace (File>Save Workspace), and perspective (View>Perspectives>Save current). Probably one will do, but not sure which one.
 
@@ -338,10 +338,10 @@ FREEGLUT_STATIC. This is to statically link freeglut. Alternatively dynamical li
 
 In Windows 10:
 
-* Unzip BSO-toolbox-v.1.1.1.zip found at github.com, and put the resulting directories bso, example, and unit_tests in the project folder, so here:
-D:\BSO111\bso, 
-D:\BSO111\example, 
-D:\BSO111\unit_tests
+* Unzip BSO-toolbox-v.1.1.1.zip found at github.com, and put the resulting directories bso, example, and unit_tests in the project folder, so here:  
+D:\BSO111\bso   
+D:\BSO111\example   
+D:\BSO111\unit_tests  
 
 All in Code::Blocks:
 
@@ -349,25 +349,30 @@ All in Code::Blocks:
 
 **NOTE** For editing and searching in the other hpp and cpp files, all other files in the folders bso, example, and unit_tests can be included (using Add files recursively). But then these files should be untagged "Compile file" and "Link file": If all directories are unfold, all files can be selected in one step, and Compile file and Link file can be switched off.
 
-* In Settings>Compiler>Search directions>Compiler, add the directory of the BSO-toolbox to enable the compiler to find the toolbox cpp and hpp files, in the particular example here, this is:
+* In Settings>Compiler>Search directions>Compiler, add the directory of the BSO-toolbox to enable the compiler to find the toolbox cpp and hpp files, in the particular example here, this is:  
 D:\BSO111
 
 In Code::Blocks or any text-editor: 
 
-* As a temporarily bugfix, add the following three pre-compiler lines (here seperated by commas) to D:\toolbox\BSO-toolbox-v.1.1.1/bso/utilities/geometry/vector.hpp: #ifndef M_PI, #define M_PI 3.141592653589793238463, #endif // M_PI. Here these three lines have been put after the first two lines (#ifndef VECTOR_HPP, #define VECTOR_HPP)
+* As a temporarily bugfix, add the following pre-compiler lines to D:\toolbox\BSO-toolbox-v.1.1.1/bso/utilities/geometry/vector.hpp. Here these three lines have been put after the first two lines (#ifndef VECTOR_HPP, #define VECTOR_HPP):  
+~~~
+#ifndef M_PI
+#define M_PI 3.141592653589793238463
+#endif // M_PI
+~~~
 
 **NOTE** This bug will be fixed in future versions.
 
-All in Code::Blocks
+All in Code::Blocks:
 
-* In Settings>Compiler>Compiler settings>Compiler Flags, switch on:
--std=c++17 (c++17 version), 
--m64 (64-bits executable), 
--Og (otherwise Debug executable too large), 
+* In Settings>Compiler>Compiler settings>Compiler Flags, switch on:  
+-std=c++17 (c++17 version)   
+-m64 (64-bits executable)   
+-Og (otherwise Debug executable too large)   
 -O3 (optimised code)
 
-* Right (or left) click the project (in the left Management column), choose Properties. At tab "Build targets" select for the "Execution working dir:" the location of the main.cpp file, so for this example:
-D:\BSO111\example.  
+* Right (or left) click the project (in the left Management column), choose Properties. At tab "Build targets" select for the "Execution working dir:" the location of the main.cpp file, so for this example:  
+D:\BSO111\example    
 Use the absolute path, so not the relative option. And note that this is to be done for both the Debug and Release options (left column).
 
 ##### 4. Build and run
@@ -380,12 +385,12 @@ In Code::Blocks:
 
 All in Code::Blocks:
 
-* Delete the main.cpp file in the project, and add instead:
-D:\BSO\unit_tests\all_test.cpp. 
+* Delete the main.cpp file in the project, and add instead:  
+D:\BSO111\unit_tests\all_test.cpp   
 Select Debug and Release options.
 
-* Use for the "Execution working dir:" the following (see also above):
-D:\BSO\BSO-toolbox-v.1.1.1\unit_tests
+* Use for the "Execution working dir:" the following (see also above):  
+D:\BSO111\unit_tests
 
 * Build>Clean workspace
 
@@ -395,17 +400,19 @@ D:\BSO\BSO-toolbox-v.1.1.1\unit_tests
 
 All in Windows 10:
 
-* Include the folder with neccessary dll's in the windows PATH:
-C:\Program Files\CodeBlocks\MinGW\bin. 
+* Include the folder with neccessary dll's in the windows PATH:  
+C:\Program Files\CodeBlocks\MinGW\bin  
 This can be done by:
 Win-X, search, type “env”, and choose “Edit the system environment variables”; 
 Click the “Environment Variables…” button; 
 Under the “System Variables” section (the lower half), find the row with “Path” in the first column, and click edit, and add the location.
 
-* Move the executable file, now in
-D:\BSO111\bin\Debug, 
-to the appropiate execution working directory as indicated above, i.e. for the unit tests in:
-D:\toolbox\BSO-toolbox-v.1.1.1\unit_tests.
+* Move the executable file, now in:  
+D:\BSO111\bin\Debug   
+to the appropiate execution working directory as indicated above, i.e. for the unit tests in:  
+D:\BSO111\unit_tests  
+and for the example:  
+D:\BSO111\example  
 
 * Run the executable in a console.
 
@@ -436,7 +443,6 @@ In this case, you can create an issue, or contact an admin or the project manage
 
 Parts of the code that are used in the BSO toolbox are based on codes that are originally developed by other authors.
 This section is used to clarify which parts of code in the BSO toolbox are based on other codes, and refers to the original work.
-For any contributions to the BSO toolbox that use code that is originally written by other authors, add the accreditation to this section.
 
 #### Method of Moving Asymptotes
 The MMA.hpp and MMA.cpp files in the directiory `../BSO-toolbox/bso/structural_design/topology_optimization` are the translation of the MMA-code written in MATLAB by Krister Svanberg.
@@ -446,15 +452,24 @@ For a description of the original work see this [paper] (https://onlinelibrary.w
 
 ## Who do I talk to? ###
 
-###### For technical issues and/or questions, contact the repository admin:
-  dr.ir. S. (Sjonnie) Boonstra  
-  s.boonstra[at]abt.eu
+###### For technical issues, questions, and interests in the projects:  
+Dr. H.(Hèrm) Hofmeyer MSc (project leader Eindhoven University of Technology)  
+h.hofmeyer[at]tue.nl  
 
-###### For questions and other interests concerning the project, contact the project manager:
-  dr.ir. H. (Hèrm) Hofmeyer  
-  h.hofmeyer[at]tue.nl
+Dr. S.(Sjonnie) Boonstra MSc (former PhD student Eindhoven)  
+s.boonstra[at]abt.eu
 
-###### Other members of the project.
-Project manager at Leiden Institute of Advanced Computer Science (LIACS):  
-  dr.ir. M.T.M. (Michael) Emmerich  
-  m.t.m.emmerich[at]liacs.leidenuniv.nl
+###### Other members of the projects:  
+
+Dr. M.T.M. (Michael) Emmerich MSc (project leader Leiden Institute of Advanced Computer Science (LIACS))  
+m.t.m.emmerich[at]liacs.leidenuniv.nl  
+
+T.(Tessa) Ezendam MSc (PhD student Eindhoven)  
+t.ezendam[at]tue.nl  
+
+K.G. Pereverdieva MSc (PhD student Leiden)  
+k.g.pereverdieva[at]liacs.leidenuniv.nl  
+
+Dr. K. van der Blom MSc (former PhD student Leiden)  
+koen.vdblom[at]lip6.fr
+
