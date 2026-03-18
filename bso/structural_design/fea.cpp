@@ -220,13 +220,13 @@ namespace bso { namespace structural_design {
 					Eigen::Vector6d nodalLoads;
 					try
 					{
-						Eigen::Vector6d nodalLoads = j->getLoads(i);
+						nodalLoads = j->getLoads(i);
 					}
 					catch (std::exception& e)
 					{
 						// this node does not have a load with this load case
 						j->addLoadCase(i);
-						Eigen::Vector6d nodalLoads = j->getLoads(i);
+						nodalLoads = j->getLoads(i);
 					}
 					for (unsigned int k = 0; k < 6; ++k)
 					{
@@ -348,7 +348,10 @@ namespace bso { namespace structural_design {
 	bool fea::isSingular()
 	{
 		if (mGSM.nonZeros() == 0) return true;
-		Eigen::JacobiSVD<Eigen::MatrixXd> SVD(mGSM);
+		// Modification (Herm, March 18, 2026) Convert sparse to dense explicitly (Eigen 5 requires this)
+		Eigen::MatrixXd denseGSM(mGSM);
+		// from here "old" code 
+		Eigen::JacobiSVD<Eigen::MatrixXd> SVD(denseGSM);
 		double cond = SVD.singularValues()(0) / SVD.singularValues()(SVD.singularValues().size()-1);
 		return cond > 1e10;
 	}
