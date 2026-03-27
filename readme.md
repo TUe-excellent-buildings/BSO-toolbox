@@ -38,7 +38,7 @@ Furthermore, the toolbox depends on the following external source and static/dyn
 * Various utilities (e.g. [Odeint](https://www.odeint.com)) from the [Boost](https://www.boost.org/) C++ library (Linux: last tested is v1.80.0). Precompiling is not needed.
 * Visualization is written in the OpenGL standard and makes use of freeglut (Linux: last tested is v2.8.1-6).   
 
-First, an elaborate Linux installation tutorial is given. It may be usefull to read this first, even if a Windows 10 installation is desired. Hereafter, the Windows 10 installation is explained.
+First, an elaborate Linux installation tutorial is given. Although it only officially supports Linux, devices with macOS should also be able to run the toolbox. It may be usefull to read this first, even if a Windows 10 installation is desired. Hereafter, the Windows 10 installation is explained.
 
 ### Linux installation
 For Linux, a tutuorial for the installation of the dependencies and the toolbox is given in the following steps.
@@ -285,6 +285,14 @@ For example to test the geometry package of the toolbox type the following in th
 $ make clean cls geometry
 $ ./geometry_test
 ```
+
+#### (Optional) Development on macOS
+The installation process follows in the same way as for Linux. Furthermore, GLUT should already be preinstalled with the C++ compiler on macOS. Other code dependent on the BSO toolbox can be compiled with the following command (please keep in mind that for your application, the paths and filenames will most likely be different), hence let this be a simple example, which rather visualizes how to properly link the necessary libraries.
+
+```bash
+g++ -std=c++17 tutorial.cpp -o BSO_tutorial -I/Users/john/BSO_dir -I/Users/john/includes/eigen -I/Users/john/includes/boost -framework GLUT -framework OpenGL -L /usr/local/Cellar/freeglut/3.4.0/lib -lglut -O3 -march=native -w
+```
+
 ### Windows 10 installation
 
 For this installation Code::Blocks has been used, but other strategies are possible as well.
